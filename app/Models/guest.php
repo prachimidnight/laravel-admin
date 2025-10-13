@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class users extends Model
+class guest extends Model
 {
-    protected $table='tbl_users';
-    protected $primaryKey='user_id';
+    protected $table='tbl_guest';
+    protected $primaryKey='guest_id';
     protected $fillable=[
         'role_id',
         'country_id',
