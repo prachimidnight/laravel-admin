@@ -37,14 +37,14 @@ Route::prefix('state')->controller(StateController::class)->group(function() {
 
 Route::prefix('role')->controller(RoleController::class)->group(function() {
     Route::post('/create','create');
-    Route::post('/','list');
+    Route::post('/  ','list');
     Route::post('/update','update');
     Route::post('/delete','delete');
 });
 
 Route::prefix('city')->controller(CityController::class)->group(function() {
     Route::post('/create','create');
-    Route::post('/','list');
+    Route::post('/list','list');
     Route::post('/update','update');
     Route::post('/delete','delete');
 });

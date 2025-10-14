@@ -37,6 +37,37 @@ class CityController extends Controller
           return response()->json(['status'=> 500, 'message'=> 'failed']);
       }
     }
+    public function list(Request $request)
+    {
+        $valid = Validator::make($request->all(), []);
+
+        if ($valid->fails()) {
+            return response()->json(['status' => 400, 'error' => $valid->errors()], 400);
+        } else {
+            $data = [];
+            $data['offset'] = $request->input('offset');
+            $data['limit'] = $request->input('limit');
+
+            if ($request->has('sortby') && $request->input('sortby') != "" && $request->has('sorttype') && $request->input('sorttype') != "") {
+                $data['sortby'] = $request->input('sortby');
+                $data['sorttype'] = $request->input('sorttype');
+            }
+
+            if ($request->has('search')) {
+                $data['search'] = $request->input('search');
+            }
+
+            if ($request->has('city_id') && $request->input('city_id')) {
+                $data['city_id'] = $request->input('city_id');
+            }
+
+            $data = new city();
+            $totalCount = $data->getallcity($data)['total'];
+            $citydata = $data->getallcity($data)['data'];
+
+            return response()->json(['status' => 200, 'count' => $totalCount, 'data' => $citydata ]);
+        }
+    }
     public function update(Request $request)
     {
 
@@ -84,5 +115,5 @@ class CityController extends Controller
             }
         }
     }
-    
+
 }
