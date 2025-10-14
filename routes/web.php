@@ -17,7 +17,10 @@ use App\Http\Controllers\UserController;
 
 
 Route::get('/', function() {
-    return view('adminview/welcome');
-});
+    return view('/adminview/login');
+})->name('login');
 
+Route::get('dashboard', function() {
+    return view('adminview/dashboard');
+});
 

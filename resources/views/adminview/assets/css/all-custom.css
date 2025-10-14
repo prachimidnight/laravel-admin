@@ -1428,6 +1428,12 @@ section,
   border-color:var(--primary-color);
 }
 
+.btn.btn-black {
+  background-color: rgb(255, 255, 255);
+  color: black;
+  border-color:black;
+}
+
 .btn.btn-primary:hover {
   background-color: var(--primary-hover);
   color: var(--white-color);
@@ -2051,7 +2057,7 @@ section,
 
 .card {
   position: relative;
-  background-color: var(--white-bg);
+  background-color: black;
   box-shadow: var(--box-shadow);
   border-radius: var(--border-radius);
   overflow: visible;
@@ -2971,7 +2977,7 @@ html:not([dir=rtl]) .select2-container--default .select2-selection--multiple .se
   line-height: 18px;
   margin-bottom: 6px;
   display: block;
-  color: var(--gray-700);
+  color: white;
 }
 
 .input-group {
@@ -4034,4 +4040,33 @@ span.fs-8.fw-bold.dark-3.bg-dark-6.d-block.px-3.py-2.rounded-top.mb-2 {
 }
 .custom-search {
     width: 250px;
+}
+
+.input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc !important;
+    justify-content: space-between;
+    width: 100%;
+    padding: 9px 15px;
+}
+
+.input-group-text {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+}
+
+.fa-eye, .fa-eye-slash {
+    font-size: 18px;
+}
+
+input#password {
+    outline: none;
+    border: none;
+    width: 80%;
+    font-size: 16px;
+    font-family: var(--font-family);
+    font-weight: 500;
 }
