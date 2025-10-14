@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\CityController;
+use App\Http\Controllers\CountryController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\StateController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,3 +29,8 @@ Route::post('/updateuser', [UserController::class, 'update']);
 Route::post('/deleteuser', [UserController::class, 'delete']);
 Route::post('/loginuser', [UserController::class, 'login']);
 Route::post('/logoutuser', [UserController::class, 'destroy']);
+
+Route::post('/addcountry', [CountryController::class, 'create']);
+Route::post('/addstate', [StateController::class, 'create']);
+Route::post('/addcity', [CityController::class, 'create']);
+Route::post('/addrole', [RoleController::class, 'create']);
