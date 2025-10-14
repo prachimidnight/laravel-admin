@@ -1,11 +1,10 @@
 <?php
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StateController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,15 +21,30 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-/* User Route */
-Route::post('/adduser', [UserController::class, 'register']);
-Route::post('/getalluser', [UserController::class, 'userlist']);
-Route::post('/updateuser', [UserController::class, 'update']);
-Route::post('/deleteuser', [UserController::class, 'delete']);
-Route::post('/loginuser', [UserController::class, 'login']);
-Route::post('/logoutuser', [UserController::class, 'destroy']);
+Route::prefix('country')->controller(CountryController::class)->group(function() {
+    Route::post('/create','create');
+    Route::post('/','list');
+    Route::post('/update','update');
+    Route::post('/delete','delete');
+});
 
-Route::post('/addcountry', [CountryController::class, 'create']);
-Route::post('/addstate', [StateController::class, 'create']);
-Route::post('/addcity', [CityController::class, 'create']);
-Route::post('/addrole', [RoleController::class, 'create']);
+Route::prefix('state')->controller(StateController::class)->group(function() {
+    Route::post('/create','create');
+    Route::post('/','list');
+    Route::post('/update','update');
+    Route::post('/delete','delete');
+});
+
+Route::prefix('role')->controller(RoleController::class)->group(function() {
+    Route::post('/create','create');
+    Route::post('/','list');
+    Route::post('/update','update');
+    Route::post('/delete','delete');
+});
+
+Route::prefix('city')->controller(CityController::class)->group(function() {
+    Route::post('/create','create');
+    Route::post('/','list');
+    Route::post('/update','update');
+    Route::post('/delete','delete');
+});
