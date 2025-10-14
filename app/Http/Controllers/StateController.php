@@ -37,6 +37,48 @@ class StateController extends Controller
             return response()->json(['status'=> 500, 'message'=> 'failed']);
         }
     }
+
+    public function list(Request $request)
+    {
+        $valid = Validator::make($request->all(), []);
+    
+        if ($valid->fails()) {
+            return response()->json(['status' => 400, 'error' => $valid->errors()], 400);
+        } else {
+    
+            // 1️⃣ Collect filter data in an array
+            $data = [];
+            $data['offset'] = $request->input('offset');
+            $data['limit'] = $request->input('limit');
+    
+            if ($request->has('sortby') && $request->input('sortby') != "" && 
+                $request->has('sorttype') && $request->input('sorttype') != "") {
+                $data['sortby'] = $request->input('sortby');
+                $data['sorttype'] = $request->input('sorttype');
+            }
+    
+            if ($request->has('search')) {
+                $data['search'] = $request->input('search');
+            }
+    
+            if ($request->has('state_id') && $request->input('state_id')) {
+                $data['state_id'] = $request->input('state_id');
+            }
+    
+            // 2️⃣ Create model object separately
+            $stateModel = new state();
+    
+            // 3️⃣ Pass the array ($data), not the model, into getallcity()
+            $stateResult = $stateModel->getallcity($data);
+    
+            return response()->json([
+                'status' => 200,
+                'count'  => $stateResult['total'],
+                'data'   => $stateResult['data']
+            ]);
+        }
+    }
+
     public function update(Request $request)
     {
 

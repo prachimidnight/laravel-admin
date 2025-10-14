@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\country;
 use App\Models\role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -36,6 +37,48 @@ class RoleController extends Controller
             return response()->json(['status'=> 500, 'message'=> 'failed']);
         }
     }
+
+     public function list(Request $request)
+    {
+        $valid = Validator::make($request->all(), []);
+    
+        if ($valid->fails()) {
+            return response()->json(['status' => 400, 'error' => $valid->errors()], 400);
+        } else {
+    
+            // 1️⃣ Collect filter data in an array
+            $data = [];
+            $data['offset'] = $request->input('offset');
+            $data['limit'] = $request->input('limit');
+    
+            if ($request->has('sortby') && $request->input('sortby') != "" && 
+                $request->has('sorttype') && $request->input('sorttype') != "") {
+                $data['sortby'] = $request->input('sortby');
+                $data['sorttype'] = $request->input('sorttype');
+            }
+    
+            if ($request->has('search')) {
+                $data['search'] = $request->input('search');
+            }
+    
+            if ($request->has('country_id') && $request->input('country_id')) {
+                $data['country_id'] = $request->input('country_id');
+            }
+    
+            // 2️⃣ Create model object separately
+            $countryModel = new country();
+    
+            // 3️⃣ Pass the array ($data), not the model, into getallcity()
+            $countryResult = $countryModel->getallcity($data);
+    
+            return response()->json([
+                'status' => 200,
+                'count'  => $countryResult['total'],
+                'data'   => $countryResult['data']
+            ]);
+        }
+    }
+
     public function update(Request $request)
     {
 
