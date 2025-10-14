@@ -18,59 +18,24 @@ class CountryController extends Controller
             'country_name'=>'required',
         ]);
             
-    if ($validator->fails()) {
-        return response()->json(['status' => false, 'message' => 'validation failed', 'errors'=> $validator->errors()], 400);
-    }
+        if ($validator->fails()) {
+            return response()->json(['status' => false, 'message' => 'validation failed', 'errors'=> $validator->errors()], 400);
+        }
 
-    $country = New country();
-    $country -> country_name = $request -> input('country_name');
-    $country -> status = ('1');
-    $country -> token = (string) str::uuid();
-    $country -> guid = (string) str::uuid();
-    $country -> created_at = carbon::now('asia/kolkata') -> toDateTimeString(); 
-    $country -> updated_at = carbon::now('asia/kolkata') -> toDateTimeString();
-    $country -> created_by = $request -> input('created_by');
-    $country -> updated_by = $request -> input('updated_by');
+        $country = New country();
+        $country->country_name = $request->input('country_name');
+        $country->token = generateToken(10);
+        $country->guid = generateToken(30);
+        $country->created_at = carbon::now('asia/kolkata')->toDateTimeString(); 
+        $country->updated_at = carbon::now('asia/kolkata')->toDateTimeString();
+        $country->created_by = $request->input('created_by');
+        $country->updated_by = $request->input('updated_by');
 
-    if($country->save()){
-        return response()->json(['status'=> 200, 'message'=> 'successfully', 'data'=> $country]);
-    } else {
-        return response()->json(['status'=> 500, 'message'=> 'failed']);
-    }
-}
-
-    public function list(Request $request)
-    {
-        $query=country::query();
-            
-    if ($request->has('country_id')){
-        $CountryId = $request->input('country_id');
-        $query->where('country_id', $CountryId);
-    }
-
-    if ($request->has('search')){
-        $search = $request->input('search');
-        $query->where(function ($q) use ($search){
-            $q->where('tbl_country.country_id','like', '%' . $search . '%',);
-        });
-    }
-
-    $count = $query->where('status',1)->count();
-    $limit = $request->input('limit',50);
-    $offset = $request->input('offset',0);
-    $data = $query->skip($offset)
-                    ->take($limit)
-                    ->get();
-
-
-    $user = $query->where('status',1)->get();
-            
-
-        return response()->json([
-            'status'=>200,
-            'message'=>'list fetched successfully',
-            'data'=>$user
-        ]);
+        if($country->save()){
+            return response()->json(['status'=> 200, 'message'=> 'successfully', 'data'=> $country]);
+        } else {
+            return response()->json(['status'=> 500, 'message'=> 'failed']);
+        }
     }
     public function update(Request $request)
     {

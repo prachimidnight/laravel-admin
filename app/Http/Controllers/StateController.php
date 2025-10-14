@@ -17,60 +17,25 @@ class StateController extends Controller
             'state_name'=>'required',
         ]);
             
-    if ($validator->fails()) {
-        return response()->json(['status' => false, 'message' => 'validation failed', 'errors'=> $validator->errors()], 400);
-    }
+        if ($validator->fails()) {
+            return response()->json(['status' => false, 'message' => 'validation failed', 'errors'=> $validator->errors()], 400);
+        }
 
-    $state = New state();
-    $state -> country_id = $request -> input('state_id');
-    $state -> state_name = $request -> input('state_name');
-    $state -> status = ('1');
-    $state -> token = (string) str::uuid();
-    $state -> guid = (string) str::uuid();
-    $state -> created_at = carbon::now('asia/kolkata') -> toDateTimeString(); 
-    $state -> updated_at = carbon::now('asia/kolkata') -> toDateTimeString();
-    $state -> created_by = $request -> input('created_by');
-    $state -> updated_by = $request -> input('updated_by');
+        $state = New state();
+        $state->country_id = $request->input('country_id');
+        $state->state_name = $request->input('state_name');
+        $state->token = generateToken(10);
+        $state->guid = generateToken(30);
+        $state->created_at = carbon::now('asia/kolkata')->toDateTimeString(); 
+        $state->updated_at = carbon::now('asia/kolkata')->toDateTimeString();
+        $state->created_by = $request -> input('created_by');
+        $state->updated_by = $request -> input('updated_by');
 
-    if($state->save()){
-        return response()->json(['status'=> 200, 'message'=> 'successfully', 'data'=> $state]);
-    } else {
-        return response()->json(['status'=> 500, 'message'=> 'failed']);
-    }
-}
-
-    public function list(Request $request)
-    {
-        $query=state::query();
-            
-    if ($request->has('state_id')){
-        $StateId = $request->input('state_id');
-        $query->where('state_id', $StateId);
-    }
-
-    if ($request->has('search')){
-        $search = $request->input('search');
-        $query->where(function ($q) use ($search){
-            $q->where('tbl_state.state_id','like', '%' . $search . '%',);
-        });
-    }
-
-    $count = $query->where('status',1)->count();
-    $limit = $request->input('limit',50);
-    $offset = $request->input('offset',0);
-    $data = $query->skip($offset)
-                    ->take($limit)
-                    ->get();
-
-
-    $user = $query->where('status',1)->get();
-            
-
-        return response()->json([
-            'status'=>200,
-            'message'=>'list fetched successfully',
-            'data'=>$user
-        ]);
+        if($state->save()){
+            return response()->json(['status'=> 200, 'message'=> 'successfully', 'data'=> $state]);
+        } else {
+            return response()->json(['status'=> 500, 'message'=> 'failed']);
+        }
     }
     public function update(Request $request)
     {

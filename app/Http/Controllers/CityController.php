@@ -24,8 +24,8 @@ class CityController extends Controller
       $city->state_id = $request->input('state_id');
       $city->country_id = $request->input('country_id');
       $city->city_name = $request->input('city_name');
-      $city->token = (string) str::uuid();
-      $city->guid = (string) str::uuid();
+      $city->token = generateToken(10);
+      $city->guid = generateToken(30);
       $city->created_at = carbon::now('asia/kolkata')->toDateTimeString(); 
       $city->updated_at = carbon::now('asia/kolkata')->toDateTimeString();
       $city->created_by = $request->input('created_by');
