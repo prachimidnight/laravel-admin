@@ -63,7 +63,6 @@ class GuestController extends Controller
             return response()->json(['status' => 400, 'error' => $valid->errors()], 400);
         } else {
     
-            // 1️⃣ Collect filter data in an array
             $data = [];
             $data['offset'] = $request->input('offset');
             $data['limit'] = $request->input('limit');
@@ -81,12 +80,25 @@ class GuestController extends Controller
             if ($request->has('guest_id') && $request->input('guest_id')) {
                 $data['guest_id'] = $request->input('guest_id');
             }
+
+            if ($request->has('role_id') && $request->input('role_id')) {
+                $data['role_id'] = $request->input('role_id');
+            }
+
+            if ($request->has('city_id') && $request->input('city_id')) {
+                $data['city_id'] = $request->input('city_id');
+            }
+
+            if ($request->has('state_id') && $request->input('state_id')) {
+                $data['state_id'] = $request->input('state_id');
+            }
+
+            if ($request->has('country_id') && $request->input('country_id')) {
+                $data['country_id'] = $request->input('country_id');
+            }
     
-            // 2️⃣ Create model object separately
             $Modelguest = new guest();
-    
-            // 3️⃣ Pass the array ($data), not the model, into getallcity()
-            $guestResult = $Modelguest->getallguestw($data);
+            $guestResult = $Modelguest->getallguest($data);
     
             return response()->json([
                 'status' => 200,
@@ -95,7 +107,6 @@ class GuestController extends Controller
             ]);
         }
     }
-
 
     public function update(Request $request)
     {

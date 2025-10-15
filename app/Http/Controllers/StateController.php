@@ -64,11 +64,12 @@ class StateController extends Controller
             if ($request->has('state_id') && $request->input('state_id')) {
                 $data['state_id'] = $request->input('state_id');
             }
+
+            if ($request->has('country_id') && $request->input('country_id')) {
+                $data['country_id'] = $request->input('country_id');
+            }
     
-            // 2️⃣ Create model object separately
             $stateModel = new state();
-    
-            // 3️⃣ Pass the array ($data), not the model, into getallcity()
             $stateResult = $stateModel->getallcity($data);
     
             return response()->json([

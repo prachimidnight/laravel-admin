@@ -26,6 +26,22 @@ class guest extends Model
             $query = $query->where('tg.guest_id', '=', $data['guest_id']);
         }
 
+        if (array_key_exists('role_id', $data) && isset($data['role_id'])) {
+            $query = $query->where('tr.role_id', '=', $data['role_id']);
+        }
+
+        if (array_key_exists('city_id', $data) && isset($data['city_id'])) {
+            $query = $query->where('tc.city_id', '=', $data['city_id']);
+        }
+
+        if (array_key_exists('state_id', $data) && isset($data['state_id'])) {
+            $query = $query->where('ts.state_id', '=', $data['state_id']);
+        }
+
+         if (array_key_exists('country_id', $data) && isset($data['country_id'])) {
+            $query = $query->where('co.country_id', '=', $data['country_id']);
+        }
+
         if (array_key_exists('search', $data) && isset($data['search'])) {
             $searchTerm = $data['search'];
             $query = $query->where(function ($query) use ($searchTerm) {

@@ -14,22 +14,22 @@ class country extends Model
 
     public function getallcity($data)
     {
-        $query = DB::table('tbl_country as tc')->select('tc.*');
+        $query = DB::table('tbl_country as co')->select('co.*');
 
         if (array_key_exists('sortby', $data) && isset($data['sortby']) && array_key_exists('sorttype', $data) && isset($data['sorttype'])) {
-            $query->orderBy('tc.' . $data['sortby'], $data['sorttype']);
+            $query->orderBy('co.' . $data['sortby'], $data['sorttype']);
         } else {
-            $query->orderBy('tc.country_id', 'ASC');
+            $query->orderBy('co.country_id', 'ASC');
         }
 
         if (array_key_exists('country_id', $data) && isset($data['country_id'])) {
-            $query = $query->where('tc.country_id', '=', $data['country_id']);
+            $query = $query->where('co.country_id', '=', $data['country_id']);
         }
 
         if (array_key_exists('search', $data) && isset($data['search'])) {
             $searchTerm = $data['search'];
             $query = $query->where(function ($query) use ($searchTerm) {
-                $query->orWhere('tc.country_name', 'like', '%' . $searchTerm . '%');
+                $query->orWhere('co.country_name', 'like', '%' . $searchTerm . '%');
             });
         }
         
@@ -39,7 +39,7 @@ class country extends Model
             $query->offset($data['offset'])->limit($data['limit']);
         }
 
-        $result = $query->where('tc.status', 1)->get(); 
+        $result = $query->where('co.status', 1)->get(); 
         
         $response = [
             'total' => $totalCount,

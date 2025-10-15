@@ -46,7 +46,6 @@ class RoleController extends Controller
             return response()->json(['status' => 400, 'error' => $valid->errors()], 400);
         } else {
     
-            // 1️⃣ Collect filter data in an array
             $data = [];
             $data['offset'] = $request->input('offset');
             $data['limit'] = $request->input('limit');
@@ -65,10 +64,7 @@ class RoleController extends Controller
                 $data['country_id'] = $request->input('country_id');
             }
     
-            // 2️⃣ Create model object separately
             $countryModel = new country();
-    
-            // 3️⃣ Pass the array ($data), not the model, into getallcity()
             $countryResult = $countryModel->getallcity($data);
     
             return response()->json([
