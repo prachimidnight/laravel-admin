@@ -44,7 +44,7 @@ class city extends Model
             });
         }
         
-        $totalCount = $query->where('status', 1)->count();
+        $totalCount = $query->where('tc.status', 1)->count();
 
         if (array_key_exists('offset', $data) && isset($data['offset']) && array_key_exists('limit', $data) && isset($data['limit'])) {
             $query->offset($data['offset'])->limit($data['limit']);
