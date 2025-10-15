@@ -22,17 +22,17 @@ class RoleController extends Controller
             return response()->json(['status' => false, 'message' => 'validation failed', 'errors'=> $validator->errors()], 400);
         }
 
-        $role = New role();
-        $role->role_name = $request->input('role_name');
-        $role->token = generateToken(10);
-        $role->guid = generateToken(30);
-        $role->created_at = carbon::now('asia/kolkata')->toDateTimeString(); 
-        $role->updated_at = carbon::now('asia/kolkata')->toDateTimeString();
-        $role->created_by = $request->input('created_by');
-        $role->updated_by = $request->input('updated_by');
+        $data = New role();
+        $data->role_name = $request->input('role_name');
+        $data->token = generateToken(10);
+        $data->guid = generateToken(30);
+        $data->created_at = carbon::now('asia/kolkata')->toDateTimeString(); 
+        $data->updated_at = carbon::now('asia/kolkata')->toDateTimeString();
+        $data->created_by = $request->input('created_by');
+        $data->updated_by = $request->input('updated_by');
 
-        if($role->save()){
-            return response()->json(['status'=> 200, 'message'=> 'successfully', 'data'=> $role]);
+        if($data->save()){
+            return response()->json(['status'=> 200, 'message'=> 'successfully', 'data'=> $data]);
         } else {
             return response()->json(['status'=> 500, 'message'=> 'failed']);
         }
@@ -89,11 +89,11 @@ class RoleController extends Controller
         if ($valid->fails()){
             return response()->json(['status'=>400,'errors'=> $valid->errors()],400);
         } else {
-            $role=new role();
+            $data=new role();
             $request-> request-> add(['status'=>0]);
             $newrequest=$request->except(['role_id']);
             $request->request->add(['updated_by'=> $request->input('updated_by')]);
-            $result = $role-> where('role_id',$request->input('role_id'))->update($newrequest);
+            $result = $data-> where('role_id',$request->input('role_id'))->update($newrequest);
 
             if($result){
             return response()->json(['status'=>200, 'message'=>'updated successfully', 'data'=>[]]);
@@ -115,11 +115,11 @@ class RoleController extends Controller
             return response()->json(['status' => 400, 'errors' => $valid->errors()], 400);
         } else {
 
-            $role = new role();
+            $data = new role();
             $request->request->add(['status' => 0]);
             $newrequest = $request->except(['role_id']);
             $request->request->add(['updated_by' => $request->input('updated_by')]);
-            $result = $role->where('role_id', $request->input('role_id'))->update($newrequest);
+            $result = $data->where('role_id', $request->input('role_id'))->update($newrequest);
 
             if ($result) {
                 return response()->json(['status' => 200, 'message' => 'Deleted Successfully', 'data' => []]);

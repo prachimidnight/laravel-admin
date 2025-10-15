@@ -3,6 +3,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\GuestController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StateController;
 
@@ -23,7 +24,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('country')->controller(CountryController::class)->group(function() {
     Route::post('/create','create');
-    Route::post('/','list');
+    Route::post('/list','list');
     Route::post('/update','update');
     Route::post('/delete','delete');
 });
@@ -37,12 +38,19 @@ Route::prefix('state')->controller(StateController::class)->group(function() {
 
 Route::prefix('role')->controller(RoleController::class)->group(function() {
     Route::post('/create','create');
-    Route::post('/  ','list');
-    Route::post('/update','update');
+    Route::post('/list ','list');
+    Route::post('/update','update');    
     Route::post('/delete','delete');
 });
 
 Route::prefix('city')->controller(CityController::class)->group(function() {
+    Route::post('/create','create');
+    Route::post('/list','list');
+    Route::post('/update','update');
+    Route::post('/delete','delete');
+});
+
+Route::prefix('login')->controller(GuestController::class)->group(function() {
     Route::post('/create','create');
     Route::post('/list','list');
     Route::post('/update','update');
