@@ -44,7 +44,6 @@ class CityController extends Controller
             return response()->json(['status' => 400, 'error' => $valid->errors()], 400);
         } else {
     
-            // 1️⃣ Collect filter data in an array
             $data = [];
             $data['offset'] = $request->input('offset');
             $data['limit'] = $request->input('limit');
@@ -62,11 +61,16 @@ class CityController extends Controller
             if ($request->has('city_id') && $request->input('city_id')) {
                 $data['city_id'] = $request->input('city_id');
             }
-    
-            // 2️⃣ Create model object separately
+
+            if ($request->has('state_id') && $request->input('state_id')) {
+                $data['state_id'] = $request->input('state_id');
+            }
+
+            if ($request->has('country_id') && $request->input('country_id')) {
+                $data['country_id'] = $request->input('country_id');
+            }
+
             $cityModel = new city();
-    
-            // 3️⃣ Pass the array ($data), not the model, into getallcity()
             $cityResult = $cityModel->getallcity($data);
     
             return response()->json([
