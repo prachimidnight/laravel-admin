@@ -37,7 +37,6 @@ class StateController extends Controller
             return response()->json(['status'=> 500, 'message'=> 'failed']);
         }
     }
-
     public function list(Request $request)
     {
         $valid = Validator::make($request->all(), []);
@@ -79,7 +78,6 @@ class StateController extends Controller
             ]);
         }
     }
-
     public function update(Request $request)
     {
 

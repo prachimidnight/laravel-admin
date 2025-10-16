@@ -42,8 +42,8 @@ $pagetype = 'Login';
             </form>
         </div>
     </div>
-
-     <script>
+<script>
+    var apipath = "http://localhost/laravel-admin";
         function togglePasswordVisibility() {
             var passwordInput = document.getElementById("password");
             var toggleIcon = document.getElementById("togglePasswordIcon");
@@ -60,6 +60,27 @@ $pagetype = 'Login';
                 toggleIcon.classList.add("fa-eye-slash");
             }
         }
-      </script>
+        $(document).ready(function(){
+        $("#frm-login").on("submit", function(e){
+        e.preventDefault();
+
+            const email = $("#email").val();
+            const password = $("#password").val();
+            $.ajax({
+                url: apipath + "/api/login",
+                type: "POST",
+                data: { email, password },
+                success: function(res){
+                    if(res.status === 200){
+                
+                        Swal.fire("Success", res.message, "success"); 
+                    } else {
+                        Swal.fire("Error", res.message, "error");
+                    }
+                },
+            });
+        });
+    });
+</script>
 </body>
 </html>

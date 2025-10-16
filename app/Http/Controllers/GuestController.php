@@ -54,7 +54,6 @@ class GuestController extends Controller
             return response()->json(['status'=> 500, 'message'=> 'failed']);
         }
     }
-
     public function list(Request $request)
     {
         $valid = Validator::make($request->all(), []);
@@ -107,7 +106,6 @@ class GuestController extends Controller
             ]);
         }
     }
-
     public function update(Request $request)
     {
 
@@ -157,5 +155,58 @@ class GuestController extends Controller
             }
         }
     }
+    public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required',
+            'password' => 'required'
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json(['status' => 422, 'errors' => $validator->errors()]);
+        }
+    
+        $data = guest::where('email', $request->input('email'))->first();
+    
+        if (!$data) {
+            return response()->json(['status' => 404, 'message' => '$data not found']);
+        }
+    
+        if ($data->password !== md5($request->input('password'))) {
+            return response()->json(['status'=>400, 'message'=>'Invalid password']);
+        }
+        return response()->json([
+            'status' => 200,
+            'message' => 'Login successful',
+            'data' => $data,
+            'guest_id'=>$data->guest_id,
+            'guid'=>$data->guid
+        ]);
+    }
+    public function logout(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'guest_id' => 'required'
+        ]);
 
+        if ($validator->fails()) {
+            return response()->json(['status' => 400, 'errors' => $validator->errors()], 400);
+        }
+
+        $guest = guest::where('guest_id', $request->input('guest_id'))->first();
+
+        if (!$guest) {
+            return response()->json(['status' => 404, 'message' => 'Guest not found']);
+        }
+
+        $guest->token = null;
+        $guest->updated_at = \Carbon\Carbon::now('Asia/Kolkata')->toDateTimeString();
+        $guest->save();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Logout successful',
+            'data' => []
+        ]);
+    }
 }

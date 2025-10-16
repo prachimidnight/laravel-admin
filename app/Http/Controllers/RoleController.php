@@ -37,8 +37,7 @@ class RoleController extends Controller
             return response()->json(['status'=> 500, 'message'=> 'failed']);
         }
     }
-
-     public function list(Request $request)
+    public function list(Request $request)
     {
         $valid = Validator::make($request->all(), []);
     
@@ -74,7 +73,6 @@ class RoleController extends Controller
             ]);
         }
     }
-
     public function update(Request $request)
     {
 

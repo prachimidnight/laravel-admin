@@ -50,9 +50,11 @@ Route::prefix('city')->controller(CityController::class)->group(function() {
     Route::post('/delete','delete');
 });
 
-Route::prefix('login')->controller(GuestController::class)->group(function() {
+Route::prefix('guest')->controller(GuestController::class)->group(function() {
     Route::post('/create','create');
     Route::post('/list','list');
     Route::post('/update','update');
     Route::post('/delete','delete');
+    Route::post('/login','login');
+    Route::post('/logout','logout');
 });

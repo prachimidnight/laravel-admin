@@ -4,17 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class guest extends Model
 {
     protected $table='tbl_guest';
     protected $primaryKey='guest_id';
-    protected $fillable=['guest_id','role_id','country_id','state_id','city_id','first_name','last_name','phone_no,','description','address','profile_image','email','whatsapp_no','is_whatsapp','is_send','is_sms','is_gift','status','token','guid','created_at','updated_at','created_by','updated_by'];
+    protected $fillable=['guest_id','role_id','country_id','state_id','city_id','first_name','last_name','phone_no,','description','address','profile_image','email','password','whatsapp_no','is_whatsapp','is_send','is_sms','is_gift','status','token','guid','created_at','updated_at','created_by','updated_by'];
 
     public function getallguest($data)
     {
-        $query = DB::table('tbl_guest as tg')->select('tg.*');
+        $query = DB::table('tbl_guest as tg')
+        ->leftjoin('tbl_role as tr', 'tg.role_id', '=', 'tr.role_id')
+        ->leftjoin('tbl_country as co', 'tg.country_id', '=', 'co.country_id')
+        ->leftjoin('tbl_state as ts', 'tg.state_id', '=', 'ts.state_id')
+        ->leftjoin('tbl_city as tc', 'tg.city_id', '=', 'tc.city_id')
+        ->select('tc.*','tr.role_id','ts.state_id','co.country_id','tc.city_id','tr.role_name','ts.state_name','co.country_name','tc.city_name');
 
         if (array_key_exists('sortby', $data) && isset($data['sortby']) && array_key_exists('sorttype', $data) && isset($data['sorttype'])) {
             $query->orderBy('tg.' . $data['sortby'], $data['sorttype']);
@@ -64,6 +69,5 @@ class guest extends Model
 
         return $response;
     }
-
 }
 
