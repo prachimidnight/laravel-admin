@@ -37,6 +37,7 @@ class CountryController extends Controller
             return response()->json(['status'=> 500, 'message'=> 'failed']);
         }
     }
+
     public function list(Request $request)
     {
         $valid = Validator::make($request->all(), []);
@@ -73,6 +74,7 @@ class CountryController extends Controller
             ]);
         }
     }
+
     public function update(Request $request)
     {
 
@@ -97,6 +99,7 @@ class CountryController extends Controller
             }
         }
     }
+    
     public function delete(Request $request)
     {
 

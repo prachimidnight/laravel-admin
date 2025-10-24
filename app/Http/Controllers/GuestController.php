@@ -16,8 +16,6 @@ class GuestController extends Controller
             'first_name'=>'required',
             'last_name'=>'required',
             'phone_no'=>'required',
-            'email'=>'required',
-            'whatsapp_no'=>'required'
         ]);
             
         if ($validator->fails()) {
@@ -38,9 +36,9 @@ class GuestController extends Controller
         $data->email = $request->input('email');
         $data->whatsapp_no = $request->input('whatsapp_no');
         $data->is_whatsapp = $request->input('is_whatsapp');
-        $data->is_send = $request->input('is_send');
-        $data->is_sms = $request->input('is_sms');
-        $data->is_gift = $request->input('is_gift');
+        $data->is_send = $request->input('is_send', 0);
+        $data->is_sms = $request->input('is_sms', 0);
+        $data->is_gift = $request->input('is_gift', 0);
         $data->token = generateToken(10);
         $data->guid = generateToken(30);
         $data->created_at = carbon::now('asia/kolkata')->toDateTimeString(); 
@@ -49,11 +47,12 @@ class GuestController extends Controller
         $data->updated_by = $request->input('updated_by');
 
         if($data->save()){
-            return response()->json(['status'=> 200, 'message'=> 'successfully', 'data'=> $data]);
+            return response()->json(['status'=> 200, 'message'=> 'Guest Data Added successfully', 'data'=> $data]);
         } else {
             return response()->json(['status'=> 500, 'message'=> 'failed']);
         }
     }
+
     public function list(Request $request)
     {
         $valid = Validator::make($request->all(), []);
@@ -106,9 +105,9 @@ class GuestController extends Controller
             ]);
         }
     }
+
     public function update(Request $request)
     {
-
         $valid = validator::make($request->all(),[
             "guest_id"=>"required"
         ]);
@@ -123,16 +122,16 @@ class GuestController extends Controller
             $result = $data-> where('guest_id',$request->input('guest_id'))->update($newrequest);
 
             if($result){
-            return response()->json(['status'=>200, 'message'=>'updated successfully', 'data'=>[]]);
+            return response()->json(['status'=>200, 'message'=>'Guest Data Updated Successfully', 'data'=>[]]);
             }
             else{
             return response()->json(['status'=> 400,'errors' => 'something went wrong.'],400);
             }
         }
     }
+
     public function delete(Request $request)
     {
-
         $valid = Validator::make($request->all(), [
             "guest_id" => "required"
 
@@ -149,12 +148,13 @@ class GuestController extends Controller
             $result = $data->where('guest_id', $request->input('guest_id'))->update($newrequest);
 
             if ($result) {
-                return response()->json(['status' => 200, 'message' => 'Deleted Successfully', 'data' => []]);
+                return response()->json(['status' => 200, 'message' => 'Guest Data Deleted Successfully', 'data' => []]);
             } else {
                 return response()->json(['status' => 400, 'errors' => 'Something went wrong.'], 400);
             }
         }
     }
+
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -183,6 +183,7 @@ class GuestController extends Controller
             'guid'=>$data->guid
         ]);
     }
+
     public function logout(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -209,4 +210,5 @@ class GuestController extends Controller
             'data' => []
         ]);
     }
+    
 }

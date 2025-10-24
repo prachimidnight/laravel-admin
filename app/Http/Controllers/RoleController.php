@@ -102,7 +102,6 @@ class RoleController extends Controller
 
         $valid = Validator::make($request->all(), [
             "role_id" => "required"
-
         ]);
 
         if ($valid->fails()) {

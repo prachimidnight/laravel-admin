@@ -36,6 +36,7 @@ class CityController extends Controller
           return response()->json(['status'=> 500, 'message'=> 'failed']);
       }
     }
+    
     public function list(Request $request)
     {
         $valid = Validator::make($request->all(), []);

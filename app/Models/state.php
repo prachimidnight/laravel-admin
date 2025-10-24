@@ -26,11 +26,9 @@ class state extends Model
             $query = $query->where('ts.state_id', '=', $data['state_id']);
         }
 
-        
         if (array_key_exists('country_id', $data) && isset($data['country_id'])) {
             $query = $query->where('co.country_id', '=', $data['country_id']);
         }
-
 
         if (array_key_exists('search', $data) && isset($data['search'])) {
             $searchTerm = $data['search'];
