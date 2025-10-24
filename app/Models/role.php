@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\DB;
 
 class role extends Model
 {
-    protected $table='tbl_role';
-    protected $primaryKey='role_id';
-    protected $fillable=['role_id','role_name','status','token','guid','created_at','updated_at','created_by','updated_by'];
+    protected $table = 'tbl_role';
+    protected $primaryKey = 'role_id';
+    protected $fillable = ['role_id','role_name','status','token','guid','created_at','updated_at','created_by','updated_by'];
    
     public function getallcity($data)
     {

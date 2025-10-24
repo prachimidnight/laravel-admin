@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\DB;
 
 class country extends Model
 {
-    protected $table='tbl_country';
-    protected $primaryKey='country_id';
-    protected $fillable=['country_id','country_name','status','token','guid','created_at','updated_at','created_by','updated_by'];
+    protected $table = 'tbl_country';
+    protected $primaryKey = 'country_id';
+    protected $fillable = ['country_id','country_name','status','token','guid','created_at','updated_at','created_by','updated_by'];
 
     public function getallcity($data)
     {

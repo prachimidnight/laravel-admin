@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\DB;
 
 class state extends Model
 {
-    protected $table='tbl_state';
-    protected $primaryKey='state_id';
-    protected $fillable=['state_id','country_id','state_name','status','token','guid','created_at','updated_at','created_by','updated_by'];
+    protected $table = 'tbl_state';
+    protected $primaryKey = 'state_id';
+    protected $fillable = ['state_id','country_id','state_name','status','token','guid','created_at','updated_at','created_by','updated_by'];
        
     public function getallcity($data)
     {
