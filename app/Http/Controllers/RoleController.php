@@ -63,13 +63,13 @@ class RoleController extends Controller
                 $data['country_id'] = $request->input('country_id');
             }
     
-            $countryModel = new country();
-            $countryResult = $countryModel->getallcity($data);
+            $roleModel = new role();
+            $roleResult = $roleModel->getallrole($data);
     
             return response()->json([
                 'status' => 200,
-                'count'  => $countryResult['total'],
-                'data'   => $countryResult['data']
+                'count'  => $roleResult['total'],
+                'data'   => $roleResult['data']
             ]);
         }
     }

@@ -12,7 +12,7 @@ class state extends Model
     protected $primaryKey = 'state_id';
     protected $fillable = ['state_id','country_id','state_name','status','token','guid','created_at','updated_at','created_by','updated_by'];
        
-    public function getallcity($data)
+    public function getallstate($data)
     {
         $query = DB::table('tbl_state as ts')->select('ts.*');
 

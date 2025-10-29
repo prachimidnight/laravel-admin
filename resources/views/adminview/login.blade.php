@@ -43,7 +43,8 @@ $pagetype = 'Login';
         </div>
     </div>
 <script>
-    var apipath = "http://localhost/laravel-admin";
+    var apipath = "http://localhost/laravel-admin/api";
+
         function togglePasswordVisibility() {
             var passwordInput = document.getElementById("password");
             var toggleIcon = document.getElementById("togglePasswordIcon");
@@ -67,7 +68,7 @@ $pagetype = 'Login';
             const email = $("#email").val();
             const password = $("#password").val();
             $.ajax({
-                url: apipath + "/api/login",
+                url: apipath + "/guest/login",
                 type: "POST",
                 data: { email, password },
                 success: function(res){

@@ -70,7 +70,7 @@ class StateController extends Controller
             }
     
             $stateModel = new state();
-            $stateResult = $stateModel->getallcity($data);
+            $stateResult = $stateModel->getallstate($data);
     
             return response()->json([
                 'status' => 200,

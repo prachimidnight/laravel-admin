@@ -5,154 +5,163 @@ namespace App\Http\Controllers;
 use App\Models\guest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 
 class GuestController extends Controller
 {
     public function create(Request $request)
     {
-        $validator = validator::make ($request->all(),
-        [
-            'first_name'=>'required',
-            'last_name'=>'required',
-            'phone_no'=>'required',
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'phone_no' => 'required',
         ]);
             
         if ($validator->fails()) {
-            return response()->json(['status' => false, 'message' => 'validation failed', 'errors'=> $validator->errors()], 400);
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
-        $data = New guest();
-        $data->role_id = $request->input('role_id');
-        $data->country_id = $request->input('country_id');
-        $data->state_id = $request->input('state_id');
-        $data->city_id = $request->input('city_id');
-        $data->first_name = $request->input('first_name');
-        $data->last_name = $request->input('last_name');
-        $data->phone_no = $request->input('phone_no');
-        $data->description =$request->input('description');
-        $data->address = $request->input('address');
-        $data->profile_image = $request->input('profile_image');
-        $data->email = $request->input('email');
-        $data->whatsapp_no = $request->input('whatsapp_no');
-        $data->is_whatsapp = $request->input('is_whatsapp');
-        $data->is_send = $request->input('is_send', 0);
-        $data->is_sms = $request->input('is_sms', 0);
-        $data->is_gift = $request->input('is_gift', 0);
-        $data->token = generateToken(10);
-        $data->guid = generateToken(30);
-        $data->created_at = carbon::now('asia/kolkata')->toDateTimeString(); 
-        $data->updated_at = carbon::now('asia/kolkata')->toDateTimeString();
-        $data->created_by = $request->input('created_by');
-        $data->updated_by = $request->input('updated_by');
+        $guest = guest::create([
+            'role_id' => $request->role_id,
+            'country_id' => $request->country_id,
+            'state_id' => $request->state_id,
+            'city_id' => $request->city_id,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'phone_no' => $request->input('phone_no'),
+            'description' => $request->description,
+            'address' => $request->address,
+            'profile_image' => $request->profile_image,
+            'email' => $request->email,
+            'password' => hash::make($request->input('password')),
+            'whatsapp_no' => $request->whatsapp_no,
+            'is_whatsapp' => $request->boolean('is_whatsapp'),
+            'is_send' => $request->boolean('is_send',0),
+            'is_sms' => $request->boolean('is_sms',0),
+            'is_gift' => $request->boolean('is_gift',0),
+            'token' => generateToken(10),
+            'guid' => generateToken(30),
+            'created_by' => $request->created_by,
+            'updated_by' => $request->updated_by,
+        ]);
 
-        if($data->save()){
-            return response()->json(['status'=> 200, 'message'=> 'Guest Data Added successfully', 'data'=> $data]);
-        } else {
-            return response()->json(['status'=> 500, 'message'=> 'failed']);
-        }
+        return response()->json([
+            'status' => true,
+            'message' => 'Guest created successfully',
+            'data' => $guest
+        ], 200);
     }
 
     public function list(Request $request)
     {
-        $valid = Validator::make($request->all(), []);
+        $validator = Validator::make($request->all(), [
+            'offset' => 'nullable|integer|min:0',
+            'limit' => 'nullable|integer|min:1|max:100',
+            'sortby' => 'nullable|string',
+            'sorttype' => 'nullable|in:asc,desc',
+            'search' => 'nullable|string',
+            'guest_id' => 'nullable|integer',
+            'role_id' => 'nullable|integer',
+            'city_id' => 'nullable|integer',
+            'state_id' => 'nullable|integer',
+            'country_id' => 'nullable|integer',
+        ]);
     
-        if ($valid->fails()) {
-            return response()->json(['status' => 400, 'error' => $valid->errors()], 400);
-        } else {
-    
-            $data = [];
-            $data['offset'] = $request->input('offset');
-            $data['limit'] = $request->input('limit');
-    
-            if ($request->has('sortby') && $request->input('sortby') != "" && 
-                $request->has('sorttype') && $request->input('sorttype') != "") {
-                $data['sortby'] = $request->input('sortby');
-                $data['sorttype'] = $request->input('sorttype');
-            }
-    
-            if ($request->has('search')) {
-                $data['search'] = $request->input('search');
-            }
-    
-            if ($request->has('guest_id') && $request->input('guest_id')) {
-                $data['guest_id'] = $request->input('guest_id');
-            }
-
-            if ($request->has('role_id') && $request->input('role_id')) {
-                $data['role_id'] = $request->input('role_id');
-            }
-
-            if ($request->has('city_id') && $request->input('city_id')) {
-                $data['city_id'] = $request->input('city_id');
-            }
-
-            if ($request->has('state_id') && $request->input('state_id')) {
-                $data['state_id'] = $request->input('state_id');
-            }
-
-            if ($request->has('country_id') && $request->input('country_id')) {
-                $data['country_id'] = $request->input('country_id');
-            }
-    
-            $Modelguest = new guest();
-            $guestResult = $Modelguest->getallguest($data);
-    
+        if ($validator->fails()) {
             return response()->json([
-                'status' => 200,
-                'count'  => $guestResult['total'],
-                'data'   => $guestResult['data']
-            ]);
+                'status' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
         }
-    }
 
-    public function update(Request $request)
-    {
-        $valid = validator::make($request->all(),[
-            "guest_id"=>"required"
+        $filters = $request->only([
+            'offset', 'limit', 'sortby', 'sorttype', 
+            'search', 'guest_id', 'role_id', 'city_id', 
+            'state_id', 'country_id'
         ]);
 
-        if ($valid->fails()){
-            return response()->json(['status'=>400,'errors'=> $valid->errors()],400);
-        } else {
-            $data=new guest();
-            $request-> request-> add(['status'=>0]);
-            $newrequest=$request->except(['guest_id']);
-            $request->request->add(['updated_by'=> $request->input('updated_by')]);
-            $result = $data-> where('guest_id',$request->input('guest_id'))->update($newrequest);
+        $guestModel = new guest();
+        $result = $guestModel->getallguest($filters);
 
-            if($result){
-            return response()->json(['status'=>200, 'message'=>'Guest Data Updated Successfully', 'data'=>[]]);
-            }
-            else{
-            return response()->json(['status'=> 400,'errors' => 'something went wrong.'],400);
-            }
-        }
+        return response()->json([
+            'status' => true,
+            'count' => $result['total'],
+            'data' => $result['data']
+        ]);
     }
+
+   
+    public function update(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'guest_id' => 'required|integer|exists:tbl_guest,guest_id',
+            'email' => 'nullable|email',
+            'password' => 'nullable|string|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $guest = Guest::findOrFail($request->guest_id);
+        
+        $updateData = $request->except(['guest_id', 'password']);
+        
+        if ($request->filled('password')) {
+            $updateData['password'] = Hash::make($request->password);
+        }
+
+        $updateData['updated_by'] = $request->updated_by;
+        $updateData['updated_at'] = Carbon::now('Asia/Kolkata');
+
+        $guest->update($updateData);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Guest updated successfully',
+            'data' => $guest->fresh()
+        ]);
+    }
+
 
     public function delete(Request $request)
     {
-        $valid = Validator::make($request->all(), [
-            "guest_id" => "required"
-
+        $validator = Validator::make($request->all(), [
+            'guest_id' => 'required|integer|exists:tbl_guest,guest_id',
+            'updated_by' => 'nullable|integer',
         ]);
 
-        if ($valid->fails()) {
-            return response()->json(['status' => 400, 'errors' => $valid->errors()], 400);
-        } else {
-
-            $data = new guest();
-            $request->request->add(['status' => 0]);
-            $newrequest = $request->except(['guest_id']);
-            $request->request->add(['updated_by' => $request->input('updated_by')]);
-            $result = $data->where('guest_id', $request->input('guest_id'))->update($newrequest);
-
-            if ($result) {
-                return response()->json(['status' => 200, 'message' => 'Guest Data Deleted Successfully', 'data' => []]);
-            } else {
-                return response()->json(['status' => 400, 'errors' => 'Something went wrong.'], 400);
-            }
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
         }
+
+        $guest = guest::findOrFail($request->guest_id);
+        
+        $guest->update([
+            'status' => 0,
+            'updated_by' => $request->updated_by,
+            'updated_at' => Carbon::now('Asia/Kolkata')
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Guest deleted successfully',
+            'data' => []
+        ]);
     }
 
     public function login(Request $request)
@@ -163,52 +172,71 @@ class GuestController extends Controller
         ]);
     
         if ($validator->fails()) {
-            return response()->json(['status' => 422, 'errors' => $validator->errors()]);
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
         }
     
-        $data = guest::where('email', $request->input('email'))->first();
+        $guest = guest::where('email', $request->email)
+            ->where('status', 1)
+            ->first();
     
-        if (!$data) {
-            return response()->json(['status' => 404, 'message' => '$data not found']);
+        if (!$guest) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Guest not found'
+            ], 404);
         }
     
-        if ($data->password !== md5($request->input('password'))) {
-            return response()->json(['status'=>400, 'message'=>'Invalid password']);
+        if (Hash::check($request->password, $guest->password)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Invalid credentials'
+            ], 401);
         }
+
+        // Generate new token
+        $guest->token = generateToken(60);
+        $guest->updated_at = Carbon::now('Asia/Kolkata');
+        $guest->save();
+
         return response()->json([
-            'status' => 200,
+            'status' => true,
             'message' => 'Login successful',
-            'data' => $data,
-            'guest_id'=>$data->guest_id,
-            'guid'=>$data->guid
+            'data' => [
+                'guest' => $guest,
+                'token' => $guest->token
+            ]
         ]);
     }
 
     public function logout(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'guest_id' => 'required'
+            'guest_id' => 'required|integer|exists:guests,guest_id'
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['status' => 400, 'errors' => $validator->errors()], 400);
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
-        $guest = guest::where('guest_id', $request->input('guest_id'))->first();
+        $guest = guest::findOrFail($request->guest_id);
 
-        if (!$guest) {
-            return response()->json(['status' => 404, 'message' => 'Guest not found']);
-        }
-
-        $guest->token = null;
-        $guest->updated_at = \Carbon\Carbon::now('Asia/Kolkata')->toDateTimeString();
-        $guest->save();
+        $guest->update([
+            'token' => null,
+            'updated_at' => Carbon::now('Asia/Kolkata')
+        ]);
 
         return response()->json([
-            'status' => 200,
+            'status' => true,
             'message' => 'Logout successful',
             'data' => []
         ]);
     }
-    
 }

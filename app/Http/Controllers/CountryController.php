@@ -65,7 +65,7 @@ class CountryController extends Controller
             }
     
             $Modelcountry = new country();
-            $countryResult = $Modelcountry->getallcity($data);
+            $countryResult = $Modelcountry->getallcountry($data);
     
             return response()->json([
                 'status' => 200,
@@ -77,7 +77,6 @@ class CountryController extends Controller
 
     public function update(Request $request)
     {
-
         $valid = validator::make($request->all(),[
             "country_id"=>"required"
         ]);

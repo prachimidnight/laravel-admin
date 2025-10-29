@@ -12,7 +12,7 @@ class role extends Model
     protected $primaryKey = 'role_id';
     protected $fillable = ['role_id','role_name','status','token','guid','created_at','updated_at','created_by','updated_by'];
    
-    public function getallcity($data)
+    public function getallrole($data)
     {
         $query = DB::table('tbl_role as tr')->select('tr.*');
 
