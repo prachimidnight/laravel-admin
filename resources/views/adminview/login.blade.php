@@ -71,7 +71,7 @@ $pagetype = 'Login';
                 type: "POST",
                 data: { email, password },
                 success: function(res){
-                    if(res.status === 200){
+                    if(res.status === true){
                         Swal.fire("Success", res.message, "success"); 
                     } else {
                         Swal.fire("Error", res.message, "error");

@@ -190,7 +190,7 @@ class GuestController extends Controller
             ], 404);
         }
     
-        if (!Hash::check($request->password, $guest->password)) {
+        if (Hash::check($request->password, $guest->password)) {
             return response()->json([
                 'status' => false,
                 'message' => 'Invalid credentials'
