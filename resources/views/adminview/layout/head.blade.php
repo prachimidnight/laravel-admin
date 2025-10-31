@@ -85,7 +85,7 @@
 @php
 $userdata = Session::get('userdata');
 
-$user_id = '';
+$guest_id = '';
 $user_profile_photo = '';
 $token = '';
 $role_id = '';
@@ -94,13 +94,12 @@ $developer_id = '';
 
 if ($userdata && isset($userdata[0])) {
 
-    $user_id = $userdata[0]['user_id'] ?? '';
+    $guest_id = $userdata[0]['guest_id'] ?? '';
     $user_profile_photo = $userdata[0]['user_profile_photo'] ?? '';
     $token = $userdata[0]['token'] ?? '';
     $role_id = $userdata[0]['role_id'] ?? '';
     $guid = $userdata[0]['guid'] ?? '';
-    $developer_id = $userdata[0]['developer_id'] ?? '';
-
+   
 } else {
 
     return redirect()->route('login');
@@ -108,20 +107,18 @@ if ($userdata && isset($userdata[0])) {
 @endphp
 
 <script>
-    var user_id = '{{ $user_id }}';
+    var guest_id = '{{ $guest_id }}';
     var user_profile_photo = '{{ $user_profile_photo }}';
     var token = '{{ $token }}';
     var role_id = '{{ $role_id }}';
     var guid = '{{ $guid }}';
-    var developer_id = '{{ $developer_id }}';
-
-    sessionStorage.setItem('user_id', user_id);
+   
+    sessionStorage.setItem('guest_id', guest_id);
     sessionStorage.setItem('user_profile_photo', user_profile_photo);
     sessionStorage.setItem('token', token);
     sessionStorage.setItem('role_id', role_id);
     sessionStorage.setItem('guid', guid);
-    sessionStorage.setItem('developer_id', developer_id);
-
+ 
     function slugify(content) {
         return content.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
     }

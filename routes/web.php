@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\GuestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,7 +13,7 @@ use App\Http\Controllers\UserController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
+Route::post('/set_session', [GuestController::class, 'set_session']);
 
 
 Route::get('/', function() {
@@ -21,6 +21,6 @@ Route::get('/', function() {
 })->name('login');
 
 Route::get('dashboard', function() {
-    return view('adminview/dashboard');
+    return view('/adminview/dashboard');
 });
 

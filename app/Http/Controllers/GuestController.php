@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\guest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 
@@ -177,64 +178,21 @@ class GuestController extends Controller
             ], 422);
         }
     
-        $guest = guest::where('email', $request->email)
-            ->where('status', 1)
-            ->first();
-    
-        if (!$guest) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Guest not found'
-            ], 404);
-        }
-    
-        if (Hash::check($request->password, $guest->password)) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Invalid credentials'
-            ], 401);
-        }
+        $user_obj = new guest();
+        $result = $user_obj->where('status', 1)
+          ->where('email', $request->input('email'))
+          ->where('password', md5($request->input('password')))
+          ->get();
 
-        // Generate new token
-        $guest->token = generateToken(30);
-        $guest->updated_at = Carbon::now('Asia/Kolkata');
-        $guest->save();
+        return response()->json(['status' => 200, 'message' => 'Login Successfully', 'data' => $result]);
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Login successful',
-            'data' => [
-                'guest' => $guest,
-                'token' => $guest->token
-            ]
-        ]);
     }
 
-    public function logout(Request $request)
+    public function set_session(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'guest_id' => 'required|integer|exists:guests,guest_id'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $guest = guest::findOrFail($request->guest_id);
-
-        $guest->update([
-            'token' => null,
-            'updated_at' => Carbon::now('Asia/Kolkata')
-        ]);
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Logout successful',
-            'data' => []
-        ]);
+        $userdata = json_decode($request->userdata, true);
+        Session::put('userdata', $userdata);
+        return response()->json(['status' => 200]);
     }
+
 }

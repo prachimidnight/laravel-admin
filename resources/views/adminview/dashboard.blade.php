@@ -1,8 +1,8 @@
 <?php
-$page = 'Dashboard';
-$parentname = 'Dashboard';
-$pagename = 'Dashboard';
-$pagetype = 'Dashboard';
+$page = 'dashboard';
+$parentname = 'dashboard';
+$pagename = 'dashboard';
+$pagetype = 'dashboard';
 ?>
 @extends('adminview/layout/master')
 @section('body')

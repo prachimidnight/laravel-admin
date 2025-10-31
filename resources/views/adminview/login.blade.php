@@ -42,7 +42,10 @@ $pagetype = 'Login';
             </form>
         </div>
     </div>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.js" integrity="sha512-uE2UhqPZkcKyOjeXjPCmYsW9Sudy5Vbv0XwAVnKBamQeasAVAmH6HR9j5Qpy6Itk1cxk+ypFRPeAZwNnEwNuzQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
+
+  
     var apipath = "http://localhost/laravel-admin/api";
 
         function togglePasswordVisibility() {
@@ -62,24 +65,100 @@ $pagetype = 'Login';
             }
         }
         $(document).ready(function(){
-        $("#frm-login").on("submit", function(e){
-        e.preventDefault();
-            const email = $("#email").val();
-            const password = $("#password").val();
-            $.ajax({
-                url: apipath + "/guest/login",
-                type: "POST",
-                data: { email, password },
-                success: function(res){
-                    if(res.status === true){
-                        Swal.fire("Success", res.message, "success"); 
-                    } else {
-                        Swal.fire("Error", res.message, "error");
-                    }
-                },
+
+            $("#frm-login").validate({
+                submitHandler: function(form) {
+                    var formData = {
+                        email: $("#email").val(),
+                        password: $("#password").val(),
+                        role: "admin",
+                        dynamicurl: "login"
+                    };
+
+                    // Disable the button and show 'Loading...' text
+                    $(".btn-primary").html('Loading...').attr('disabled', true);
+
+                    $.ajax({
+                        method: "POST",
+                        url: apipath + "/guest/login",
+                        data: formData,
+                        dataType: "json",
+                        success: function(response) {
+                            if (response.status == 200) {
+                                let userdata = response.data;
+
+                                $.ajax({
+                                    type: "POST",
+                                    headers: {
+                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                    },
+                                    url: "{{URL('set_session')}}",
+                                    data: { userdata: JSON.stringify(userdata) },
+                                    dataType: 'json',
+                                    success: function(data1) {
+                                        if (response.status == 200) {
+                                            var finaljson = response.data[0];
+                                            $.each(finaljson, function(key, value) {
+                                                localStorage.setItem(key, value);
+                                            });
+
+                                            notifyuser('success', 'Login successful');
+                                            setTimeout(() => {
+                                                 window.location.href = "{{URL('admin/dashboard')}}";
+                                            }, 1000);
+                                        } else {
+                                            notifyuser('error', 'Invalid credentials, please try again.');
+                                        }
+                                    },
+                                    error: function(xhr, status, error) {
+                                        notifyuser('error', 'An error occurred while processing your request.');
+                                    }
+                                }).always(function() {
+                                    // Re-enable the button after the inner AJAX call completes (success or error)
+                                    $(".btn-primary").html('Login').attr('disabled', false);
+                                });
+                            } else {
+                                notifyuser('error', 'Invalid credentials, please try again.');
+                                $(".btn-primary").html('Login').attr('disabled', false);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            notifyuser('error', 'An error occurred while processing your request.');
+                            $(".btn-primary").html('Login').attr('disabled', false);
+                        }
+                    }).always(function() {
+                        // Ensure the button is re-enabled after the outer AJAX call completes
+                        $(".btn-primary").html('Login').attr('disabled', false);
+                    });
+
+                    return false;
+                }
             });
-        });
+
+        // $("#frm-login").on("submit", function(e){
+        // e.preventDefault();
+        //     const email = $("#email").val();
+        //     const password = $("#password").val();
+        //     $.ajax({
+        //         url: apipath + "/guest/login",
+        //         type: "POST",
+        //         data: { email, password },
+        //         success: function(res){
+        //             if(res.status === 200){
+        //                 Swal.fire("Success", res.message, "success"); 
+        //                 setTimeout(() => {
+        //                                 window.location.href = "{{URL('dashboard')}}";
+        //                             }, 1000);
+        //             } else {
+        //                 Swal.fire("Error", res.message, "error");
+        //             }
+        //         },
+        //     });
+        // });
     });
+     function notifyuser(type, message) {
+            $.notify(message, type);
+        }
 </script>
 </body>
 </html>
