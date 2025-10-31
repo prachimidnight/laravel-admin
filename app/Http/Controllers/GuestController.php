@@ -96,7 +96,6 @@ class GuestController extends Controller
         ]);
     }
 
-   
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -132,7 +131,6 @@ class GuestController extends Controller
             'data' => $guest->fresh()
         ]);
     }
-
 
     public function delete(Request $request)
     {
@@ -198,7 +196,7 @@ class GuestController extends Controller
         }
 
         // Generate new token
-        $guest->token = generateToken(60);
+        $guest->token = generateToken(30);
         $guest->updated_at = Carbon::now('Asia/Kolkata');
         $guest->save();
 
