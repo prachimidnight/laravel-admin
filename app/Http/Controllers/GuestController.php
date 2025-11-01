@@ -169,23 +169,19 @@ class GuestController extends Controller
             'email' => 'required|email',
             'password' => 'required'
         ]);
-    
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
-            ], 422);
+
+        if ($validator->fails()) {return response()->json(['status' => 422,'success' => false,'message' => 'Validation failed','errors' => $validator->errors()], 422);}
+        $user = guest::where('status', 1)
+            ->where('email', $request->input('email'))
+            ->first();
+
+        if (!$user) {return response()->json(['status' => 401,'success' => false,'message' => 'Invalid email Id'], 401);}
+
+        if (!password_verify($request->input('password'), $user->password)) {
+            return response()->json(['status' => 401,'success' => false,'message' => 'Invalid password'], 401);
         }
-    
-        $user_obj = new guest();
-        $result = $user_obj->where('status', 1)
-          ->where('email', $request->input('email'))
-          ->where('password', md5($request->input('password')))
-          ->get();
 
-        return response()->json(['status' => 200, 'message' => 'Login Successfully', 'data' => $result]);
-
+        return response()->json(['status' => 200,'success' => true,'message' => 'Login Successfully','data' => [$user] ], 200);
     }
 
     public function set_session(Request $request)
@@ -193,6 +189,13 @@ class GuestController extends Controller
         $userdata = json_decode($request->userdata, true);
         Session::put('userdata', $userdata);
         return response()->json(['status' => 200]);
+    }
+
+     public function destroy(Request $request)
+    {
+        Session::flush();
+        return redirect()->route('login');
+        // return response()->json(['status' => 200, 'message' => 'Logged out successfully']);
     }
 
 }

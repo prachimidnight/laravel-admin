@@ -9,7 +9,7 @@
             </svg>
         </a>
         <marquee class="marquee-text" direction="left" behavior="scroll" scrollamount="8">
-            <span>Welcome to <b>Sibermond Portal</b></span>
+            <span>Welcome to <b>Guest Inviation Portal</b></span>
         </marquee>
         <div class="is-flex is-align-items-center is-gap-2">
             <div class="dropdown dropdown-notifications is-flex-shrink-0">
@@ -96,66 +96,68 @@
     //     window.location.href = "{{ route('login') }}";
     // }
 
-    $(document).ready(function() {
+//     $(document).ready(function() {
 
-        $('.dropdown button').click(function(e) {
-        e.stopPropagation(); // Prevent the click event from bubbling up
-        $(this).siblings('.dropdown-menu').toggle(); // Toggle the profile dropdown
-    });
+//         $('.dropdown button').click(function(e) {
+//         e.stopPropagation(); // Prevent the click event from bubbling up
+//         $(this).siblings('.dropdown-menu').toggle(); // Toggle the profile dropdown
+//     });
 
-    // Close profile dropdown if clicked outside
-    $(document).click(function(e) {
-        if (!$('.dropdown').is(e.target) && $('.dropdown').has(e.target).length === 0) {
-            $('.dropdown-menu').hide(); // Close profile dropdown if clicked outside
-        }
-    });
+//     // Close profile dropdown if clicked outside
+//     $(document).click(function(e) {
+//         if (!$('.dropdown').is(e.target) && $('.dropdown').has(e.target).length === 0) {
+//             $('.dropdown-menu').hide(); // Close profile dropdown if clicked outside
+//         }
+//     });
 
-    var formdata = new FormData();
+//     var formdata = new FormData();
 
-    var developer_id = sessionStorage.getItem('developer_id');
-    var url;
+//     var developer_id = sessionStorage.getItem('developer_id');
+//     var url;
 
-    if (developer_id) {
-        url = '{{ apipath }}/getalldeveloper';
-        formdata.append('developer_id', developer_id);
-    } else {
-        var user_id = sessionStorage.getItem('user_id');
-        url = '{{ apipath }}/getalluser';
-        formdata.append('user_id', user_id);
-    }
+//     if (developer_id) {
+// url: apipath + "/guest/login",
+//         url = 'apipath /getalldeveloper';
+//         formdata.append('developer_id', developer_id);
+//     } else {
+//         var user_id = sessionStorage.getItem('user_id');
+ //url: apipath + "/guest/login",
+//         url = 'apipath /getalluser';
+//         formdata.append('user_id', user_id);
+//     }
 
-    $.ajax({
-        url: url,
-        type: 'POST',
-        dataType: 'json',
-        data: formdata,
-        processData: false,
-        contentType: false,
-        success: function(result) {
-            if (result.status == 200) {
+//     $.ajax({
+//         url: url,
+//         type: 'POST',
+//         dataType: 'json',
+//         data: formdata,
+//         processData: false,
+//         contentType: false,
+//         success: function(result) {
+//             if (result.status == 200) {
 
-                        if (result.data.length > 0) {
-                        var userPhoto = result.data[0].user_profile_photo;
-                        var devLogo = result.data[0].developer_logo;
+//                         if (result.data.length > 0) {
+//                         var userPhoto = result.data[0].user_profile_photo;
+//                         var devLogo = result.data[0].developer_logo;
 
-                        var fallbackImage = 'resources/uploads/1723887504blank-profile-picture-973460_960_720.webp'; // Use your actual default path
+//                         var fallbackImage = 'resources/uploads/1723887504blank-profile-picture-973460_960_720.webp'; // Use your actual default path
 
-                        if (devLogo && devLogo !== "null" && devLogo.trim() !== "") {
-                            $("#profile-image2").attr("src", devLogo);
-                        } else if (userPhoto && userPhoto !== "null" && userPhoto.trim() !== "") {
-                            $("#profile-image2").attr("src", userPhoto);
-                        } else {
-                            $("#profile-image2").attr("src", fallbackImage);
-                        }
-                        }
-                    } else {
+//                         if (devLogo && devLogo !== "null" && devLogo.trim() !== "") {
+//                             $("#profile-image2").attr("src", devLogo);
+//                         } else if (userPhoto && userPhoto !== "null" && userPhoto.trim() !== "") {
+//                             $("#profile-image2").attr("src", userPhoto);
+//                         } else {
+//                             $("#profile-image2").attr("src", fallbackImage);
+//                         }
+//                         }
+//                     } else {
 
-                    }
-        },
-        error: function(error) {
-            console.error('Error:', error);
-        }
-    });
-});
+//                     }
+//         },
+//         error: function(error) {
+//             console.error('Error:', error);
+//         }
+//     });
+// });
 
     </script>

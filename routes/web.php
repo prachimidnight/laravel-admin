@@ -14,13 +14,24 @@ use App\Http\Controllers\GuestController;
 |
 */
 Route::post('/set_session', [GuestController::class, 'set_session']);
-
+Route::get('/logoutuser', [GuestController::class, 'destroy'])->name('session.destroy');
 
 Route::get('/', function() {
     return view('/adminview/login');
 })->name('login');
 
-Route::get('dashboard', function() {
+Route::get('admin/dashboard', function() {
     return view('/adminview/dashboard');
 });
 
+Route::get('/admin/leads', function() {
+    return view('/adminview/leads');
+});
+
+Route::get('/admin/guest', function() {
+    return view('/adminview/guest');
+});
+
+Route::get('/admin/addguest', function() {
+    return view('/adminview/addguest');
+});

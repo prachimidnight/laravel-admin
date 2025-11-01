@@ -1,6 +1,6 @@
 <footer>
     <div class="is-flex is-gap-3 is-align-items-center is-justify-content-space-between">
-        <span class="fs-8 fw-500 gray-600">© 2024 Powered by <a href="https://insomniacs.in/" target="_blank" class="primary-text">insomniacs</a></span>
+        <span class="fs-8 fw-500 gray-600">© 2025 Powered by <a href="https://insomniacs.in/" target="_blank" class="primary-text"></a></span>
         <span class="fs-8 fw-500 gray-600 is-align-items-center is-flex is-gap-2 made-in-india">
             <span>Made in</span>
             <img src="{{URL::asset('resources/views/adminview/assets')}}/images/icons/flag.svg" width="36" alt="India Flag">

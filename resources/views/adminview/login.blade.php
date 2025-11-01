@@ -64,76 +64,70 @@ $pagetype = 'Login';
                 toggleIcon.classList.add("fa-eye-slash");
             }
         }
-        $(document).ready(function(){
+       $(document).ready(function() {
+          $("#frm-login").validate({
+              submitHandler: function(form) {
+                  var formData = {
+                      email: $("#email").val(),
+                      password: $("#password").val(),
+                      dynamicurl: "user/login"
+                  };
 
-            $("#frm-login").validate({
-                submitHandler: function(form) {
-                    var formData = {
-                        email: $("#email").val(),
-                        password: $("#password").val(),
-                        role: "admin",
-                        dynamicurl: "login"
-                    };
+                  $(".btn-primary").html('Loading...').attr('disabled', true);
 
-                    // Disable the button and show 'Loading...' text
-                    $(".btn-primary").html('Loading...').attr('disabled', true);
+                  $.ajax({
+                      method: "POST",
+                      url: apipath + "/guest/login",
+                      data: formData,
+                      dataType: "json",
+                      success: function(response) {
 
-                    $.ajax({
-                        method: "POST",
-                        url: apipath + "/guest/login",
-                        data: formData,
-                        dataType: "json",
-                        success: function(response) {
-                            if (response.status == 200) {
-                                let userdata = response.data;
+                          if (response.status == 200) {
+                              let userdata = response.data;
 
-                                $.ajax({
-                                    type: "POST",
-                                    headers: {
-                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                    },
-                                    url: "{{URL('set_session')}}",
-                                    data: { userdata: JSON.stringify(userdata) },
-                                    dataType: 'json',
-                                    success: function(data1) {
-                                        if (response.status == 200) {
-                                            var finaljson = response.data[0];
-                                            $.each(finaljson, function(key, value) {
-                                                localStorage.setItem(key, value);
-                                            });
+                              $.ajax({
+                                  type: "POST",
+                                  headers: {
+                                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                  },
+                                  url: "{{ URL('set_session') }}",
+                                  data: { userdata: JSON.stringify(userdata) },
+                                  dataType: 'json',
+                                  success: function(data1) {
+                                      if (data1.status == 200) {
+                                          var finaljson = response.data[0];
+                                          $.each(finaljson, function(key, value) {
+                                              localStorage.setItem(key, value);
+                                          });
 
-                                            notifyuser('success', 'Login successful');
-                                            setTimeout(() => {
-                                                 window.location.href = "{{URL('admin/dashboard')}}";
-                                            }, 1000);
-                                        } else {
-                                            notifyuser('error', 'Invalid credentials, please try again.');
-                                        }
-                                    },
-                                    error: function(xhr, status, error) {
-                                        notifyuser('error', 'An error occurred while processing your request.');
-                                    }
-                                }).always(function() {
-                                    // Re-enable the button after the inner AJAX call completes (success or error)
-                                    $(".btn-primary").html('Login').attr('disabled', false);
-                                });
-                            } else {
-                                notifyuser('error', 'Invalid credentials, please try again.');
-                                $(".btn-primary").html('Login').attr('disabled', false);
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            notifyuser('error', 'An error occurred while processing your request.');
-                            $(".btn-primary").html('Login').attr('disabled', false);
-                        }
-                    }).always(function() {
-                        // Ensure the button is re-enabled after the outer AJAX call completes
-                        $(".btn-primary").html('Login').attr('disabled', false);
-                    });
-
-                    return false;
-                }
-            });
+                                          notifyuser('success', 'Login successful');
+                                          setTimeout(() => {
+                                              window.location.href = "{{ URL('admin/leads') }}";
+                                          }, 1000);
+                                      }
+                                  },
+                                  complete: function() {
+                                      $('.main-loading').hide();
+                                      $(".btn-primary").html('LOGIN').removeAttr("disabled");
+                                  },
+                                  error: function() {
+                                      notifyuser('error', 'An error occurred while processing your request.');
+                                  }
+                              });
+                          } else {
+                              notifyuser('error', response.message || 'Invalid credentials, please try again.');
+                              $(".btn-primary").html('LOGIN').removeAttr("disabled");
+                          }
+                      },
+                      error: function(xhr) {
+                          notifyuser('error', xhr.responseJSON?.message || 'Something went wrong.');
+                          $(".btn-primary").html('LOGIN').removeAttr("disabled");
+                      }
+                  });
+                  return false;
+              }
+          });
+      });
 
         // $("#frm-login").on("submit", function(e){
         // e.preventDefault();
@@ -155,7 +149,7 @@ $pagetype = 'Login';
         //         },
         //     });
         // });
-    });
+    
      function notifyuser(type, message) {
             $.notify(message, type);
         }
