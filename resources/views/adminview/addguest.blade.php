@@ -4,7 +4,7 @@ $parentname = 'Add Guest';
 $pagename = 'Add Guest';
 $pagetype = 'Add Guest';
 ?>
-@extends('adminview.layout.master')
+@extends('adminview/layout/master')
 @section('body')
 
 <body>

@@ -17,7 +17,7 @@ Route::post('/set_session', [GuestController::class, 'set_session']);
 Route::get('/logoutuser', [GuestController::class, 'destroy'])->name('session.destroy');
 
 Route::get('/', function() {
-    return view('login');
+    return view('adminview/login');
 })->name('login');
 
 Route::get('admin/dashboard', function() {
@@ -40,7 +40,22 @@ Route::get('/admin/masters', function() {
     return view('adminview/masters');
 });
 
+Route::get('/admin/city', function() {
+    return view('adminview/city');
+});
+
+Route::get('/admin/state', function() {
+    return view('adminview/state');
+});
+
 Route::get('/admin/country', function() {
     return view('adminview/country');
 });
+
+Route::get('/admin/userroles', function() {
+    return view('adminview/userroles');
+});
+
+
+
 

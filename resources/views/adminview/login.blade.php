@@ -44,8 +44,6 @@ $pagetype = 'Login';
     </div>
      <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.js" integrity="sha512-uE2UhqPZkcKyOjeXjPCmYsW9Sudy5Vbv0XwAVnKBamQeasAVAmH6HR9j5Qpy6Itk1cxk+ypFRPeAZwNnEwNuzQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-
-  
     var apipath = "http://localhost/laravel-admin/api";
 
         function togglePasswordVisibility() {
