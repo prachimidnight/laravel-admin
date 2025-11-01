@@ -4,7 +4,7 @@ $parentname = 'Add Guest';
 $pagename = 'Add Guest';
 $pagetype = 'Add Guest';
 ?>
-@extends('adminview/layout/master')
+@extends('adminview.layout.master')
 @section('body')
 
 <body>
@@ -16,7 +16,7 @@ $pagetype = 'Add Guest';
                         <h1 class="fs-5 fw-600 lh-1">Add Guest</h1>
                         <ul class="breadcrumbs mt-1">
                             <li>
-                                <a href="developer">Developer Details</a>
+                                <a href="guest">Guest Details</a>
                             </li>
                             <li class="active highlight">Add Guest</li>
                         </ul>
@@ -38,13 +38,13 @@ $pagetype = 'Add Guest';
 
                                     <div class="column is-12-mobile is-12-tablet is-12-desktop is-12-widescreen col-form">
                                         <div class="form-group custom-file">
-                                            <label for="developer_logo" class="form-label">Developer Logo
+                                            <label for="guest_image" class="form-label">Guest Image
                                                 {{-- Developer Logo <span class="required-asterisk">*</span> --}}
                                             </label>
                                             <div class="input-group file-upload"
-                                                onclick="document.getElementById('developer_logo').click()">
+                                                onclick="document.getElementById('guest_image').click()">
                                                 <span class="form-control file-upload-name">Upload</span>
-                                                <input type="file" name="developer_logo" id="developer_logo"
+                                                <input type="file" name="guest_image" id="guest_image"
                                                     style="display: none;">
                                                 <span class="input-group-text">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -66,46 +66,56 @@ $pagetype = 'Add Guest';
 
                                     <div class="column is-12-mobile is-12-tablet is-6-desktop is-6-widescreen col-form">
                                         <div class="form-group">
-                                            <label class="form-label">Developer Name <span
+                                            <label class="form-label">First Name <span
                                                     class="required-asterisk">*</span></label>
-                                            <input type="text" class="form-control" name="developer_name"
-                                                id="developer_name" required>
+                                            <input type="text" class="form-control" name="guest_first_name"
+                                                id="guest_first_name" required>
                                         </div>
                                     </div>
+
                                     <div class="column is-12-mobile is-12-tablet is-6-desktop is-6-widescreen col-form">
                                         <div class="form-group">
-                                            <label class="form-label">Developer Slug <span
+                                            <label class="form-label">Last Name <span
                                                     class="required-asterisk">*</span></label>
-                                            <input type="text" class="form-control" name="developer_slug"
-                                                id="developer_slug" required>
+                                            <input type="text" class="form-control" name="guest_last_name"
+                                                id="guest_last_name" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="column is-12-mobile is-12-tablet is-6-desktop is-6-widescreen col-form">
+                                        <div class="form-group">
+                                            <label class="form-label">Guest slug <span
+                                                    class="required-asterisk">*</span></label>
+                                            <input type="text" class="form-control" name="guest_slug"
+                                                id="guest_slug" required>
                                         </div>
                                     </div>
                                     
 
                                     <div class="column is-12-mobile is-12-tablet is-6-desktop is-6-widescreen col-form">
                                         <div class="form-group">
-                                            <label class="form-label">Developer Email <span
+                                            <label class="form-label">Guest Email <span
                                                     class="required-asterisk">*</span></label>
-                                            <input type="text" class="form-control" name="developer_email"
-                                                id="developer_email" required>
+                                            <input type="text" class="form-control" name="guest_email"
+                                                id="guest_email" required>
                                         </div>
                                     </div>
 
                                     <div class="column is-12-mobile is-12-tablet is-6-desktop is-6-widescreen col-form">
                                         <div class="form-group">
-                                            <label class="form-label">Developer Mobile No <span
+                                            <label class="form-label">Guest Mobile No <span
                                                     class="required-asterisk">*</span></label>
-                                            <input type="text" class="form-control" name="developer_mobile"
-                                                id="developer_mobile" minlength="8" maxlength="10" required>
+                                            <input type="text" class="form-control" name="guest_mobile"
+                                                id="guest_mobile" minlength="8" maxlength="10" required>
                                         </div>
                                     </div>
                                     
                                     <div class="column is-12-mobile is-12-tablet is-6-desktop is-6-widescreen col-form">
                                         <div class="form-group">
-                                            <label class="form-label">Developer WhatsApp No <span
+                                            <label class="form-label">Guest WhatsApp No <span
                                                     class="required-asterisk">*</span></label>
-                                            <input type="text" class="form-control" name="developer_wp"
-                                                id="developer_wp" minlength="8" maxlength="10" required>
+                                            <input type="text" class="form-control" name="guest_wp"
+                                                id="guest_wp" minlength="8" maxlength="10" required>
                                         </div>
                                     </div>
 
@@ -115,32 +125,6 @@ $pagetype = 'Add Guest';
                                                 <input type="checkbox" id="is_whatsapp" name="is_whatsapp"> Same as WhatsApp
                                                 Number
                                             </label>
-                                        </div>
-                                    </div>
-
-                                    <div class="column is-12-mobile is-12-tablet is-6-desktop is-6-widescreen col-form">
-                                        <div class="form-group">
-                                            <label class="form-label">Developer Website <span
-                                                    class="required-asterisk">*</span></label>
-                                            <input type="text" class="form-control" name="developer_website"
-                                                id="developer_website" required>
-                                        </div>
-                                    </div>
-
-                                    <div class="column is-12-mobile is-12-tablet is-6-desktop is-6-widescreen col-form">
-                                        <div class="form-group">
-                                            <label class="form-label">Pincode <span class="required-asterisk">*</span></label>
-                                            <select class="form-control select" id="pincode" name="pincode" required>
-                                                <option value="">Select Pincode</option> 
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="column is-12-mobile is-12-tablet is-6-desktop is-6-widescreen col-form">
-                                        <div class="form-group custom-select">
-                                            <label class="form-label">Area <span class="required-asterisk">*</span></label>
-                                            <select class="form-control select" id="area" name="area" required>
-                                                <option value="">Select Area</option> <!-- Default option -->
-                                            </select>
                                         </div>
                                     </div>
 
@@ -167,14 +151,21 @@ $pagetype = 'Add Guest';
 
                                     <div class="column is-12-mobile is-12-tablet is-12-desktop is-12-widescreen col-form">
                                         <div class="form-group">
-                                            <label class="form-label">Developer Address <span class="required-asterisk">*</span></label>
-                                            <textarea class="form-control" name="developer_address" id="developer_address" rows="4" required></textarea>
+                                            <label class="form-label">Guest Address <span class="required-asterisk">*</span></label>
+                                            <textarea class="form-control" name="guest_address" id="guest_address" rows="4" required></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="column is-12-mobile is-12-tablet is-12-desktop is-12-widescreen col-form">
+                                        <div class="form-group">
+                                            <label class="form-label">Description <span class="required-asterisk">*</span></label>
+                                            <textarea class="form-control" name="guest_description" id="guest_description" rows="4" required></textarea>
                                         </div>
                                     </div>
                                     
 
                                     <div class="is-flex is-flex-wrap-wrap is-gap-3 pt-5 pl-3">
-                                        <input type="hidden" name="developer_id" id="developer_id" />
+                                        <input type="hidden" name="guest_id" id="guest_id" />
                                         <button id="btn-add-project" class="btn btn-primary">Add </button>
                                     </div>
                                 </div>

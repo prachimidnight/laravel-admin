@@ -17,21 +17,21 @@ Route::post('/set_session', [GuestController::class, 'set_session']);
 Route::get('/logoutuser', [GuestController::class, 'destroy'])->name('session.destroy');
 
 Route::get('/', function() {
-    return view('/adminview/login');
+    return view('adminview.login');
 })->name('login');
 
 Route::get('admin/dashboard', function() {
-    return view('/adminview/dashboard');
+    return view('adminview.dashboard');
 });
 
 Route::get('/admin/leads', function() {
-    return view('/adminview/leads');
+    return view('adminview.leads');
 });
 
 Route::get('/admin/guest', function() {
-    return view('/adminview/guest');
+    return view('adminview.guest');
 });
 
 Route::get('/admin/addguest', function() {
-    return view('/adminview/addguest');
+    return view('adminview.addguest');
 });

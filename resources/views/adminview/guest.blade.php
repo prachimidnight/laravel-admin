@@ -4,7 +4,7 @@ $parentname = 'Guest';
 $pagename = 'Guest';
 $pagetype = 'Guest';
 ?>
-@extends('adminview/layout/master')
+@extends('adminview.layout.master')
 @section('body')
     <style>
         .required-asterisk {
@@ -59,22 +59,22 @@ $pagetype = 'Guest';
                                                 <div class="table-filter">
                                                 </div>
                                             </th>
-                                            <th class="th-with-dropdown">Developer Name
+                                            <th class="th-with-dropdown">Guest Name
                                                 <div class="table-filter">
 
                                                 </div>
                                             </th>
 
-                                            <th class="th-with-dropdown">Devloper Contact
+                                            <th class="th-with-dropdown">Guest Contact
                                                 <div class="table-filter">
                                                 </div>
                                             </th>
-                                            <th class="th-with-dropdown">Developer Website
+                                            <th class="th-with-dropdown">Guest Website
                                                 <div class="table-filter">
 
                                                 </div>
                                             </th>
-                                            <th class="th-with-dropdown">Developer Address
+                                            <th class="th-with-dropdown">Guest Address
                                                 <div class="table-filter">
 
                                                 </div>
@@ -134,7 +134,7 @@ $pagetype = 'Guest';
                                     </div>
                                 </div>
                                 <div class="column is-12 col-form">
-                                    <input type="hidden" name="developer_id" id="developer_id" />
+                                    <input type="hidden" name="guest_id" id="guest_id" />
                                     <button type="submit" class="btn btn-danger w-100" id="delete">Delete</button>
                                 </div>
                             </div>
