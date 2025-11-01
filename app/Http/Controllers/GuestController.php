@@ -29,7 +29,6 @@ class GuestController extends Controller
 
         $guest = guest::create([
             'role_id' => $request->role_id,
-            'guest_slug' => $request->guest_slug,
             'country_id' => $request->country_id,
             'state_id' => $request->state_id,
             'city_id' => $request->city_id,

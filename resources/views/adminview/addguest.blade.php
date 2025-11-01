@@ -84,16 +84,6 @@ $pagetype = 'Add Guest';
 
                                     <div class="column is-12-mobile is-12-tablet is-6-desktop is-6-widescreen col-form">
                                         <div class="form-group">
-                                            <label class="form-label">Guest slug <span
-                                                    class="required-asterisk">*</span></label>
-                                            <input type="text" class="form-control" name="guest_slug"
-                                                id="guest_slug" required>
-                                        </div>
-                                    </div>
-                                    
-
-                                    <div class="column is-12-mobile is-12-tablet is-6-desktop is-6-widescreen col-form">
-                                        <div class="form-group">
                                             <label class="form-label">Guest Email <span
                                                     class="required-asterisk">*</span></label>
                                             <input type="text" class="form-control" name="guest_email"
