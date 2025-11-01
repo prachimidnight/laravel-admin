@@ -35,3 +35,7 @@ Route::get('/admin/guest', function() {
 Route::get('/admin/addguest', function() {
     return view('/adminview/addguest');
 });
+
+Route::get('/admin/masters', function() {
+    return view('/adminview/masters');
+});
