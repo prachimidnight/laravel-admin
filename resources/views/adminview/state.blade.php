@@ -221,7 +221,90 @@ $pagetype = 'State';
 
     <script>
         $(document).ready(function() {
-             $(".main-loading").hide();
+            $(".main-loading").hide();
+    
+            // API base path (adjust if needed)
+            var apipath = "http://localhost/laravel-admin/api/state";
+
+            function loadState() {
+                $.ajax({
+                    url: apipath + '/list',
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function(response) {
+                        var tableBody = $('#handle-list-1');
+                        tableBody.empty();
+    
+                        if (response.data && response.data.length > 0) {
+                            $.each(response.data, function(index, item) {
+                                var row = `
+                                    <tr>
+                                        <td>${index + 1}</td>
+                                        <td>${item.state_name}</td>
+                                        <td>${item.created_at}</td>
+                                        <td class="text-center">
+                                            <button class="btn btn-sm btn-info edit-btn" data-guid="${item.guid}" data-name="${item.state_name}">Edit</button>
+                                            <button class="btn btn-sm btn-danger delete-btn" data-guid="${item.guid}">Delete</button>
+                                        </td>
+                                    </tr>
+                                `;
+                                tableBody.append(row);
+                            });
+                        } else {
+                            tableBody.append('<tr><td colspan="4" class="text-center">No data found</td></tr>');
+                        }
+                    },
+                    error: function() {
+                        $.notify("Error fetching data", "error");
+                    }
+                });
+            }
+    
+            loadState(); // Load data on page load
+
+            $('#sbt').click(function(e) {
+                e.preventDefault();
+    
+                var state_name = $('#state_name').val().trim();
+                var guid = $('#guid').val();
+    
+                if (state_name == "") {
+                    $.notify("State Name is required", "error");
+                    return false;
+                }
+    
+                var url = guid ? apipath + '/update' : apipath + '/create';
+    
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: { state_name: state_name, guid: guid },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            $.notify(response.message, "success");
+                            $('#state_name').val('');
+                            $('#guid').val('');
+                            loadState();
+                            $('[close-sidebar]').click(); // Close sidebar
+                        } else {
+                            $.notify(response.message, "error");
+                        }
+                    },
+                    error: function(xhr) {
+                        $.notify("Something went wrong", "error");
+                        console.log(xhr.responseText);
+                    }
+                });
+            });
+    
+            $('#search').on('keyup', function() {
+                var value = $(this).val().toLowerCase();
+                $('#handle-list-1 tr').filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            });
+    
         });
     </script>
 @endsection

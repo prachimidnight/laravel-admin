@@ -59,29 +59,45 @@ $pagetype = 'Guest';
                                                 <div class="table-filter">
                                                 </div>
                                             </th>
-                                            <th class="th-with-dropdown">Guest Name
-                                                <div class="table-filter">
-
-                                                </div>
-                                            </th>
-
-                                            <th class="th-with-dropdown">Guest Contact
+                                            <th class="th-with-dropdown">First Name
                                                 <div class="table-filter">
                                                 </div>
                                             </th>
-                                            <th class="th-with-dropdown">Guest Website
-                                                <div class="table-filter">
 
+                                            <th class="th-with-dropdown">Last Name
+                                                <div class="table-filter">
+                                                </div>
+                                            </th>
+                                            <th class="th-with-dropdown">Guest Email
+                                                <div class="table-filter">
+                                                </div>
+                                            </th>
+                                            <th class="th-with-dropdown">Phone_no
+                                                <div class="table-filter">
+                                                </div>
+                                            </th>
+                                            <th class="th-with-dropdown">Guest Whatsapp No
+                                                <div class="table-filter">
+                                                </div>
+                                            </th>
+                                            <th class="th-with-dropdown">City
+                                                <div class="table-filter">
+                                                </div>
+                                            </th>
+                                            <th class="th-with-dropdown">State
+                                                <div class="table-filter">
+                                                </div>
+                                            </th>
+                                            <th class="th-with-dropdown">Country
+                                                <div class="table-filter">
                                                 </div>
                                             </th>
                                             <th class="th-with-dropdown">Guest Address
                                                 <div class="table-filter">
-
                                                 </div>
                                             </th>
                                             <th class="th-with-dropdown">Logs
                                                 <div class="table-filter">
-
                                                 </div>
                                             </th>
                                             <th class="text-center">Actions</th>
@@ -145,9 +161,62 @@ $pagetype = 'Guest';
         </div>
     </body>
     <!-- HTML code remains unchanged -->
+    
     <script>
         $(document).ready(function() {
             $(".main-loading").hide();
+            var apipath = "http://localhost/laravel-admin/api/guest";
+
+function loadGuest() {
+    $.ajax({
+        url: apipath + '/list',
+        type: 'POST',
+        dataType: 'json',
+        success: function(response) {
+            var tableBody = $('#handle-list-1');
+            tableBody.empty();
+
+            if (response.data && response.data.length > 0) {
+                $.each(response.data, function(index, item) {
+                    var row = `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${item.first_name}</td>
+                            <td>${item.last_name}</td>
+                            <td>${item.email}</td>
+                            <td>${item.phone}</td>
+                            <td>${item.city}</td>
+                            <td>${item.state}</td>
+                            <td>${item.country}</td>
+                            <td>${item.guest_whatsapp_no}</td>
+                            <td>${item.address}</td>
+                            <td>${item.created_at}</td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-info edit-btn" data-guid="${item.guid}" data-name="${item.first_name}">Edit</button>
+                                <button class="btn btn-sm btn-danger delete-btn" data-guid="${item.guid}">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.append(row);
+                });
+            } else {
+                tableBody.append('<tr><td colspan="4" class="text-center">No data found</td></tr>');
+            }
+        },
+        error: function() {
+            $.notify("Error fetching data", "error");
+        }
+    });
+}
+
+loadGuest(); // Load data on page load
+
+$('#search').on('keyup', function() {
+            var value = $(this).val().toLowerCase();
+            $('#handle-list-1 tr').filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            });
+        });
         });
     </script>
 @endsection

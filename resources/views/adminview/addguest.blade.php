@@ -93,10 +93,10 @@ $pagetype = 'Add Guest';
 
                                     <div class="column is-12-mobile is-12-tablet is-6-desktop is-6-widescreen col-form">
                                         <div class="form-group">
-                                            <label class="form-label">Guest Mobile No <span
+                                            <label class="form-label">Guest Phone No <span
                                                     class="required-asterisk">*</span></label>
-                                            <input type="text" class="form-control" name="guest_mobile"
-                                                id="guest_mobile" minlength="8" maxlength="10" required>
+                                            <input type="text" class="form-control" name="guest_phone"
+                                                id="guest_phone" minlength="8" maxlength="10" required>
                                         </div>
                                     </div>
                                     
@@ -167,9 +167,7 @@ $pagetype = 'Add Guest';
 </body>
 <script> 
     $(document).ready(function() {
-        $(".main-loading").hide();
-
-       
+        $(".main-loading").hide();       
     });
 
 </script>
