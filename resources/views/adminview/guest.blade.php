@@ -160,63 +160,81 @@ $pagetype = 'Guest';
             </div>
         </div>
     </body>
-    <!-- HTML code remains unchanged -->
-    
+
     <script>
         $(document).ready(function() {
             $(".main-loading").hide();
             var apipath = "http://localhost/laravel-admin/api/guest";
+            function loadGuest() {
+                $.ajax({
+                    url: apipath + '/list',
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function(response) {
+                        var tableBody = $('#handle-list-1');
+                        tableBody.empty();
 
-function loadGuest() {
-    $.ajax({
-        url: apipath + '/list',
-        type: 'POST',
-        dataType: 'json',
-        success: function(response) {
-            var tableBody = $('#handle-list-1');
-            tableBody.empty();
+                        if (response.data && response.data.length > 0) {
+                            $.each(response.data, function(index, item) {
+                                var row = `
+                                    <tr>
+                                        <td>${index + 1}</td>
+                                        <td>${item.first_name}</td>
+                                        <td>${item.last_name}</td>
+                                        <td>${item.email}</td>
+                                        <td>${item.phone}</td>
+                                        <td>${item.city}</td>
+                                        <td>${item.state}</td>
+                                        <td>${item.country}</td>
+                                        <td>${item.guest_whatsapp_no}</td>
+                                        <td>${item.address}</td>
+                                        <td>${item.created_at}</td>
+                                        <td class="text-center">
+                                                    <button class="btn btn-sm btn-icon btn-info edit-btn" data-guid="${item.guid}" data-name="${item.country_name}" title="Edit">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" 
+                                                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+                                                            class="icon icon-tabler icon-tabler-pencil">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M12 20h9"></path>
+                                                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1l1 -4Z"></path>
+                                                        </svg>
+                                                    </button>
 
-            if (response.data && response.data.length > 0) {
-                $.each(response.data, function(index, item) {
-                    var row = `
-                        <tr>
-                            <td>${index + 1}</td>
-                            <td>${item.first_name}</td>
-                            <td>${item.last_name}</td>
-                            <td>${item.email}</td>
-                            <td>${item.phone}</td>
-                            <td>${item.city}</td>
-                            <td>${item.state}</td>
-                            <td>${item.country}</td>
-                            <td>${item.guest_whatsapp_no}</td>
-                            <td>${item.address}</td>
-                            <td>${item.created_at}</td>
-                            <td class="text-center">
-                                <button class="btn btn-sm btn-info edit-btn" data-guid="${item.guid}" data-name="${item.first_name}">Edit</button>
-                                <button class="btn btn-sm btn-danger delete-btn" data-guid="${item.guid}">Delete</button>
-                            </td>
-                        </tr>
-                    `;
-                    tableBody.append(row);
+                                                    <button class="btn btn-sm btn-icon btn-danger delete-btn" data-guid="${item.guid}" title="Delete">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" 
+                                                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+                                                            class="icon icon-tabler icon-tabler-trash">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M4 7h16"></path>
+                                                            <path d="M10 11v6"></path>
+                                                            <path d="M14 11v6"></path>
+                                                            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                                            <path d="M9 7V4h6v3"></path>
+                                                        </svg>
+                                                    </button>
+                                                </td> class="btn btn-sm btn-danger delete-btn" data-guid="${item.guid}">Delete</button>
+                                            </td>
+                                        </tr>
+                                    `;
+                                    tableBody.append(row);
+                                    });
+                                } else {
+                            tableBody.append('<tr><td colspan="4" class="text-center">No data found</td></tr>');
+                        }
+                    },
+                    error: function() {
+                        $.notify("Error fetching data", "error");
+                    }
                 });
-            } else {
-                tableBody.append('<tr><td colspan="4" class="text-center">No data found</td></tr>');
             }
-        },
-        error: function() {
-            $.notify("Error fetching data", "error");
-        }
-    });
-}
+            loadGuest(); // Load data on page load
 
-loadGuest(); // Load data on page load
-
-$('#search').on('keyup', function() {
-            var value = $(this).val().toLowerCase();
-            $('#handle-list-1 tr').filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            $('#search').on('keyup', function() {
+                    var value = $(this).val().toLowerCase();
+                    $('#handle-list-1 tr').filter(function() {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                    });
+                });
             });
-        });
-        });
     </script>
 @endsection

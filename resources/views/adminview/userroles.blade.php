@@ -244,9 +244,29 @@ $pagetype = 'UserRoles';
                                         <td>${item.role_name}</td>
                                         <td>${item.created_at}</td>
                                         <td class="text-center">
-                                            <button class="btn btn-sm btn-info edit-btn" data-guid="${item.guid}" data-name="${item.role_name}">Edit</button>
-                                            <button class="btn btn-sm btn-danger delete-btn" data-guid="${item.guid}">Delete</button>
-                                        </td>
+                                        <button class="btn btn-sm btn-icon btn-info edit-btn" data-guid="${item.guid}" data-name="${item.country_name}" title="Edit">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" 
+                                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+                                                class="icon icon-tabler icon-tabler-pencil">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M12 20h9"></path>
+                                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1l1 -4Z"></path>
+                                            </svg>
+                                        </button>
+
+                                        <button class="btn btn-sm btn-icon btn-danger delete-btn" data-guid="${item.guid}" title="Delete">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" 
+                                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+                                                class="icon icon-tabler icon-tabler-trash">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M4 7h16"></path>
+                                                <path d="M10 11v6"></path>
+                                                <path d="M14 11v6"></path>
+                                                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                                <path d="M9 7V4h6v3"></path>
+                                            </svg>
+                                        </button>
+                                    </td>
                                     </tr>
                                 `;
                                 tableBody.append(row);
