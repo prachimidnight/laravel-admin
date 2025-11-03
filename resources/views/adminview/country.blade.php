@@ -221,151 +221,238 @@ $pagetype = 'Country';
 
     <script>
         $(document).ready(function() {
-            $(".main-loading").hide();
-    
-            var apipath = "http://localhost/laravel-admin/api/country";
-    
-            function loadCountry() {
-                $.ajax({
-                    url: apipath + '/list',
-                    type: 'POST',
-                    dataType: 'json',
-                    success: function(response) {
-                        var tableBody = $('#handle-list-1');
-                        tableBody.empty();
-    
-                        if (response.data && response.data.length > 0) {
-                            $.each(response.data, function(index, item) {
-                                var row = `
-                                <tr>
-                                    <td>${index + 1}</td>
-                                    <td>${item.country_name}</td>
-                                    <td>${item.created_at}</td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-icon btn-info edit-btn" data-guid="${item.guid}" data-name="${item.country_name}" title="Edit">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" 
-                                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
-                                                class="icon icon-tabler icon-tabler-pencil">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                <path d="M12 20h9"></path>
-                                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1l1 -4Z"></path>
-                                            </svg>
-                                        </button>
+            fetchCountryData();
+  $(".main-loading").hide();
+            $("#search").on('input', function() {
+                var filterData = {
+                    "search": $(this).val()
+                };
+                fetchCountryData(page = 1, offset = 0, limit = pagelimit, filterData);
 
-                                        <button class="btn btn-sm btn-icon btn-danger delete-btn" data-guid="${item.guid}" title="Delete">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" 
-                                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
-                                                class="icon icon-tabler icon-tabler-trash">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                <path d="M4 7h16"></path>
-                                                <path d="M10 11v6"></path>
-                                                <path d="M14 11v6"></path>
-                                                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
-                                                <path d="M9 7V4h6v3"></path>
-                                            </svg>
-                                        </button>
-                                    </td>
-                                </tr>
-                                `;
-                                tableBody.append(row);
+            });
+        });
+
+        $(document).on("click", "#btn-add-user", function() {
+            $('#guid').val(''); // Ensure guid is empty for new entries
+            $('#country_name').val('');
+            $('#add-users-sidebar').addClass('show');
+            $('.theme-sidebar-title').html("Add Country");
+            $('#sbt').html("Add");
+        });
+
+
+        //Edit model
+        $(document).on("click", "#openedit", function() {
+            var guid = $(this).data("guid");
+            $("#guid").val(guid);
+
+            var country_name = $(this).data("country_name");
+            $("#country_name").val(country_name);
+
+            $('#sbt').html("Save changes");
+            $('.theme-sidebar-title').html("Edit Country");
+            $('#add-users-sidebar').addClass('active');
+        });
+
+        // Add-Update city
+        $("#add-users-sidebar form").submit(function(e) {
+            $(".btn-primary").html('Loading...').attr('disabled', true);
+            e.preventDefault();
+        }).validate({
+            submitHandler: function(form) {
+                var formData = new FormData(form);
+
+                var guid = $('#guid').val();
+                var url = '';
+                var type = 'POST'; 
+                if (guid != null && guid !== '') {
+                    url = apipath + "/country/update"; 
+                } else {
+                    url = apipath + "/country/create";  
+                }
+
+                $.ajax({
+                    type: type,
+                    url: url,
+                    data: formData,
+                    dataType: 'json',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        if (data.status == 200) {
+                            $(".form-control").val("");
+                            $(".btn-primary").html('Add').attr('disabled', true);
+                            $('#add-users-sidebar').removeClass('active');
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: 'Data added successfully!',
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(() => {
+                                location.reload();
                             });
                         } else {
-                            tableBody.append('<tr><td colspan="4" class="text-center">No data found</td></tr>');
+                            notifyuser('error', 'An error occurred');
                         }
                     },
-                    error: function() {
-                        $.notify("Error fetching data", "error");
+                    complete: function() {
+                        $(".btn-primary").html('Add').removeAttr("disabled");
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        $(".btn-primary").html('Add').removeAttr("disabled");
+
                     }
+                });
+
+                return false;
+            }
+        });
+
+        //Get all country
+        function fetchCountryData(page = 1, offset = 0, limit = pagelimit, filterData = "") {
+            var formdata = {
+                offset: offset,
+                limit: limit,
+            };
+            if (filterData && filterData.search !== undefined && filterData.search !== "") {
+                formdata['search'] = filterData.search;
+            }
+            $.ajax({
+                url: apipath + "/country/list",
+                type: 'POST',
+                dataType: 'json',
+                data: formdata,
+                success: function(response) {
+                    $('#handle-list-1').empty();
+
+                    $.each(response.data, function(index, country) {
+                        $('#handle-list-1').append(`
+                                  <tr>
+                                      <td>
+                                          <div class="is-flex is-align-items-center is-gap-3">
+                                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-direction drag-handle cursor-pointer">
+                                                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                  <path d="M9 10l3 -3l3 3" />
+                                                  <path d="M9 14l3 3l3 -3" />
+                                              </svg>
+                                              ${index + 1}
+                                          </div>
+                                      </td>
+                                      <td>
+                                          <div class="tag-rounded-wrapper">
+                                              <div class="tag-rounded tag-rounded-gray">
+                                                  <span class="avatar avatar-md">
+                                                      <span class="user-name-latter latter-j">${country.country_name.charAt(0)}</span>
+                                                  </span>
+                                                  <div>
+                                                      <b>${country.country_name}</b>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </td>
+                                    <td>
+                                        <div class="theme-date-list">
+                                           <div class="theme-date" data-tooltip="Create at: ${new Date(country.created_at).toUTCString()}">
+                                              <div class="theme-date-content">
+                                              <small>${new Date(country.created_at).toLocaleString('default', { month: 'short', timeZone: 'UTC' })}</small>
+                                              <span>${new Date(country.created_at).getUTCDate()}</span>
+                                            </div>
+                                               <span class="theme-date-footer">${new Date(country.created_at).getUTCFullYear()}</span>
+                                            </div>
+                                               <div class="theme-date" data-tooltip="Update at: ${new Date(country.updated_at).toUTCString()}">
+                                               <div class="theme-date-content"> 
+                                               <small>${new Date(country.updated_at).toLocaleString('default', { month: 'short', timeZone: 'UTC' })}</small>
+                                               <span>${new Date(country.updated_at).getUTCDate()}</span>
+                                            </div>
+                                               <span class="theme-date-footer">${new Date(country.updated_at).getUTCFullYear()}</span>
+                                            </div>
+                                        </div>
+                                      </td>
+                                      <td class="table-actions-wrapper">
+                                          <div class="table-actions">
+                                              <a href="#" open-sidebar="edit-users-sidebar"  id="openedit" data-guid=${country.guid} data-country_name=${country.country_name}>
+                                                  <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-pencil" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"></path>
+                                                      <path d="M13.5 6.5l4 4"></path>
+                                                  </svg>
+                                              </a>
+                                              <a href="#" open-sidebar="delete-sidebar" class="opendelete" data-guid=${country.guid}>
+                                                  <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                      <path d="M4 7l16 0"></path>
+                                                      <path d="M10 11l0 6"></path>
+                                                      <path d="M14 11l0 6"></path>
+                                                      <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                                      <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                                  </svg>
+                                              </a>
+                                          </div>
+                                      </td>
+                                  </tr>
+                              `);
+                    });
+                },
+                error: function(error) {
+                    console.log("Error fetching country data:", error);
+                }
+            });
+        }
+        $(document).on('click', '.opendelete', function(e) {
+            e.preventDefault();
+            var guid = $(this).data('guid');
+            $('#guid').val(guid);
+            $('#delete-sidebar').addClass('active');
+        });
+
+        $(document).on('click', '#delete', function(e) {
+            e.preventDefault();
+
+            var deleteInput = $('#deletedata').val().trim();
+
+            if (deleteInput === "DELETE") {
+                var guid = $('#guid').val();
+
+                // AJAX call to delete data
+                $.ajax({
+                    type: 'POST',
+                    url: apipath + "/country/delete",
+                    dataType: 'json',
+                    data: {
+                        guid: guid
+                    },
+                    success: function(response) {
+                        // console.log('Data deleted successfully:', response);
+                        $('#delete-sidebar').removeClass('active');
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Deleted!',
+                            text: 'Country has been deleted successfully.',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function(err) {
+                        console.error('Error deleting data:', err);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'There was an error deleting the city. Please try again.',
+                        });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Input Required',
+                    text: "Please type 'DELETE' in the input box to confirm deletion.",
                 });
             }
-    
-            loadCountry(); 
-    
-            $('#sbt').click(function(e) {
-                e.preventDefault();
-    
-                var country_name = $('#country_name').val().trim();
-                var guid = $('#guid').val();
-    
-                if (country_name == "") {
-                    $.notify("Country Name is required", "error");
-                    return false;
-                }
-    
-                var url = guid ? apipath + '/update' : apipath + '/create';
-    
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    data: { country_name: country_name, guid: guid },
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success) {
-                            $.notify(response.message, "success");
-                            $('#country_name').val('');
-                            $('#guid').val('');
-                            loadCountry();
-                            $('[close-sidebar]').click(); 
-                        } else {
-                            $.notify(response.message, "error");
-                        }
-                    },
-                    error: function(xhr) {
-                        $.notify("Something went wrong", "error");
-                        console.log(xhr.responseText);
-                    }
-                });
-            });
-    
-            $(document).on("click", ".delete-btn", function () {
-            var guestId = $(this).data("id");
-
-            Swal.fire({
-                title: "Are you sure?",
-                text: "You want to delete this Country?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: apipath + '/update',
-                        type: "POST",
-                        data: { guest_id: guestId },
-                        success: function (res) {
-                            if (res.status === 200) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "Deleted!",
-                                    text: " deleted successfully.",
-                                    showConfirmButton: false,
-                                    timer: 2000
-                                }).then(() => {
-                                    loadCountry(); 
-                                });
-                            } else {
-                                Swal.fire("Error", "Delete failed", "error");
-                            }
-                        },
-                        error: function (xhr) {
-                            console.error(xhr.responseText);
-                            Swal.fire("Error", "API call failed", "error");
-                        }
-                    });
-                }
-            });
         });
-        });
-
-        $('#search').on('keyup', function() {
-            var value = $(this).val().toLowerCase();
-            $('#handle-list-1 tr').filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-            });
-        });
-    
     </script>
-    
 @endsection

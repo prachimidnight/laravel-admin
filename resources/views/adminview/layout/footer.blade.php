@@ -30,7 +30,10 @@
 <script src="{{URL::asset('resources/views/adminview/assets')}}/js/slim.kickstart.min .js"></script>
 <script src="{{URL::asset('resources/views/adminview/assets')}}/js/notify.js"></script>
 
-
+<script>
+  var apipath = "{{ config('app.api_path') }}";
+  var environment = "{{ config('app.environment') }}";
+</script>
 <script>
 
 	

@@ -15,10 +15,9 @@ return [
     | any other location as required by the application or its packages.
     |
     */
-
     'api_path' => env('APP_ENV') === 'local' ? env('LOCAL_API_PATH') : env('LIVE_API_PATH'),
     'environment' => env('ENVIRONMENT'),
-
+    
     'name' => env('APP_NAME', 'Laravel'),
 
     /*
