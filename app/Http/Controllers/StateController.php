@@ -83,17 +83,16 @@ class StateController extends Controller
     {
 
         $valid = validator::make($request->all(),[
-            "state_id"=>"required"
+            "guid"=>"required"
         ]);
 
         if ($valid->fails()){
             return response()->json(['status'=>400,'errors'=> $valid->errors()],400);
         } else {
             $data=new state();
-            $request-> request-> add(['status'=>0]);
-            $newrequest=$request->except(['state_id']);
+            $newrequest=$request->except(['guid']);
             $request->request->add(['updated_by'=> $request->input('updated_by')]);
-            $result = $data-> where('state_id',$request->input('state_id'))->update($newrequest);
+            $result = $data-> where('guid',$request->input('guid'))->update($newrequest);
 
             if($result){
             return response()->json(['status'=>200, 'message'=>'updated successfully', 'data'=>[]]);
@@ -107,7 +106,7 @@ class StateController extends Controller
     {
 
         $valid = Validator::make($request->all(), [
-            "state_id" => "required"
+            "guid" => "required"
 
         ]);
 
@@ -117,9 +116,9 @@ class StateController extends Controller
 
             $data = new state();
             $request->request->add(['status' => 0]);
-            $newrequest = $request->except(['state_id']);
+            $newrequest = $request->except(['guid']);
             $request->request->add(['updated_by' => $request->input('updated_by')]);
-            $result = $data->where('state_id', $request->input('state_id'))->update($newrequest);
+            $result = $data->where('guid', $request->input('guid'))->update($newrequest);
 
             if ($result) {
                 return response()->json(['status' => 200, 'message' => 'Deleted Successfully', 'data' => []]);

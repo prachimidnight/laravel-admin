@@ -68,8 +68,8 @@ $pagetype = 'Add Guest';
                                         <div class="form-group">
                                             <label class="form-label">First Name <span
                                                     class="required-asterisk">*</span></label>
-                                            <input type="text" class="form-control" name="guest_first_name"
-                                                id="guest_first_name" required>
+                                            <input type="text" class="form-control" name="first_name"
+                                                id="first_name" required>
                                         </div>
                                     </div>
 
@@ -77,8 +77,8 @@ $pagetype = 'Add Guest';
                                         <div class="form-group">
                                             <label class="form-label">Last Name <span
                                                     class="required-asterisk">*</span></label>
-                                            <input type="text" class="form-control" name="guest_last_name"
-                                                id="guest_last_name" required>
+                                            <input type="text" class="form-control" name="last_name"
+                                                id="last_name" required>
                                         </div>
                                     </div>
 
@@ -86,8 +86,8 @@ $pagetype = 'Add Guest';
                                         <div class="form-group">
                                             <label class="form-label">Guest Email <span
                                                     class="required-asterisk">*</span></label>
-                                            <input type="text" class="form-control" name="guest_email"
-                                                id="guest_email" required>
+                                            <input type="text" class="form-control" name="email"
+                                                id="email" required>
                                         </div>
                                     </div>
 
@@ -95,8 +95,8 @@ $pagetype = 'Add Guest';
                                         <div class="form-group">
                                             <label class="form-label">Guest Phone No <span
                                                     class="required-asterisk">*</span></label>
-                                            <input type="text" class="form-control" name="guest_phone"
-                                                id="guest_phone" minlength="8" maxlength="10" required>
+                                            <input type="text" class="form-control" name="phone_no"
+                                                id="phone_no" minlength="8" maxlength="10" required>
                                         </div>
                                     </div>
                                     
@@ -142,14 +142,14 @@ $pagetype = 'Add Guest';
                                     <div class="column is-12-mobile is-12-tablet is-12-desktop is-12-widescreen col-form">
                                         <div class="form-group">
                                             <label class="form-label">Guest Address <span class="required-asterisk">*</span></label>
-                                            <textarea class="form-control" name="guest_address" id="guest_address" rows="4" required></textarea>
+                                            <textarea class="form-control" name="address" id="address" rows="4" required></textarea>
                                         </div>
                                     </div>
 
                                     <div class="column is-12-mobile is-12-tablet is-12-desktop is-12-widescreen col-form">
                                         <div class="form-group">
                                             <label class="form-label">Description <span class="required-asterisk">*</span></label>
-                                            <textarea class="form-control" name="guest_description" id="guest_description" rows="4" required></textarea>
+                                            <textarea class="form-control" name="description" id="description" rows="4" required></textarea>
                                         </div>
                                     </div>
                                     
@@ -164,11 +164,89 @@ $pagetype = 'Add Guest';
                     </div>
                 </div>
             </div>
-</body>
-<script> 
-    $(document).ready(function() {
-        $(".main-loading").hide();       
-    });
-
-</script>
+    </body>
+    <script>
+        $(document).ready(function () {
+            $(".main-loading").hide();
+        
+            // ✅ Copy WhatsApp number if checkbox is checked
+            $('#is_whatsapp').on('change', function () {
+                if ($(this).is(':checked')) {
+                    $('#guest_wp').val($('#phone_no').val());
+                } else {
+                    $('#guest_wp').val('');
+                }
+            });
+        
+            $('#btn-add-project').on('click', function (e) {
+                e.preventDefault();
+    
+                var first_name = $("#first_name").val();
+                var last_name = $("#last_name").val();
+                var guest_email = $("#guest_email").val();
+                var phone_no = $("#phone_no").val();
+                var whatsapp_no = $("#guest_wp").val();
+                var city = $("#city").val();
+                var state = $("#state").val();
+                var country = $("#country").val();
+                var address = $("#address").val();
+                var description = $("#description").val();
+        
+                // 🧠 Basic validation
+                if (
+                    first_name == "" || last_name == "" || guest_email == "" ||
+                    phone_no == "" || whatsapp_no == "" || city == "" ||
+                    state == "" || country == "" || address == "" || description == ""
+                ) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Missing Fields',
+                        text: 'Please fill all required fields before submitting.'
+                    });
+                    return;
+                }
+        
+                // ✅ Send data using AJAX
+                $.ajax({
+                    url: apipath + "/guest/create",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        first_name: first_name,
+                        last_name: last_name,
+                        guest_email: guest_email,
+                        phone_no: phone_no,
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        if (response.status == 200) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Guest Added!',
+                                text: 'Guest has been added successfully.',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(function () {
+                                window.location.href = "guest";
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Validation Error',
+                                text: response.message || "Please check your input fields."
+                            });
+                        }
+                    },
+                    error: function (xhr) {
+                        console.log("Error adding guest:", xhr);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'Failed to add guest. Please try again.'
+                        });
+                    }
+                });
+            });
+        });
+        </script>
 @endsection

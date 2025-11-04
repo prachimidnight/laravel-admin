@@ -92,7 +92,7 @@ $pagetype = 'Guest';
                                                 <div class="table-filter">
                                                 </div>
                                             </th>
-                                            <th class="th-with-dropdown">Guest Address
+                                            <th class="th-with-dropdown">Address
                                                 <div class="table-filter">
                                                 </div>
                                             </th>
@@ -160,81 +160,191 @@ $pagetype = 'Guest';
             </div>
         </div>
     </body>
-
+    <!-- HTML code remains unchanged -->
+    
     <script>
         $(document).ready(function() {
+            fetchGuestData();
             $(".main-loading").hide();
-            var apipath = "http://localhost/laravel-admin/api/guest";
-            function loadGuest() {
+            $("#search").on('input', function() {
+                var filterData = {
+                    "search": $(this).val()
+                };
+                fetchGuestData(page = 1, offset = 0, limit = pagelimit, filterData);
+
+            });
+        });
+
+        $(document).on("click", "#btn-add-user", function() {
+            $('#guid').val(''); // Ensure guid is empty for new entries
+            $('#first_name').val('');
+            $('#add-users-sidebar').addClass('show');
+            $('.theme-sidebar-title').html("Add guest");            
+            $('#sbt').html("Add");
+        });
+       
+        //Get all guest
+        function fetchGuestData(page = 1, offset = 0, limit = pagelimit, filterData = "") {
+            var formdata = {
+                offset: offset,
+                limit: limit,
+            };
+            if (filterData && filterData.search !== undefined && filterData.search !== "") {
+                formdata['search'] = filterData.search;
+            }
+            $.ajax({
+                url: apipath + "/guest/list",
+                type: 'POST',
+                dataType: 'json',
+                data: formdata,
+                success: function(response) {
+                    $('#handle-list-1').empty();
+
+                    $.each(response.data, function(index, item) {
+                        $('#handle-list-1').append(`
+                                  <tr>
+                                      <td>
+                                          <div class="is-flex is-align-items-center is-gap-3">
+                                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-direction drag-handle cursor-pointer">
+                                                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                  <path d="M9 10l3 -3l3 3" />
+                                                  <path d="M9 14l3 3l3 -3" />
+                                              </svg>
+                                              ${index + 1}
+                                          </div>
+                                      </td>
+                                      <td>
+                                          <div class="tag-rounded-wrapper">
+                                              <div class="tag-rounded tag-rounded-gray">
+                                                  <span class="avatar avatar-md">
+                                                      <span class="user-name-latter latter-j">${item.first_name.charAt(0)}</span>
+                                                  </span>
+                                                  <div>
+                                                      <b>${item.first_name}</b>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </td>
+                                       <td>
+                                          <div class="tag-rounded-wrapper">
+                                              <div class="tag-rounded tag-rounded-gray">
+                                                  <span class="avatar avatar-md">
+                                                      <span class="user-name-latter latter-j">${item.last_name.charAt(0)}</span>
+                                                  </span>
+                                                  <div>
+                                                      <b>${item.last_name}</b>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </td>
+                                    <td>${item.guest_email || '-'}</td>
+                                    <td>${item.phone_no || '-'}</td>
+                                    <td>${item.whatsapp_no || '-'}</td>
+                                    <td>${item.city || '-'}</td>
+                                    <td>${item.state || '-'}</td>
+                                    <td>${item.country || '-'}</td>
+                                    <td class="wrap-text">${item.address || '-'}</td>
+                                    <td>
+                                        <div class="theme-date-list">
+                                           <div class="theme-date" data-tooltip="Create at: ${new Date(item.created_at).toUTCString()}">
+                                              <div class="theme-date-content">
+                                              <small>${new Date(item.created_at).toLocaleString('default', { month: 'short', timeZone: 'UTC' })}</small>
+                                              <span>${new Date(item.created_at).getUTCDate()}</span>
+                                            </div>
+                                               <span class="theme-date-footer">${new Date(item.created_at).getUTCFullYear()}</span>
+                                            </div>
+                                               <div class="theme-date" data-tooltip="Update at: ${new Date(item.updated_at).toUTCString()}">
+                                               <div class="theme-date-content"> 
+                                               <small>${new Date(item.updated_at).toLocaleString('default', { month: 'short', timeZone: 'UTC' })}</small>
+                                               <span>${new Date(item.updated_at).getUTCDate()}</span>
+                                            </div>
+                                               <span class="theme-date-footer">${new Date(item.updated_at).getUTCFullYear()}</span>
+                                            </div>
+                                        </div>
+                                      </td>
+                                      <td class="table-actions-wrapper">
+                                          <div class="table-actions">
+                                              <a href="#" open-sidebar="edit-users-sidebar"  id="openedit" data-guid=${item.guid} data-first_name=${item.first_name}>
+                                                  <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-pencil" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"></path>
+                                                      <path d="M13.5 6.5l4 4"></path>
+                                                  </svg>
+                                              </a>
+                                              <a href="#" open-sidebar="delete-sidebar" class="opendelete" data-guid=${item.guid}>
+                                                  <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                      <path d="M4 7l16 0"></path>
+                                                      <path d="M10 11l0 6"></path>
+                                                      <path d="M14 11l0 6"></path>
+                                                      <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                                      <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                                  </svg>
+                                              </a>
+                                          </div>
+                                      </td>
+                                  </tr>
+                              `);
+                    });
+                },
+                error: function(error) {
+                    console.log("Error fetching guest data:", error);
+                }
+            });
+        }
+        $(document).on('click', '.opendelete', function(e) {
+            e.preventDefault();
+            var guid = $(this).data('guid');
+            $('#guid').val(guid);
+            $('#delete-sidebar').addClass('active');
+        });
+
+        $(document).on('click', '#delete', function(e) {
+            e.preventDefault();
+
+            var deleteInput = $('#deletedata').val().trim();
+
+            if (deleteInput === "DELETE") {
+                var guid = $('#guid').val();
+
+                // AJAX call to delete data
                 $.ajax({
-                    url: apipath + '/list',
                     type: 'POST',
+                    url: apipath + "/guest/delete",
                     dataType: 'json',
-                    success: function(response) {
-                        var tableBody = $('#handle-list-1');
-                        tableBody.empty();
-
-                        if (response.data && response.data.length > 0) {
-                            $.each(response.data, function(index, item) {
-                                var row = `
-                                    <tr>
-                                        <td>${index + 1}</td>
-                                        <td>${item.first_name}</td>
-                                        <td>${item.last_name}</td>
-                                        <td>${item.email}</td>
-                                        <td>${item.phone}</td>
-                                        <td>${item.city}</td>
-                                        <td>${item.state}</td>
-                                        <td>${item.country}</td>
-                                        <td>${item.guest_whatsapp_no}</td>
-                                        <td>${item.address}</td>
-                                        <td>${item.created_at}</td>
-                                        <td class="text-center">
-                                                    <button class="btn btn-sm btn-icon btn-info edit-btn" data-guid="${item.guid}" data-name="${item.country_name}" title="Edit">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" 
-                                                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
-                                                            class="icon icon-tabler icon-tabler-pencil">
-                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                            <path d="M12 20h9"></path>
-                                                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1l1 -4Z"></path>
-                                                        </svg>
-                                                    </button>
-
-                                                    <button class="btn btn-sm btn-icon btn-danger delete-btn" data-guid="${item.guid}" title="Delete">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" 
-                                                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
-                                                            class="icon icon-tabler icon-tabler-trash">
-                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                            <path d="M4 7h16"></path>
-                                                            <path d="M10 11v6"></path>
-                                                            <path d="M14 11v6"></path>
-                                                            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
-                                                            <path d="M9 7V4h6v3"></path>
-                                                        </svg>
-                                                    </button>
-                                                </td> class="btn btn-sm btn-danger delete-btn" data-guid="${item.guid}">Delete</button>
-                                            </td>
-                                        </tr>
-                                    `;
-                                    tableBody.append(row);
-                                    });
-                                } else {
-                            tableBody.append('<tr><td colspan="4" class="text-center">No data found</td></tr>');
-                        }
+                    data: {
+                        guid: guid
                     },
-                    error: function() {
-                        $.notify("Error fetching data", "error");
+                    success: function(response) {
+                        // console.log('Data deleted successfully:', response);
+                        $('#delete-sidebar').removeClass('active');
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Deleted!',
+                            text: 'Guest has been deleted successfully.',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function(err) {
+                        console.error('Error deleting data:', err);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'There was an error deleting the Guest. Please try again.',
+                        });
                     }
                 });
-            }
-            loadGuest(); // Load data on page load
-
-            $('#search').on('keyup', function() {
-                    var value = $(this).val().toLowerCase();
-                    $('#handle-list-1 tr').filter(function() {
-                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-                    });
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Input Required',
+                    text: "Please type 'DELETE' in the input box to confirm deletion.",
                 });
-            });
-    </script>
+            }
+        });
+    </script> 
 @endsection

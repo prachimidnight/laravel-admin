@@ -222,7 +222,7 @@ $pagetype = 'Country';
     <script>
         $(document).ready(function() {
             fetchCountryData();
-  $(".main-loading").hide();
+            $(".main-loading").hide();
             $("#search").on('input', function() {
                 var filterData = {
                     "search": $(this).val()
@@ -238,76 +238,6 @@ $pagetype = 'Country';
             $('#add-users-sidebar').addClass('show');
             $('.theme-sidebar-title').html("Add Country");
             $('#sbt').html("Add");
-        });
-
-
-        //Edit model
-        $(document).on("click", "#openedit", function() {
-            var guid = $(this).data("guid");
-            $("#guid").val(guid);
-
-            var country_name = $(this).data("country_name");
-            $("#country_name").val(country_name);
-
-            $('#sbt').html("Save changes");
-            $('.theme-sidebar-title').html("Edit Country");
-            $('#add-users-sidebar').addClass('active');
-        });
-
-        // Add-Update city
-        $("#add-users-sidebar form").submit(function(e) {
-            $(".btn-primary").html('Loading...').attr('disabled', true);
-            e.preventDefault();
-        }).validate({
-            submitHandler: function(form) {
-                var formData = new FormData(form);
-
-                var guid = $('#guid').val();
-                var url = '';
-                var type = 'POST'; 
-                if (guid != null && guid !== '') {
-                    url = apipath + "/country/update"; 
-                } else {
-                    url = apipath + "/country/create";  
-                }
-
-                $.ajax({
-                    type: type,
-                    url: url,
-                    data: formData,
-                    dataType: 'json',
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    success: function(data) {
-                        if (data.status == 200) {
-                            $(".form-control").val("");
-                            $(".btn-primary").html('Add').attr('disabled', true);
-                            $('#add-users-sidebar').removeClass('active');
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success',
-                                text: 'Data added successfully!',
-                                showConfirmButton: false,
-                                timer: 2000
-                            }).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            notifyuser('error', 'An error occurred');
-                        }
-                    },
-                    complete: function() {
-                        $(".btn-primary").html('Add').removeAttr("disabled");
-                    },
-                    error: function(xhr, ajaxOptions, thrownError) {
-                        $(".btn-primary").html('Add').removeAttr("disabled");
-
-                    }
-                });
-
-                return false;
-            }
         });
 
         //Get all country
@@ -327,7 +257,7 @@ $pagetype = 'Country';
                 success: function(response) {
                     $('#handle-list-1').empty();
 
-                    $.each(response.data, function(index, country) {
+                    $.each(response.data, function(index, item) {
                         $('#handle-list-1').append(`
                                   <tr>
                                       <td>
@@ -344,42 +274,42 @@ $pagetype = 'Country';
                                           <div class="tag-rounded-wrapper">
                                               <div class="tag-rounded tag-rounded-gray">
                                                   <span class="avatar avatar-md">
-                                                      <span class="user-name-latter latter-j">${country.country_name.charAt(0)}</span>
+                                                      <span class="user-name-latter latter-j">${item.country_name.charAt(0)}</span>
                                                   </span>
                                                   <div>
-                                                      <b>${country.country_name}</b>
+                                                      <b>${item.country_name}</b>
                                                   </div>
                                               </div>
                                           </div>
                                       </td>
                                     <td>
                                         <div class="theme-date-list">
-                                           <div class="theme-date" data-tooltip="Create at: ${new Date(country.created_at).toUTCString()}">
+                                           <div class="theme-date" data-tooltip="Create at: ${new Date(item.created_at).toUTCString()}">
                                               <div class="theme-date-content">
-                                              <small>${new Date(country.created_at).toLocaleString('default', { month: 'short', timeZone: 'UTC' })}</small>
-                                              <span>${new Date(country.created_at).getUTCDate()}</span>
+                                              <small>${new Date(item.created_at).toLocaleString('default', { month: 'short', timeZone: 'UTC' })}</small>
+                                              <span>${new Date(item.created_at).getUTCDate()}</span>
                                             </div>
-                                               <span class="theme-date-footer">${new Date(country.created_at).getUTCFullYear()}</span>
+                                               <span class="theme-date-footer">${new Date(item.created_at).getUTCFullYear()}</span>
                                             </div>
-                                               <div class="theme-date" data-tooltip="Update at: ${new Date(country.updated_at).toUTCString()}">
+                                               <div class="theme-date" data-tooltip="Update at: ${new Date(item.updated_at).toUTCString()}">
                                                <div class="theme-date-content"> 
-                                               <small>${new Date(country.updated_at).toLocaleString('default', { month: 'short', timeZone: 'UTC' })}</small>
-                                               <span>${new Date(country.updated_at).getUTCDate()}</span>
+                                               <small>${new Date(item.updated_at).toLocaleString('default', { month: 'short', timeZone: 'UTC' })}</small>
+                                               <span>${new Date(item.updated_at).getUTCDate()}</span>
                                             </div>
-                                               <span class="theme-date-footer">${new Date(country.updated_at).getUTCFullYear()}</span>
+                                               <span class="theme-date-footer">${new Date(item.updated_at).getUTCFullYear()}</span>
                                             </div>
                                         </div>
                                       </td>
                                       <td class="table-actions-wrapper">
                                           <div class="table-actions">
-                                              <a href="#" open-sidebar="edit-users-sidebar"  id="openedit" data-guid=${country.guid} data-country_name=${country.country_name}>
+                                              <a href="#" open-sidebar="edit-users-sidebar"  id="openedit" data-guid=${item.guid} data-country_name=${item.country_name}>
                                                   <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-pencil" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                       <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                       <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"></path>
                                                       <path d="M13.5 6.5l4 4"></path>
                                                   </svg>
                                               </a>
-                                              <a href="#" open-sidebar="delete-sidebar" class="opendelete" data-guid=${country.guid}>
+                                              <a href="#" open-sidebar="delete-sidebar" class="opendelete" data-guid=${item.guid}>
                                                   <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                       <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                       <path d="M4 7l16 0"></path>
@@ -442,7 +372,7 @@ $pagetype = 'Country';
                         Swal.fire({
                             icon: 'error',
                             title: 'Error!',
-                            text: 'There was an error deleting the city. Please try again.',
+                            text: 'There was an error deleting the Country. Please try again.',
                         });
                     }
                 });

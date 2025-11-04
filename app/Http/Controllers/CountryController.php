@@ -78,17 +78,16 @@ class CountryController extends Controller
     public function update(Request $request)
     {
         $valid = validator::make($request->all(),[
-            "country_id"=>"required"
+            "guid"=>"required"
         ]);
 
         if ($valid->fails()){
             return response()->json(['status'=>400,'errors'=> $valid->errors()],400);
         } else {
             $data=new country();
-            $request-> request-> add(['status'=>0]);
-            $newrequest=$request->except(['country_id']);
+            $newrequest=$request->except(['guid']);
             $request->request->add(['updated_by'=> $request->input('updated_by')]);
-            $result = $data-> where('country_id',$request->input('country_id'))->update($newrequest);
+            $result = $data-> where('guid',$request->input('guid'))->update($newrequest);
 
             if($result){
             return response()->json(['status'=>200, 'message'=>'updated successfully', 'data'=>[]]);
@@ -103,7 +102,7 @@ class CountryController extends Controller
     {
 
         $valid = Validator::make($request->all(), [
-            "country_id" => "required"
+            "guid" => "required"
 
         ]);
 
@@ -113,9 +112,9 @@ class CountryController extends Controller
 
             $data = new country();
             $request->request->add(['status' => 0]);
-            $newrequest = $request->except(['country_id']);
+            $newrequest = $request->except(['guid']);
             $request->request->add(['updated_by' => $request->input('updated_by')]);
-            $result = $data->where('country_id', $request->input('country_id'))->update($newrequest);
+            $result = $data->where('guid', $request->input('guid'))->update($newrequest);
 
             if ($result) {
                 return response()->json(['status' => 200, 'message' => 'Deleted Successfully', 'data' => []]);
