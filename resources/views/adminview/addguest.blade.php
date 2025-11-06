@@ -104,8 +104,8 @@ $pagetype = 'Add Guest';
                                         <div class="form-group">
                                             <label class="form-label">Guest WhatsApp No <span
                                                     class="required-asterisk">*</span></label>
-                                            <input type="text" class="form-control" name="guest_wp"
-                                                id="guest_wp" minlength="8" maxlength="10" required>
+                                            <input type="text" class="form-control" name="whatsapp_no"
+                                                id="whatsapp_no" minlength="8" maxlength="10" required>
                                         </div>
                                     </div>
 
@@ -118,24 +118,34 @@ $pagetype = 'Add Guest';
                                         </div>
                                     </div>
 
-                                    <div class="column is-12-mobile is-12-tablet is-6-desktop is-6-widescreen col-form">
-                                        <div class="form-group">
-                                            <label class="form-label">City <span class="required-asterisk">*</span></label>
-                                            <input type="text" class="form-control" name="city" id="city" required>
+                                   
+                                        <div class="column is-4-mobile is-4-tablet is-4-desktop is-4-widescreen col-form">
+                                            <div class="form-group">
+                                                <label class="form-label">City <span class="required-asterisk">*</span></label>
+                                                <input type="text" class="form-control" name="city" id="city" required>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div class="column is-12-mobile is-12-tablet is-6-desktop is-6-widescreen col-form">
-                                        <div class="form-group">
-                                            <label class="form-label">State <span class="required-asterisk">*</span></label>
-                                            <input type="text" class="form-control" name="state" id="state" required>
+                                        <div class="column is-4-mobile is-4-tablet is-4-desktop is-4-widescreen col-form">
+                                            <div class="form-group">
+                                                <label class="form-label">State <span class="required-asterisk">*</span></label>
+                                                <input type="text" class="form-control" name="state" id="state" required>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div class="column is-12-mobile is-12-tablet is-6-desktop is-6-widescreen col-form">
-                                        <div class="form-group">
-                                            <label class="form-label">Country <span class="required-asterisk">*</span></label>
-                                            <input type="text" class="form-control" name="country" id="country" required>
+                                        <div class="column is-4-mobile is-4-tablet is-4-desktop is-4-widescreen col-form">
+                                            <div class="form-group">
+                                                <label class="form-label">Country <span class="required-asterisk">*</span></label>
+                                                <input type="text" class="form-control" name="country" id="country" required>
+                                            </div>
+                                        </div>
+                                  
+
+                                    <div class="column is-6 col-form">
+                                        <div class="form-group mt-4">
+                                            <label class="checkbox">
+                                                <input type="checkbox" id="is_gift" name="is_gift" value="1"> Is Gift?
+                                            </label>
                                         </div>
                                     </div>
 
@@ -169,84 +179,79 @@ $pagetype = 'Add Guest';
         $(document).ready(function () {
             $(".main-loading").hide();
         
-            // ✅ Copy WhatsApp number if checkbox is checked
-            $('#is_whatsapp').on('change', function () {
+            // Copy WhatsApp number if checkbox is checked
+            $('#is_whatsapp').on('change', function() {
                 if ($(this).is(':checked')) {
-                    $('#guest_wp').val($('#phone_no').val());
+                    $('#whatsapp_no').val($('#phone_no').val());
                 } else {
-                    $('#guest_wp').val('');
+                    $('#whatsapp_no').val('');
                 }
             });
         
-            $('#btn-add-project').on('click', function (e) {
-                e.preventDefault();
-    
-                var first_name = $("#first_name").val();
-                var last_name = $("#last_name").val();
-                var guest_email = $("#guest_email").val();
-                var phone_no = $("#phone_no").val();
-                var whatsapp_no = $("#guest_wp").val();
-                var city = $("#city").val();
-                var state = $("#state").val();
-                var country = $("#country").val();
-                var address = $("#address").val();
-                var description = $("#description").val();
-        
-                // 🧠 Basic validation
-                if (
-                    first_name == "" || last_name == "" || guest_email == "" ||
-                    phone_no == "" || whatsapp_no == "" || city == "" ||
-                    state == "" || country == "" || address == "" || description == ""
-                ) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Missing Fields',
-                        text: 'Please fill all required fields before submitting.'
-                    });
-                    return;
-                }
-        
-                // ✅ Send data using AJAX
+            // Handle Add Guest form submit
+
+            $("#addproject").validate({
+            submitHandler: function(form) {
+            $(".btn-primary").html('Loading...').attr('disabled', true);
+
+            if (!$('#is_gift').is(':checked')) {
+                        $('<input>').attr({
+                            type: 'hidden',
+                            name: 'is_gift',
+                            value: '0'
+                        }).appendTo(form);
+                    }
+
+
+                var formData = new FormData(form);
+                var url = apipath + "/guest/create";
+                var type = 'POST';
+
                 $.ajax({
-                    url: apipath + "/guest/create",
-                    type: "POST",
-                    dataType: "json",
-                    data: {
-                        first_name: first_name,
-                        last_name: last_name,
-                        guest_email: guest_email,
-                        phone_no: phone_no,
-                    },
-                    success: function (response) {
-                        console.log(response);
-                        if (response.status == 200) {
+                    type: type,
+                    url: url,
+                    data: formData,
+                    dataType: 'json',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        if (data.status == 200 || data.status == true) {
+                            $(".form-control").val("");
+                            $("#is_whatsapp").prop("checked", false);
+                            $(".btn-primary").html('Add').removeAttr("disabled");
+
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Guest Added!',
-                                text: 'Guest has been added successfully.',
-                                timer: 2000,
-                                showConfirmButton: false
-                            }).then(function () {
-                                window.location.href = "guest";
+                                title: 'Success',
+                                text: 'Guest added successfully!',
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(() => {
+                                location.reload();
                             });
                         } else {
+                            $(".btn-primary").html('Add').removeAttr("disabled");
                             Swal.fire({
-                                icon: 'warning',
-                                title: 'Validation Error',
-                                text: response.message || "Please check your input fields."
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Failed to add guest!'
                             });
                         }
                     },
-                    error: function (xhr) {
-                        console.log("Error adding guest:", xhr);
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
+                        $(".btn-primary").html('Add').removeAttr("disabled");
                         Swal.fire({
                             icon: 'error',
                             title: 'Error!',
-                            text: 'Failed to add guest. Please try again.'
+                            text: 'Something went wrong. Please check required fields.'
                         });
                     }
-                });
+                    });
+                 return false;
+            }
             });
         });
-        </script>
+    </script>     
 @endsection

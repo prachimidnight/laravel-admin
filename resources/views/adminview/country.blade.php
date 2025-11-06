@@ -240,6 +240,75 @@ $pagetype = 'Country';
             $('#sbt').html("Add");
         });
 
+               //Edit model
+               $(document).on("click", "#openedit", function() {
+            var guid = $(this).data("guid");
+            $("#guid").val(guid);
+
+            var country_name = $(this).data("country_name");
+            $("#country_name").val(country_name);
+
+            $('#sbt').html("Save changes");
+            $('.theme-sidebar-title').html("Edit Country");
+            $('#add-users-sidebar').addClass('active');
+        });
+
+        // Add-Update Country
+        $("#add-users-sidebar form").submit(function(e) {
+            $(".btn-primary").html('Loading...').attr('disabled', true);
+            e.preventDefault();
+        }).validate({
+            submitHandler: function(form) {
+                var formData = new FormData(form);
+
+                var guid = $('#guid').val();
+                var url = '';
+                var type = 'POST'; 
+                if (guid != null && guid !== '') {
+                    url = apipath + "/country/update"; 
+                } else {
+                    url = apipath + "/country/create";  
+                }
+
+                $.ajax({
+                    type: type,
+                    url: url,
+                    data: formData,
+                    dataType: 'json',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        if (data.status == 200) {
+                            $(".form-control").val("");
+                            $(".btn-primary").html('Add').attr('disabled', true);
+                            $('#add-users-sidebar').removeClass('active');
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: 'Data added successfully!',
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            notifyuser('error', 'An error occurred');
+                        }
+                    },
+                    complete: function() {
+                        $(".btn-primary").html('Add').removeAttr("disabled");
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        $(".btn-primary").html('Add').removeAttr("disabled");
+
+                    }
+                });
+
+                return false;
+            }
+        });
+
         //Get all country
         function fetchCountryData(page = 1, offset = 0, limit = pagelimit, filterData = "") {
             var formdata = {

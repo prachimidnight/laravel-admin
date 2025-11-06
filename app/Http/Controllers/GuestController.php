@@ -136,7 +136,7 @@ class GuestController extends Controller
     public function delete(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'guest_id' => 'required|integer|exists:tbl_guest,guest_id',
+            'guid' => 'required',
             'updated_by' => 'nullable|integer',
         ]);
 
@@ -148,7 +148,7 @@ class GuestController extends Controller
             ], 422);
         }
 
-        $guest = guest::findOrFail($request->guest_id);
+        $guest = guest::findOrFail($request->guid);
         
         $guest->update([
             'status' => 0,

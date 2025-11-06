@@ -90,9 +90,39 @@ $pagetype = 'Guest';
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="box mt-2">
-                                <ul id="pagination" class="pagination pull-right page-item active"></ul>
-                            </div>
+                            <div
+                            class="card-footer is-align-items-center is-flex is-gap-3 is-justify-content-space-between px-5 pb-5">
+                            <span class="fs-7 gray-700">Showing 1 to 5 of 5 Entries</span>
+                            <ul class="pagination ml-auto">
+                                <li class="page-item">
+                                    <a href="#">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="icon icon-tabler icons-tabler-outline icon-tabler-chevrons-left">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <path d="M11 7l-5 5l5 5"></path>
+                                            <path d="M17 7l-5 5l5 5"></path>
+                                        </svg>
+                                    </a>
+                                </li>
+                                <li class="page-item active">
+                                    <a href="#">1</a>
+                                </li>
+                                <li class="page-item">
+                                    <a href="#">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="icon icon-tabler icons-tabler-outline icon-tabler-chevrons-right">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <path d="M7 7l5 5l-5 5"></path>
+                                            <path d="M13 7l5 5l-5 5"></path>
+                                        </svg>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                         </div>
 
                     </div>
@@ -130,7 +160,7 @@ $pagetype = 'Guest';
                                     </div>
                                 </div>
                                 <div class="column is-12 col-form">
-                                    <input type="hidden" name="guest_id" id="guest_id" />
+                                    <input type="hidden" name="guid" id="guid" />
                                     <button type="submit" class="btn btn-danger w-100" id="delete">Delete</button>
                                 </div>
                             </div>
@@ -154,15 +184,7 @@ $pagetype = 'Guest';
 
             });
         });
-
-        $(document).on("click", "#btn-add-user", function() {
-            $('#guid').val(''); // Ensure guid is empty for new entries
-            $('#first_name').val('');
-            $('#add-users-sidebar').addClass('show');
-            $('.theme-sidebar-title').html("Add guest");            
-            $('#sbt').html("Add");
-        });
-       
+   
         //Get all guest
         function fetchGuestData(page = 1, offset = 0, limit = pagelimit, filterData = "") {
             var formdata = {
@@ -235,7 +257,9 @@ $pagetype = 'Guest';
                                           </span>
                                       </div>
                                     </td>
-                                    <td class="wrap-text">${item.address || '-'}</td>
+                                    <td class="wrap-text">
+                                        ${item.address ? `${item.address}, ${item.city_name || ''}, ${item.state_name || ''}` : '-'}
+                                    </td>
                                     <td>${item.is_gift || '-'}</td>
                                     
                                     <td>
