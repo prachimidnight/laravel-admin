@@ -98,7 +98,7 @@ class GuestController extends Controller
     }
 
     public function update(Request $request)
-{
+    {
     $valid = Validator::make($request->all(), [
         "guid" => "required"
     ]);
@@ -122,9 +122,9 @@ class GuestController extends Controller
                 'status' => 400,
                 'errors' => 'Something went wrong.'
             ], 400);
-        }
+            }
+        }   
     }
-}
 
 
     public function delete(Request $request)

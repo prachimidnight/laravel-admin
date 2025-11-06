@@ -118,34 +118,24 @@ $pagetype = 'Add Guest';
                                         </div>
                                     </div>
 
-                                   
-                                        <div class="column is-4-mobile is-4-tablet is-4-desktop is-4-widescreen col-form">
-                                            <div class="form-group">
-                                                <label class="form-label">City <span class="required-asterisk">*</span></label>
-                                                <input type="text" class="form-control" name="city" id="city" required>
-                                            </div>
+                                    <div class="column is-4-mobile is-4-tablet is-4-desktop is-4-widescreen col-form">
+                                        <div class="form-group">
+                                            <label class="form-label">City <span class="required-asterisk">*</span></label>
+                                            <input type="text" class="form-control" name="city" id="city" required>
                                         </div>
+                                    </div>
 
-                                        <div class="column is-4-mobile is-4-tablet is-4-desktop is-4-widescreen col-form">
-                                            <div class="form-group">
-                                                <label class="form-label">State <span class="required-asterisk">*</span></label>
-                                                <input type="text" class="form-control" name="state" id="state" required>
-                                            </div>
+                                    <div class="column is-4-mobile is-4-tablet is-4-desktop is-4-widescreen col-form">
+                                        <div class="form-group">
+                                            <label class="form-label">State <span class="required-asterisk">*</span></label>
+                                            <input type="text" class="form-control" name="state" id="state" required>
                                         </div>
+                                    </div>
 
-                                        <div class="column is-4-mobile is-4-tablet is-4-desktop is-4-widescreen col-form">
-                                            <div class="form-group">
-                                                <label class="form-label">Country <span class="required-asterisk">*</span></label>
-                                                <input type="text" class="form-control" name="country" id="country" required>
-                                            </div>
-                                        </div>
-                                  
-
-                                    <div class="column is-6 col-form">
-                                        <div class="form-group mt-4">
-                                            <label class="checkbox">
-                                                <input type="checkbox" id="is_gift" name="is_gift" value="1"> Is Gift?
-                                            </label>
+                                    <div class="column is-4-mobile is-4-tablet is-4-desktop is-4-widescreen col-form">
+                                        <div class="form-group">
+                                            <label class="form-label">Country <span class="required-asterisk">*</span></label>
+                                            <input type="text" class="form-control" name="country" id="country" required>
                                         </div>
                                     </div>
 
@@ -193,15 +183,6 @@ $pagetype = 'Add Guest';
             $("#addproject").validate({
             submitHandler: function(form) {
             $(".btn-primary").html('Loading...').attr('disabled', true);
-
-            if (!$('#is_gift').is(':checked')) {
-                        $('<input>').attr({
-                            type: 'hidden',
-                            name: 'is_gift',
-                            value: '0'
-                        }).appendTo(form);
-                    }
-
 
                 var formData = new FormData(form);
                 var url = apipath + "/guest/create";

@@ -318,8 +318,11 @@ $pagetype = 'Guest';
                                     <td class="wrap-text">
                                         ${item.address ? `${item.address}, ${item.city_name || ''}, ${item.state_name || ''}` : '-'}
                                     </td>
-                                    <td>${item.is_gift || '-'}</td>
-                                    
+                                   
+                                    <td>
+                                        <input type="checkbox" class="gift-checkbox" data-guest-id="${item.guest_id}" ${item.is_gift == 1 ? 'checked' : ''} />
+                                    </td>
+                                
                                     <td>
                                         <div class="theme-date-list">
                                            <div class="theme-date" data-tooltip="Create at: ${new Date(item.created_at).toUTCString()}">
