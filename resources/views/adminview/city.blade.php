@@ -221,13 +221,13 @@ $pagetype = 'City';
 
     <script>
         $(document).ready(function() {
-            fetchCityData();
+            getallcity();
             $(".main-loading").hide();
             $("#search").on('input', function() {
                 var filterData = {
                     "search": $(this).val()
                 };
-                fetchCityData(page = 1, offset = 0, limit = pagelimit, filterData);
+                getallcity(page = 1, offset = 0, limit = pagelimit, filterData);
 
             });
         });
@@ -311,7 +311,7 @@ $pagetype = 'City';
         });
 
         //Get all city
-        function fetchCityData(page = 1, offset = 0, limit = pagelimit, filterData = "") {
+        function getallcity(page = 1, offset = 0, limit = pagelimit, filterData = "") {
             var formdata = {
                 offset: offset,
                 limit: limit,

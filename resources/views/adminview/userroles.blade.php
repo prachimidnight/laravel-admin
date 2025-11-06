@@ -221,13 +221,13 @@ $pagetype = 'UserRoles';
 
     <script>
         $(document).ready(function() {
-            fetchRoleData();
+            getallrole();
             $(".main-loading").hide();
             $("#search").on('input', function() {
                 var filterData = {
                     "search": $(this).val()
                 };
-                fetchRoleData(page = 1, offset = 0, limit = pagelimit, filterData);
+                getallrole(page = 1, offset = 0, limit = pagelimit, filterData);
 
             });
         });
@@ -311,7 +311,7 @@ $pagetype = 'UserRoles';
         });
 
         //Get all role
-        function fetchRoleData(page = 1, offset = 0, limit = pagelimit, filterData = "") {
+        function getallrole(page = 1, offset = 0, limit = pagelimit, filterData = "") {
             var formdata = {
                 offset: offset,
                 limit: limit,

@@ -221,13 +221,13 @@ $pagetype = 'Country';
 
     <script>
         $(document).ready(function() {
-            fetchCountryData();
+            getallcountry();
             $(".main-loading").hide();
             $("#search").on('input', function() {
                 var filterData = {
                     "search": $(this).val()
                 };
-                fetchCountryData(page = 1, offset = 0, limit = pagelimit, filterData);
+                getallcountry(page = 1, offset = 0, limit = pagelimit, filterData);
 
             });
         });
@@ -310,7 +310,7 @@ $pagetype = 'Country';
         });
 
         //Get all country
-        function fetchCountryData(page = 1, offset = 0, limit = pagelimit, filterData = "") {
+        function getallcountry(page = 1, offset = 0, limit = pagelimit, filterData = "") {
             var formdata = {
                 offset: offset,
                 limit: limit,

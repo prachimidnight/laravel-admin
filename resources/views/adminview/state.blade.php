@@ -221,13 +221,13 @@ $pagetype = 'State';
 
     <script>
         $(document).ready(function() {
-            fetchStateData();
+            getallstate();
             $(".main-loading").hide();
             $("#search").on('input', function() {
                 var filterData = {
                     "search": $(this).val()
                 };
-                fetchStateData(page = 1, offset = 0, limit = pagelimit, filterData);
+                getallstate(page = 1, offset = 0, limit = pagelimit, filterData);
 
             });
         });
@@ -308,7 +308,7 @@ $pagetype = 'State';
             }
         });
           //Get all state
-          function fetchStateData(page = 1, offset = 0, limit = pagelimit, filterData = "") {
+          function getallstate(page = 1, offset = 0, limit = pagelimit, filterData = "") {
             var formdata = {
                 offset: offset,
                 limit: limit,
