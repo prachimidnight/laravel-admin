@@ -185,74 +185,63 @@ $pagetype = 'Guest';
             });
         });
 
-        //Edit model
         $(document).on("click", "#openedit", function() {
-            var guid = $(this).data("guid");
-            $("#guid").val(guid);
+        var guid = $(this).data("guid");
+        $("#guid").val(guid);
 
-            var first_name = $(this).data("first_name");
-            $("#first_name").val(first_name);
+        var first_name = $(this).data("first_name");
+        $("#first_name").val(first_name);
 
-            $('#sbt').html("Save changes");
-            $('.theme-sidebar-title').html("Edit Guest");
-            $('#add-users-sidebar').addClass('active');
-        });
+        $('#sbt').html("Save changes");
+        $('.theme-sidebar-title').html("Edit Guest");
+        $('#add-users-sidebar').addClass('active');
+    });
 
-        // Add-Update Guest
-        $("#add-users-sidebar form").submit(function(e) {
+    // Only Update Guest
+    $("#add-users-sidebar form").submit(function(e) {
+        e.preventDefault();
+    }).validate({
+        submitHandler: function(form) {
             $(".btn-primary").html('Loading...').attr('disabled', true);
-            e.preventDefault();
-        }).validate({
-            submitHandler: function(form) {
-                var formData = new FormData(form);
 
-                var guid = $('#guid').val();
-                var url = '';
-                var type = 'POST'; 
-                if (guid != null && guid !== '') {
-                    url = apipath + "/guest/update"; 
-                } else {
-                    url = apipath + "/guest/create";  
-                }
+            var formData = new FormData(form);
+            var url = apipath + "/guest/update"; 
 
-                $.ajax({
-                    type: type,
-                    url: url,
-                    data: formData,
-                    dataType: 'json',
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    success: function(data) {
-                        if (data.status == 200) {
-                            $(".form-control").val("");
-                            $(".btn-primary").html('Add').attr('disabled', true);
-                            $('#add-users-sidebar').removeClass('active');
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success',
-                                text: 'Data added successfully!',
-                                showConfirmButton: false,
-                                timer: 2000
-                            }).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            notifyuser('error', 'An error occurred');
-                        }
-                    },
-                    complete: function() {
-                        $(".btn-primary").html('Add').removeAttr("disabled");
-                    },
-                    error: function(xhr, ajaxOptions, thrownError) {
-                        $(".btn-primary").html('Add').removeAttr("disabled");
-
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: formData,
+                dataType: 'json',
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(data) {
+                    if (data.status == 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Updated!',
+                            text: 'Guest updated successfully!',
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        notifyuser('error', 'An error occurred while updating');
                     }
-                });
+                },
+                complete: function() {
+                    $(".btn-primary").html('Save changes').removeAttr("disabled");
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    $(".btn-primary").html('Save changes').removeAttr("disabled");
+                }
+            });
 
-                return false;
-            }
-        });
+            return false;
+        }
+    });
+
    
         //Get all guest
         function getallguest(page = 1, offset = 0, limit = pagelimit, filterData = "") {
