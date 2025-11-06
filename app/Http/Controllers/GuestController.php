@@ -98,71 +98,67 @@ class GuestController extends Controller
     }
 
     public function update(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'guest_id' => 'required|integer|exists:tbl_guest,guest_id',
-            'email' => 'nullable|email',
-            'password' => 'nullable|string|min:6',
-        ]);
+{
+    $valid = Validator::make($request->all(), [
+        "guid" => "required"
+    ]);
 
-        if ($validator->fails()) {
+    if ($valid->fails()) {
+        return response()->json(['status' => 400, 'errors' => $valid->errors()], 400);
+    } else {
+        $data = new Guest(); // ✅ Use Guest model instead of role
+        $newrequest = $request->except(['guid']);
+        $request->request->add(['updated_by' => $request->input('updated_by')]);
+        $result = $data->where('guid', $request->input('guid'))->update($newrequest);
+
+        if ($result) {
             return response()->json([
-                'status' => false,
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
-            ], 422);
+                'status' => 200,
+                'message' => 'Guest updated successfully',
+                'data' => []
+            ]);
+        } else {
+            return response()->json([
+                'status' => 400,
+                'errors' => 'Something went wrong.'
+            ], 400);
         }
-
-        $guest = Guest::findOrFail($request->guest_id);
-        
-        $updateData = $request->except(['guest_id', 'password']);
-        
-        if ($request->filled('password')) {
-            $updateData['password'] = Hash::make($request->password);
-        }
-
-        $updateData['updated_by'] = $request->updated_by;
-        $updateData['updated_at'] = Carbon::now('Asia/Kolkata');
-
-        $guest->update($updateData);
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Guest updated successfully',
-            'data' => $guest->fresh()
-        ]);
     }
+}
+
 
     public function delete(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'guid' => 'required',
-            'updated_by' => 'nullable|integer',
+        $valid = Validator::make($request->all(), [
+            "guid" => "required"
         ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
-            ], 422);
+    
+        if ($valid->fails()) {
+            return response()->json(['status' => 400, 'errors' => $valid->errors()], 400);
+        } else {
+    
+            $data = new Guest(); // ✅ use your Guest model here
+            $request->request->add(['status' => 0]); // mark as deleted
+            $newrequest = $request->except(['guid']);
+            $request->request->add(['updated_by' => $request->input('updated_by')]);
+    
+            $result = $data->where('guid', $request->input('guid'))->update($newrequest);
+    
+            if ($result) {
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Guest Deleted Successfully',
+                    'data' => []
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 400,
+                    'errors' => 'Something went wrong.'
+                ], 400);
+            }
         }
-
-        $guest = guest::findOrFail($request->guid);
-        
-        $guest->update([
-            'status' => 0,
-            'updated_by' => $request->updated_by,
-            'updated_at' => Carbon::now('Asia/Kolkata')
-        ]);
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Guest deleted successfully',
-            'data' => []
-        ]);
     }
-
+    
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
