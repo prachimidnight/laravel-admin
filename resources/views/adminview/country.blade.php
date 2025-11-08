@@ -21,7 +21,7 @@ $pagetype = 'Country';
                             <h1 class="fs-5 fw-600 lh-1">Country</h1>
                             <ul class="breadcrumbs mt-1">
                                 <li>
-                                    <a href="dashboard">Dashboard</a>
+                                    <a href="masters">Masters</a>
                                 </li>
                                 <li class="active">Country</li>
                             </ul>
@@ -165,7 +165,7 @@ $pagetype = 'Country';
                                     <div class="form-group">
                                         <label class="form-label">Country Name<span
                                                 class="required-asterisk">*</span></label>
-                                        <input type="text" name="country_name" id="country_name"class="form-control">
+                                        <input type="text" name="country_name" id="country_name"class="form-control" required>
                                     </div>
                                 </div>
                                 <div class="column is-12 col-form">

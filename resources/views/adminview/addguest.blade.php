@@ -120,24 +120,31 @@ $pagetype = 'Add Guest';
 
                                     <div class="column is-4-mobile is-4-tablet is-4-desktop is-4-widescreen col-form">
                                         <div class="form-group">
-                                            <label class="form-label">City <span class="required-asterisk">*</span></label>
-                                            <input type="text" class="form-control" name="city" id="city" required>
+                                            <label class="form-label">Country <span class="required-asterisk">*</span></label>
+                                            <select class="form-control" name="country" id="country" required>
+                                                <option value="">Select Country</option>
+                                            </select>
                                         </div>
                                     </div>
-
+                                    
                                     <div class="column is-4-mobile is-4-tablet is-4-desktop is-4-widescreen col-form">
                                         <div class="form-group">
                                             <label class="form-label">State <span class="required-asterisk">*</span></label>
-                                            <input type="text" class="form-control" name="state" id="state" required>
+                                            <select class="form-control" name="state" id="state" required>
+                                                <option value="">Select State</option>
+                                            </select>
                                         </div>
                                     </div>
-
+                                    
                                     <div class="column is-4-mobile is-4-tablet is-4-desktop is-4-widescreen col-form">
                                         <div class="form-group">
-                                            <label class="form-label">Country <span class="required-asterisk">*</span></label>
-                                            <input type="text" class="form-control" name="country" id="country" required>
+                                            <label class="form-label">City <span class="required-asterisk">*</span></label>
+                                            <select class="form-control" name="city" id="city" required>
+                                                <option value="">Select City</option>
+                                            </select>
                                         </div>
                                     </div>
+                                    
 
                                     <div class="column is-12-mobile is-12-tablet is-12-desktop is-12-widescreen col-form">
                                         <div class="form-group">
@@ -148,8 +155,8 @@ $pagetype = 'Add Guest';
 
                                     <div class="column is-12-mobile is-12-tablet is-12-desktop is-12-widescreen col-form">
                                         <div class="form-group">
-                                            <label class="form-label">Description <span class="required-asterisk">*</span></label>
-                                            <textarea class="form-control" name="description" id="description" rows="4" required></textarea>
+                                            <label class="form-label">Description </span></label>
+                                            <textarea class="form-control" name="description" id="description" rows="4" ></textarea>
                                         </div>
                                     </div>
                                     
@@ -178,61 +185,161 @@ $pagetype = 'Add Guest';
                 }
             });
         
+            $(document).ready(function () {
+                loadCountries();
+
+                // Load all countries
+                function loadCountries() {
+                    $.ajax({
+                        url: apipath + "/country/list",
+                        type: "POST",
+                        dataType: "json",
+                        success: function (response) {
+                            $('#country').html('<option value="">Select Country</option>');
+                            $.each(response.data, function (index, item) {
+                                $('#country').append(`<option value="${item.country_id}">${item.country_name}</option>`);
+                            });
+                        },
+                        error: function (xhr) {
+                            console.error("Error loading countries:", xhr.responseText);
+                        }
+                    });
+                }
+
+                // Load states when a country is selected
+                $('#country').on('change', function () {
+                    var country_id = $(this).val();
+                    $('#state').html('<option value="">Select State</option>');
+                    $('#city').html('<option value="">Select City</option>');
+
+                    if (country_id) {
+                        $.ajax({
+                            url: apipath + "/state/list",
+                            type: "POST",
+                            dataType: "json",
+                            data: { country_id: country_id },
+                            success: function (response) {
+                                if (response.data && response.data.length > 0) {
+                                    $.each(response.data, function (index, item) {
+                                        $('#state').append(`<option value="${item.state_id}">${item.state_name}</option>`);
+                                    });
+                                } else {
+                                    $('#state').append('<option value="">No states found</option>');
+                                }
+                            },
+                            error: function (xhr) {
+                                console.error("Error loading states:", xhr.responseText);
+                            }
+                        });
+                    }
+                });
+
+                // Load cities when a state is selected
+                $('#state').on('change', function () {
+                    var state_id = $(this).val();
+                    $('#city').html('<option value="">Select City</option>');
+
+                    if (state_id) {
+                        $.ajax({
+                            url: apipath + "/city/list",
+                            type: "POST",
+                            dataType: "json",
+                            data: { state_id: state_id },
+                            success: function (response) {
+                                if (response.data && response.data.length > 0) {
+                                    $.each(response.data, function (index, item) {
+                                        $('#city').append(`<option value="${item.city_id}">${item.city_name}</option>`);
+                                    });
+                                } else {
+                                    $('#city').append('<option value="">No cities found</option>');
+                                }
+                            },
+                            error: function (xhr) {
+                                console.error("Error loading cities:", xhr.responseText);
+                            }
+                        });
+                    }
+                });
+            });
             // Handle Add Guest form submit
 
             $("#addproject").validate({
             submitHandler: function(form) {
             $(".btn-primary").html('Loading...').attr('disabled', true);
 
-                var formData = new FormData(form);
-                var url = apipath + "/guest/create";
-                var type = 'POST';
+            var formData = new FormData(form);
+            
+            // Get the selected text (names) instead of values (IDs)
+            var countryName = $('#country option:selected').text();
+            var stateName = $('#state option:selected').text();
+            var cityName = $('#city option:selected').text();
+            
+            // Remove the ID values and add names instead
+            formData.delete('country');
+            formData.delete('state');
+            formData.delete('city');
+            
+            // Append the names
+            formData.append('country', countryName);
+            formData.append('state', stateName);
+            formData.append('city', cityName);
+            
+            // Also append the IDs if your backend needs them
+            formData.append('country_id', $('#country').val());
+            formData.append('state_id', $('#state').val());
+            formData.append('city_id', $('#city').val());
 
-                $.ajax({
-                    type: type,
-                    url: url,
-                    data: formData,
-                    dataType: 'json',
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    success: function(data) {
-                        if (data.status == 200 || data.status == true) {
-                            $(".form-control").val("");
-                            $("#is_whatsapp").prop("checked", false);
-                            $(".btn-primary").html('Add').removeAttr("disabled");
+            var url = apipath + "/guest/create";
+            var type = 'POST';
 
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success',
-                                text: 'Guest added successfully!',
-                                showConfirmButton: false,
-                                timer: 2000
-                            }).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            $(".btn-primary").html('Add').removeAttr("disabled");
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: data.message || 'Failed to add guest!'
-                            });
-                        }
-                    },
-                    error: function(xhr) {
-                        console.log(xhr.responseText);
+            $.ajax({
+                type: type,
+                url: url,
+                data: formData,
+                dataType: 'json',
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(data) {
+                    if (data.status == 200 || data.status == true) {
+                        $(".form-control").val("");
+                        $("#is_whatsapp").prop("checked", false);
+                        $('#country').val('');
+                        $('#state').html('<option value="">Select State</option>');
+                        $('#city').html('<option value="">Select City</option>');
+                        $(".btn-primary").html('Add').removeAttr("disabled");
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Guest added successfully!',
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
                         $(".btn-primary").html('Add').removeAttr("disabled");
                         Swal.fire({
                             icon: 'error',
-                            title: 'Error!',
-                            text: 'Something went wrong. Please check required fields.'
+                            title: 'Error',
+                            text: data.message || 'Failed to add guest!'
                         });
                     }
+                },
+                error: function(xhr) {
+                    console.log(xhr.responseText);
+                    $(".btn-primary").html('Add').removeAttr("disabled");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Something went wrong. Please check required fields.'
                     });
-                 return false;
-            }
+                }
             });
-        });
+            return false;
+        }
+    });
+    });
     </script>     
 @endsection

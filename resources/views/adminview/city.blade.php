@@ -21,7 +21,7 @@ $pagetype = 'City';
                             <h1 class="fs-5 fw-600 lh-1">City</h1>
                             <ul class="breadcrumbs mt-1">
                                 <li>
-                                    <a href="dashboard">Dashboard</a>
+                                    <a href="masters">Masters</a>
                                 </li>
                                 <li class="active">City</li>
                             </ul>
@@ -165,7 +165,7 @@ $pagetype = 'City';
                                     <div class="form-group">
                                         <label class="form-label">City Name<span
                                                 class="required-asterisk">*</span></label>
-                                        <input type="text" name="city_name" id="city_name"class="form-control">
+                                        <input type="text" name="city_name" id="city_name"class="form-control" required>
                                     </div>
                                 </div>
                                 <div class="column is-12 col-form">

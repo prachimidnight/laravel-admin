@@ -21,7 +21,7 @@ $pagetype = 'UserRoles';
                             <h1 class="fs-5 fw-600 lh-1">User Roles</h1>
                             <ul class="breadcrumbs mt-1">
                                 <li>
-                                    <a href="dashboard">Dashboard</a>
+                                    <a href="masters">Masters</a>
                                 </li>
                                 <li class="active">User Roles</li>
                             </ul>
@@ -165,7 +165,7 @@ $pagetype = 'UserRoles';
                                     <div class="form-group">
                                         <label class="form-label">User Role Name<span
                                                 class="required-asterisk">*</span></label>
-                                        <input type="text" name="role_name" id="role_name"class="form-control">
+                                        <input type="text" name="role_name" id="role_name"class="form-control" required>
                                     </div>
                                 </div>
                                 <div class="column is-12 col-form">

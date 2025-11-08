@@ -27,7 +27,7 @@ class state extends Model
         }
 
         if (array_key_exists('country_id', $data) && isset($data['country_id'])) {
-            $query = $query->where('co.country_id', '=', $data['country_id']);
+            $query = $query->where('ts.country_id', '=', $data['country_id']);
         }
 
         if (array_key_exists('search', $data) && isset($data['search'])) {
