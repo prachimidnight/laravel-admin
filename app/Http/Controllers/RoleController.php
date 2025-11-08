@@ -74,18 +74,17 @@ class RoleController extends Controller
     }
     public function update(Request $request)
     {
-
         $valid = validator::make($request->all(),[
-            "guid"=>"required"
+            "role_name"=>"required"
         ]);
 
         if ($valid->fails()){
             return response()->json(['status'=>400,'errors'=> $valid->errors()],400);
         } else {
             $data=new role();
-            $newrequest=$request->except(['guid']);
+            $newrequest=$request->except(['role_name']);
             $request->request->add(['updated_by'=> $request->input('updated_by')]);
-            $result = $data-> where('guid',$request->input('guid'))->update($newrequest);
+            $result = $data-> where('role_name',$request->input('role_name'))->update($newrequest);
 
             if($result){
             return response()->json(['status'=>200, 'message'=>'updated successfully', 'data'=>[]]);

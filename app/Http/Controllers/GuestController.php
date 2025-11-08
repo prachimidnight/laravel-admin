@@ -39,7 +39,7 @@ class GuestController extends Controller
             'address' => $request->address,
             'profile_image' => $request->profile_image,
             'email' => $request->email,
-            'password' => hash::make($request->input('password')),
+            'password' => Hash::make($request->input('password')),
             'whatsapp_no' => $request->whatsapp_no,
             'is_whatsapp' => $request->boolean('is_whatsapp'),
             'is_send' => $request->boolean('is_send',0),
@@ -126,7 +126,6 @@ class GuestController extends Controller
         }   
     }
 
-
     public function delete(Request $request)
     {
         $valid = Validator::make($request->all(), [
@@ -173,9 +172,10 @@ class GuestController extends Controller
 
         if (!$user) {return response()->json(['status' => 401,'success' => false,'message' => 'Invalid email Id'], 401);}
 
-        if (!password_verify($request->input('password'), $user->password)) {
-            return response()->json(['status' => 401,'success' => false,'message' => 'Invalid password'], 401);
-        }
+           $passwordInput = $request->input('password');
+           if (!Hash::needsRehash($passwordInput)) {
+               $passwordInput = Hash::make($passwordInput);
+           }
 
         return response()->json(['status' => 200,'success' => true,'message' => 'Login Successfully','data' => [$user] ], 200);
     }

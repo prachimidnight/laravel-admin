@@ -62,7 +62,7 @@ $pagetype = 'Login';
                 toggleIcon.classList.add("fa-eye-slash");
             }
         }
-       $(document).ready(function() {
+        $(document).ready(function() {
           $("#frm-login").validate({
               submitHandler: function(form) {
                   var formData = {
@@ -100,7 +100,7 @@ $pagetype = 'Login';
 
                                           notifyuser('success', 'Login successful');
                                           setTimeout(() => {
-                                              window.location.href = "{{ URL('admin/leads') }}";
+                                              window.location.href = "{{ URL('admin/dashboard') }}";
                                           }, 1000);
                                       }
                                   },
