@@ -172,10 +172,9 @@ class GuestController extends Controller
 
         if (!$user) {return response()->json(['status' => 401,'success' => false,'message' => 'Invalid email Id'], 401);}
 
-           $passwordInput = $request->input('password');
-           if (!Hash::needsRehash($passwordInput)) {
-               $passwordInput = Hash::make($passwordInput);
-           }
+        if (!password_verify($request->input('password'), $user->password)) {
+            return response()->json(['status' => 401,'success' => false,'message' => 'Invalid password'], 401);
+        }
 
         return response()->json(['status' => 200,'success' => true,'message' => 'Login Successfully','data' => [$user] ], 200);
     }

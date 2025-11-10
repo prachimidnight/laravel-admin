@@ -100,7 +100,7 @@ $pagetype = 'Login';
 
                                           notifyuser('success', 'Login successful');
                                           setTimeout(() => {
-                                              window.location.href = "{{ URL('admin/dashboard') }}";
+                                            window.location.href = "{{ URL('admin/dashboard') }}";
                                           }, 1000);
                                       }
                                   },
@@ -127,28 +127,7 @@ $pagetype = 'Login';
           });
       });
 
-        // $("#frm-login").on("submit", function(e){
-        // e.preventDefault();
-        //     const email = $("#email").val();
-        //     const password = $("#password").val();
-        //     $.ajax({
-        //         url: apipath + "/guest/login",
-        //         type: "POST",
-        //         data: { email, password },
-        //         success: function(res){
-        //             if(res.status === 200){
-        //                 Swal.fire("Success", res.message, "success"); 
-        //                 setTimeout(() => {
-        //                                 window.location.href = "{{URL('dashboard')}}";
-        //                             }, 1000);
-        //             } else {
-        //                 Swal.fire("Error", res.message, "error");
-        //             }
-        //         },
-        //     });
-        // });
-    
-     function notifyuser(type, message) {
+      function notifyuser(type, message) {
             $.notify(message, type);
         }
 </script>
