@@ -100,7 +100,7 @@ $pagetype = 'Login';
 
                                           notifyuser('success', 'Login successful');
                                           setTimeout(() => {
-                                            window.location.href = "{{ URL('admin/dashboard') }}";
+                                           window.location.href = "{{URL('dashboard')}}";
                                           }, 1000);
                                       }
                                   },

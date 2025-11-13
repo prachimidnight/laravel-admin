@@ -28,7 +28,7 @@
             @php
                 $userdata = Session::get('userdata');
             @endphp
-            @if ($userdata && isset($userdata[0]))
+            @if ($userdata)
                 <div class="menu-item">
                     <a class="menu-link" href="dashboard">
                         <span class="menu-icon">
@@ -63,37 +63,23 @@
                     <span class="tag bg-primary white-text rounded-pill" id="developer-count">0</span>
                 </a>
             </div>
-
-            {{-- @if ($userdata && isset($userdata[0]) && isset($userdata[0]['role_id']) && $userdata[0]['role_id'] != 3) --}}
-                {{-- <div class="menu-item">
-                    <a class="menu-link" href="vip">
-                        <span class="menu-icon">
-                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-user-star"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M6 21v-2a4 4 0 0 1 4 -4h.5" /><path d="M17.8 20.817l-2.172 1.138a.392 .392 0 0 1 -.568 -.41l.415 -2.411l-1.757 -1.707a.389 .389 0 0 1 .217 -.665l2.428 -.352l1.086 -2.193a.392 .392 0 0 1 .702 0l1.086 2.193l2.428 .352a.39 .39 0 0 1 .217 .665l-1.757 1.707l.414 2.41a.39 .39 0 0 1 -.567 .411l-2.172 -1.138z" /></svg>
-                        </span>
-                        <span class="menu-title">VIP Invitation</span>
-                    </a>
-                </div> --}}
-            {{-- @endif --}}
-
-            {{-- @if ($userdata && isset($userdata[0]) && isset($userdata[0]['role_id']) && $userdata[0]['role_id'] != 3) --}}
-                <div class="menu-item">
-                    <a class="menu-link" href="masters">
-                        <span class="menu-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-cube">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <path d="M21 16.008v-8.018a1.98 1.98 0 0 0 -1 -1.717l-7 -4.008a2.016 2.016 0 0 0 -2 0l-7 4.008c-.619 .355 -1 1.01 -1 1.718v8.018c0 .709 .381 1.363 1 1.717l7 4.008a2.016 2.016 0 0 0 2 0l7 -4.008c.619 -.355 1 -1.01 1 -1.718z">
-                                </path>
-                                <path d="M12 22v-10"></path>
-                                <path d="M12 12l8.73 -5.04"></path>
-                                <path d="M3.27 6.96l8.73 5.04"></path>
-                            </svg>
-                        </span>
-                        <span class="menu-title">Masters</span>
-                    </a>
-                </div>
-            {{-- @endif --}}
+            <div class="menu-item">
+                <a class="menu-link" href="masters">
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-cube">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M21 16.008v-8.018a1.98 1.98 0 0 0 -1 -1.717l-7 -4.008a2.016 2.016 0 0 0 -2 0l-7 4.008c-.619 .355 -1 1.01 -1 1.718v8.018c0 .709 .381 1.363 1 1.717l7 4.008a2.016 2.016 0 0 0 2 0l7 -4.008c.619 -.355 1 -1.01 1 -1.718z">
+                            </path>
+                            <path d="M12 22v-10"></path>
+                            <path d="M12 12l8.73 -5.04"></path>
+                            <path d="M3.27 6.96l8.73 5.04"></path>
+                        </svg>
+                    </span>
+                    <span class="menu-title">Masters</span>
+                </a>
+            </div>
             
             @else
                 @php

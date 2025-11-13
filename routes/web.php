@@ -20,39 +20,39 @@ Route::get('/', function() {
     return view('adminview/login');
 })->name('login');
 
-Route::get('admin/dashboard', function() {
+Route::get('/dashboard', function() {
     return view('adminview/dashboard');
 });
 
-Route::get('/admin/leads', function() {
+Route::get('/leads', function() {
     return view('adminview/leads');
 });
 
-Route::get('/admin/guest', function() {
+Route::get('/guest', function() {
     return view('adminview/guest');
 });
 
-Route::get('/admin/addguest', function() {
+Route::get('/addguest', function() {
     return view('adminview/addguest');
 });
 
-Route::get('/admin/masters', function() {
+Route::get('/masters', function() {
     return view('adminview/masters');
 });
 
-Route::get('/admin/city', function() {
+Route::get('/city', function() {
     return view('adminview/city');
 });
 
-Route::get('/admin/state', function() {
+Route::get('/state', function() {
     return view('adminview/state');
 });
 
-Route::get('/admin/country', function() {
+Route::get('/country', function() {
     return view('adminview/country');
 });
 
-Route::get('/admin/userroles', function() {
+Route::get('/userroles', function() {
     return view('adminview/userroles');
 });
 
