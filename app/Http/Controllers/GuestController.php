@@ -162,23 +162,26 @@ class GuestController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
-            'password' => 'required'
+            'password' => 'required',
         ]);
 
-        if ($validator->fails()) {return response()->json(['status' => 422,'success' => false,'message' => 'Validation failed','errors' => $validator->errors()], 422);}
-        $user = guest::where('status', 1)
-            ->where('email', $request->input('email'))
-            ->first();
-
-        if (!$user) {return response()->json(['status' => 401,'success' => false,'message' => 'Invalid email Id'], 401);}
-
-        if (!password_verify($request->input('password'), $user->password)) {
-            return response()->json(['status' => 401,'success' => false,'message' => 'Invalid password'], 401);
+        if ($validator->fails()) {
+            return response()->json(['status' => false, 'message' => 'Validation Failed!', 'errors' => $validator->errors()], 200);
         }
 
-        return response()->json(['status' => 200,'success' => true,'message' => 'Login Successfully','data' => [$user] ], 200);
+        $user = guest::where('email', $request->input('email'))->first();
+
+        if ($user && Hash::check($request->input('password'), $user->password)) {
+            return response()->json(['status' => 200, 'message' => 'Login Successfully', 'data' => $user]);
+        } else {
+            return response()->json([
+                'status' => 400,
+                'message' => 'Invalid Username Or Password'
+            ]);
+        }
     }
-    
+
+
     public function set_session(Request $request)
     {
         $userdata = json_decode($request->userdata, true);

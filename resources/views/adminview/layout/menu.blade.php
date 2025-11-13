@@ -28,7 +28,7 @@
             @php
                 $userdata = Session::get('userdata');
             @endphp
-            @if ($userdata && isset($userdata[0]) && isset($userdata[0]['role_id']))
+            @if ($userdata && isset($userdata[0]))
                 <div class="menu-item">
                     <a class="menu-link" href="dashboard">
                         <span class="menu-icon">
