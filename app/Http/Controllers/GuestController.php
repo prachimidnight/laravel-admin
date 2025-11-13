@@ -39,7 +39,7 @@ class GuestController extends Controller
             'address' => $request->address,
             'profile_image' => $request->profile_image,
             'email' => $request->email,
-            'password' => Hash::make($request->input('password')),
+            'password' => Hash::make($request->password),
             'whatsapp_no' => $request->whatsapp_no,
             'is_whatsapp' => $request->boolean('is_whatsapp'),
             'is_send' => $request->boolean('is_send',0),
@@ -178,7 +178,7 @@ class GuestController extends Controller
 
         return response()->json(['status' => 200,'success' => true,'message' => 'Login Successfully','data' => [$user] ], 200);
     }
-
+    
     public function set_session(Request $request)
     {
         $userdata = json_decode($request->userdata, true);
