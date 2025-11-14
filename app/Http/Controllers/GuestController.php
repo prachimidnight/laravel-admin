@@ -17,6 +17,7 @@ class GuestController extends Controller
             'first_name' => 'required',
             'last_name' => 'required',
             'phone_no' => 'required',
+            'email'=>'required',
         ]);
             
         if ($validator->fails()) {
@@ -25,6 +26,18 @@ class GuestController extends Controller
                 'message' => 'Validation failed',
                 'errors' => $validator->errors()
             ], 422);
+        }
+
+        $imageFullPath = null;
+
+        if ($request->hasFile('profile_image')) {
+            $image = $request->file('profile_image');
+            $imageName = time().'.'.$image->getClientOriginalExtension();
+            $image->move(public_path('uploads/profile'), $imageName);
+    
+            // ⭐ FULL PATH (APP_URL se)
+           $imageFullPath = env('APP_URL') . '/uploads/profile/' . $imageName;
+
         }
 
         $guest = guest::create([
@@ -37,7 +50,7 @@ class GuestController extends Controller
             'phone_no' => $request->input('phone_no'),
             'description' => $request->description,
             'address' => $request->address,
-            'profile_image' => $request->profile_image,
+            'profile_image' => $imageFullPath,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'whatsapp_no' => $request->whatsapp_no,
@@ -99,29 +112,29 @@ class GuestController extends Controller
 
     public function update(Request $request)
     {
-    $valid = Validator::make($request->all(), [
-        "guid" => "required"
-    ]);
+        $valid = Validator::make($request->all(), [
+            "guid" => "required"
+        ]);
 
-    if ($valid->fails()) {
-        return response()->json(['status' => 400, 'errors' => $valid->errors()], 400);
-    } else {
-        $data = new Guest(); // ✅ Use Guest model instead of role
-        $newrequest = $request->except(['guid']);
-        $request->request->add(['updated_by' => $request->input('updated_by')]);
-        $result = $data->where('guid', $request->input('guid'))->update($newrequest);
-
-        if ($result) {
-            return response()->json([
-                'status' => 200,
-                'message' => 'Guest updated successfully',
-                'data' => []
-            ]);
+        if ($valid->fails()) {
+            return response()->json(['status' => 400, 'errors' => $valid->errors()], 400);
         } else {
-            return response()->json([
-                'status' => 400,
-                'errors' => 'Something went wrong.'
-            ], 400);
+            $data = new Guest(); // ✅ Use Guest model instead of role
+            $newrequest = $request->except(['guid']);
+            $request->request->add(['updated_by' => $request->input('updated_by')]);
+            $result = $data->where('guid', $request->input('guid'))->update($newrequest);
+
+            if ($result) {
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Guest updated successfully',
+                    'data' => []
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 400,
+                    'errors' => 'Something went wrong.'
+                ], 400);
             }
         }   
     }
@@ -157,7 +170,7 @@ class GuestController extends Controller
             }
         }
     }
-    
+
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -166,13 +179,21 @@ class GuestController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['status' => false, 'message' => 'Validation Failed!', 'errors' => $validator->errors()], 200);
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation Failed!',
+                'errors' => $validator->errors()
+            ], 200);
         }
 
         $user = guest::where('email', $request->input('email'))->first();
 
         if ($user && Hash::check($request->input('password'), $user->password)) {
-            return response()->json(['status' => 200, 'message' => 'Login Successfully', 'data' => $user]);
+            return response()->json([
+                'status' => 200,
+                'message' => 'Login Successfully',
+                'data' => $user
+            ]);
         } else {
             return response()->json([
                 'status' => 400,
@@ -180,8 +201,7 @@ class GuestController extends Controller
             ]);
         }
     }
-
-
+  
     public function set_session(Request $request)
     {
         $userdata = json_decode($request->userdata, true);

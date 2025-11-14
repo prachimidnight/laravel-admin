@@ -460,6 +460,8 @@ $pagetype = 'Guest';
             formData.append('state_id', $('#state').val());
             formData.append('city_id', $('#city').val());
 
+            formData.append('guid', $('#guid').val());
+
             var url = apipath + "/guest/update";
 
             $.ajax({

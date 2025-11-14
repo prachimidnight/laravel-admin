@@ -38,13 +38,13 @@ $pagetype = 'Add Guest';
 
                                     <div class="column is-12-mobile is-12-tablet is-12-desktop is-12-widescreen col-form">
                                         <div class="form-group custom-file">
-                                            <label for="guest_image" class="form-label">Guest Image
+                                            <label for="profile_image" class="form-label">Guest Image
                                                 {{-- Developer Logo <span class="required-asterisk">*</span> --}}
                                             </label>
                                             <div class="input-group file-upload"
-                                                onclick="document.getElementById('guest_image').click()">
+                                                onclick="document.getElementById('profile_image').click()">
                                                 <span class="form-control file-upload-name">Upload</span>
-                                                <input type="file" name="guest_image" id="guest_image"
+                                                <input type="file" name="profile_image" id="profile_image"
                                                     style="display: none;">
                                                 <span class="input-group-text">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
