@@ -204,27 +204,6 @@ class GuestController extends Controller
             ]);
         }
     }
-
-    public function profile(Request $request)
-    {
-        $guid = $request->input('guid');
-    
-        if (!$guid) {
-            return response()->json(['status' => 400, 'message' => 'GUID is required']);
-        }
-    
-        $user = guest::where('guid', $guid)->first();
-    
-        if (!$user) {
-            return response()->json(['status' => 404, 'message' => 'User not found']);
-        }
-    
-        return response()->json([
-            'status' => 200,
-            'message' => 'Profile fetched successfully',
-            'data' => $user
-        ]);
-    }
     
     public function changePassword(Request $request)
     {

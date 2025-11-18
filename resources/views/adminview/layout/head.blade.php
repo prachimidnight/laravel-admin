@@ -87,36 +87,26 @@ $userdata = Session::get('userdata');
 
 $guest_id = '';
 $user_profile_photo = '';
-$token = '';
-$role_id = '';
 $guid = '';
-$developer_id = '';
 
 if ($userdata && isset($userdata[0])) {
 
     $guest_id = $userdata[0]['guest_id'] ?? '';
     $user_profile_photo = $userdata[0]['user_profile_photo'] ?? '';
-    $token = $userdata[0]['token'] ?? '';
-    $role_id = $userdata[0]['role_id'] ?? '';
     $guid = $userdata[0]['guid'] ?? '';
-
 } else {
 
-    // return redirect()->route('login');
+    return redirect()->route('login');
 }
 @endphp
 
 <script>
     var guest_id = '{{ $guest_id }}';
     var user_profile_photo = '{{ $user_profile_photo }}';
-    var token = '{{ $token }}';
-    var role_id = '{{ $role_id }}';
     var guid = '{{ $guid }}';
-   
+
     sessionStorage.setItem('guest_id', guest_id);
     sessionStorage.setItem('user_profile_photo', user_profile_photo);
-    sessionStorage.setItem('token', token);
-    sessionStorage.setItem('role_id', role_id);
     sessionStorage.setItem('guid', guid);
  
     function slugify(content) {

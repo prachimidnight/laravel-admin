@@ -83,7 +83,7 @@ $pagetype = 'Login';
                           if (response.status == 200) {
 
                             sessionStorage.setItem("guid", response.data.guid);
-                            console.log("Saved GUID:", response.data.guid);
+                            // console.log("Saved GUID:", response.data.guid);
                             
                               let userdata = response.data;
 

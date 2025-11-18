@@ -95,8 +95,8 @@ $pagetype = 'Profile';
                                             </div>
                                             <div
                                                 class="column is-12-mobile is-12-tablet is-12-desktop is-12-widescreen col-form">
-                                                <input type="hidden" name="user_id" id="user_id" />
-                                                <input type="hidden" name="guid" id="guid" />
+                                                <input type="hidden" name="guest_id" id="guest_id" />
+                                                <input type="text" name="guid" id="guid" />
                                                 <button type="submit" class="btn btn-primary"
                                                     id="sbt">Submit</button>
                                             </div>
@@ -160,8 +160,7 @@ $pagetype = 'Profile';
                                                 </div>
                                             </div>
                                             
-                                            <div
-                                                class="column is-12-mobile is-12-tablet is-12-desktop is-12-widescreen col-form">
+                                            <div class="column is-12-mobile is-12-tablet is-12-desktop is-12-widescreen col-form">
                                                 <button type="submit" id="change-sbt" class="btn btn-primary">Change</button>
                                             </div>
                                         </div>
@@ -188,7 +187,8 @@ $pagetype = 'Profile';
     $("#email").val(sessionStorage.getItem("email"));
     $("#phone_no").val(sessionStorage.getItem("phone_no"));
     $("#guid").val(sessionStorage.getItem("guid"));
-    $("#user_id").val(sessionStorage.getItem("user_id"));
+    $("#guest_id").val(sessionStorage.getItem("guest_id"));
+    console.log(sessionStorage.getItem("phone_no"));
 
     if(sessionStorage.getItem("profile_image")){
         $("#profile-image").attr("src", sessionStorage.getItem("profile_image"));
@@ -210,11 +210,10 @@ $pagetype = 'Profile';
             phone_no: {required:true, minlength:10, maxlength:10}
         },
         submitHandler:function(form){
-            let formData = new FormData(form);
+            var formData = new FormData(form);
             formData.append("guid", $("#guid").val());
-            
             $.ajax({
-                url: apipath + "/guest/profile",
+                url: apipath + "/guest/update",
                 type:"POST",
                 data: formData,
                 contentType:false,
@@ -222,7 +221,7 @@ $pagetype = 'Profile';
                 success:function(res){
                     if(res.status==200){
                         // Update sessionStorage
-                        sessionStorage.setItem("user_id", res.data.user_id);
+                        sessionStorage.setItem("guest_id", res.data.guest_id);
                         sessionStorage.setItem("guid", res.data.guid);
                         sessionStorage.setItem("email", res.data.email);
                         sessionStorage.setItem("first_name", res.data.first_name);
