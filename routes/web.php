@@ -15,6 +15,8 @@ use App\Http\Controllers\GuestController;
 */
 Route::post('/set_session', [GuestController::class, 'set_session']);
 Route::get('/logoutuser', [GuestController::class, 'destroy'])->name('session.destroy');
+// web.php - Add this route
+Route::get('/profile-data', [GuestController::class, 'profile'])->name('profile.data');
 
 Route::get('/', function() {
     return view('adminview/login');
@@ -56,6 +58,9 @@ Route::get('/userroles', function() {
     return view('adminview/userroles');
 });
 
+Route::get('/profile', function() {
+    return view('adminview/profile');
+});
 
 
 

@@ -69,14 +69,14 @@
                 </button>
                 <div class="dropdown-menu pt-1 pb-1">
                     <a class="dropdown-item" href="profile">Profile</a>
-                    {{-- <a class="dropdown-item" href="admin">Logout</a> --}}
+                    {{-- <a class="dropdown-item" href="/">Logout</a> --}}
                     {{-- <form id="logout-form" action="{{ route('session.destroy') }}" method="POST" style="display: none;">
                         @csrf
-                    </form>
+                    </form> --}}
 
-                    <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a> --}}
+                    {{-- <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a> --}}
 
-                    {{-- <a class="dropdown-item" id="logout-link"  href="{{route('session.destroy')}}">Logout</a> --}}
+                    <a class="dropdown-item" id="logout-link"  href="{{route('session.destroy')}}">Logout</a>
                 </div>
             </div>
         </div>

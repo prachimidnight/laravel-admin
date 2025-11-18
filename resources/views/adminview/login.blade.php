@@ -81,6 +81,10 @@ $pagetype = 'Login';
                       success: function(response) {
 
                           if (response.status == 200) {
+
+                            sessionStorage.setItem("guid", response.data.guid);
+                            console.log("Saved GUID:", response.data.guid);
+                            
                               let userdata = response.data;
 
                               $.ajax({
@@ -93,9 +97,10 @@ $pagetype = 'Login';
                                   dataType: 'json',
                                   success: function(data1) {
                                       if (data1.status == 200) {
-                                          var finaljson = response.data[0];
+                                        var finaljson = response.data;
                                           $.each(finaljson, function(key, value) {
-                                              localStorage.setItem(key, value);
+                                            sessionStorage.setItem(key, value);
+
                                           });
 
                                           notifyuser('success', 'Login successful');

@@ -170,7 +170,7 @@ class GuestController extends Controller
             }
         }
     }
-
+   
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -189,6 +189,9 @@ class GuestController extends Controller
         $user = guest::where('email', $request->input('email'))->first();
 
         if ($user && Hash::check($request->input('password'), $user->password)) {
+
+            Session::put('userdata', $user);    
+
             return response()->json([
                 'status' => 200,
                 'message' => 'Login Successfully',
@@ -201,6 +204,52 @@ class GuestController extends Controller
             ]);
         }
     }
+
+    public function profile(Request $request)
+    {
+        $guid = $request->input('guid');
+    
+        if (!$guid) {
+            return response()->json(['status' => 400, 'message' => 'GUID is required']);
+        }
+    
+        $user = guest::where('guid', $guid)->first();
+    
+        if (!$user) {
+            return response()->json(['status' => 404, 'message' => 'User not found']);
+        }
+    
+        return response()->json([
+            'status' => 200,
+            'message' => 'Profile fetched successfully',
+            'data' => $user
+        ]);
+    }
+    
+    public function changePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'guid' => 'required',
+            'new_password' => 'required|min:6',
+            'confirm_password' => 'required|same:new_password'
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json(['status' => 400, 'errors' => $validator->errors()]);
+        }
+    
+        $user = guest::where('guid', $request->guid)->first();
+    
+        if (!$user) {
+            return response()->json(['status' => 404, 'message' => 'User not found']);
+        }
+    
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+    
+        return response()->json(['status' => 200, 'message' => 'Password updated successfully']);
+    }
+    
   
     public function set_session(Request $request)
     {
@@ -215,5 +264,6 @@ class GuestController extends Controller
         return redirect()->route('login');
         // return response()->json(['status' => 200, 'message' => 'Logged out successfully']);
     }
-
 }
+
+    

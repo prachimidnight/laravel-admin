@@ -58,18 +58,17 @@ $pagetype = 'Profile';
                                                     <label class="form-label">Email <span
                                                         class="required-asterisk">*</span></label>
                                                     <input type="email" class="form-control" name="email" id="email"
-                                                        required>
+                                                        readonly>
                                                 </div>
                                             </div>
                                             <div class="column is-12-mobile is-12-tablet is-6-desktop is-6-widescreen col-form">
                                                 <div class="form-group">
                                                     <label class="form-label">Phone <span class="required-asterisk">*</span></label>
-                                                    <input type="text" class="form-control" name="mobile_number"
-                                                        id="mobile_number" minlength="10" maxlength="10" oninput="validateInput(this)" required>
+                                                    <input type="text" class="form-control" name="phone_no"
+                                                        id="phone_no" minlength="10" maxlength="10" oninput="validateInput(this)" required>
                                                 </div>
                                             </div>
                                             
-
                                             <div
                                                 class="column is-12-mobile is-12-tablet is-6-desktop is-6-widescreen col-form">
                                                 <div class="form-group">
@@ -96,8 +95,8 @@ $pagetype = 'Profile';
                                             </div>
                                             <div
                                                 class="column is-12-mobile is-12-tablet is-12-desktop is-12-widescreen col-form">
-                                                {{-- <input type="hidden" name="user_id" id="user_id" />
-                                                <input type="hidden" name="guid" id="guid" /> --}}
+                                                <input type="hidden" name="user_id" id="user_id" />
+                                                <input type="hidden" name="guid" id="guid" />
                                                 <button type="submit" class="btn btn-primary"
                                                     id="sbt">Submit</button>
                                             </div>
@@ -160,6 +159,7 @@ $pagetype = 'Profile';
                                                     <span class="error" id="password-match-message"></span>
                                                 </div>
                                             </div>
+                                            
                                             <div
                                                 class="column is-12-mobile is-12-tablet is-12-desktop is-12-widescreen col-form">
                                                 <button type="submit" id="change-sbt" class="btn btn-primary">Change</button>
@@ -174,12 +174,107 @@ $pagetype = 'Profile';
             </div>
         </div>
         </div>
-   </body>
-  <script>
-      $(document).ready(function() {
-          $(".main-loading").hide();
-      });
-      
-  </script>
- 
-@endsection
+    </body>
+    <script>
+
+    $(document).ready(function(){
+        // Hide loader if you have one
+        $(".main-loading").hide();
+
+
+    // Autofill profile form
+    $("#first_name").val(sessionStorage.getItem("first_name"));
+    $("#last_name").val(sessionStorage.getItem("last_name"));
+    $("#email").val(sessionStorage.getItem("email"));
+    $("#phone_no").val(sessionStorage.getItem("phone_no"));
+    $("#guid").val(sessionStorage.getItem("guid"));
+    $("#user_id").val(sessionStorage.getItem("user_id"));
+
+    if(sessionStorage.getItem("profile_image")){
+        $("#profile-image").attr("src", sessionStorage.getItem("profile_image"));
+    }
+
+    // Profile image upload preview
+    $("#upload-profile").click(function(e){ e.preventDefault(); $("#fileInput").click(); });
+    $("#fileInput").change(function(){
+        let reader = new FileReader();
+        reader.onload = function(e){ $("#profile-image").attr("src", e.target.result); };
+        reader.readAsDataURL(this.files[0]);
+    });
+
+    // ---------------- PROFILE UPDATE ----------------
+    $("#update-profile").validate({
+        rules:{
+            first_name: {required:true},
+            last_name: {required:true},
+            phone_no: {required:true, minlength:10, maxlength:10}
+        },
+        submitHandler:function(form){
+            let formData = new FormData(form);
+            formData.append("guid", $("#guid").val());
+            
+            $.ajax({
+                url: apipath + "/guest/profile",
+                type:"POST",
+                data: formData,
+                contentType:false,
+                processData:false,
+                success:function(res){
+                    if(res.status==200){
+                        // Update sessionStorage
+                        sessionStorage.setItem("user_id", res.data.user_id);
+                        sessionStorage.setItem("guid", res.data.guid);
+                        sessionStorage.setItem("email", res.data.email);
+                        sessionStorage.setItem("first_name", res.data.first_name);
+                        sessionStorage.setItem("last_name", res.data.last_name);
+                        sessionStorage.setItem("phone_no", res.data.phone_no);
+                        sessionStorage.setItem("profile_image", res.data.profile_image);
+
+                        Swal.fire("Success","Profile updated successfully!","success");
+                    } else {
+                        Swal.fire("Error", res.message, "error");
+                    }
+                },
+                error:function(){ Swal.fire("Error","Something went wrong!","error"); }
+            });
+            return false;
+        }
+    });
+
+    // ---------------- CHANGE PASSWORD ----------------
+    $("#change-password").validate({
+        submitHandler:function(form){
+            let newPassword = $("#new_password").val();
+            let confirmPassword = $("#new_password_confirmation").val();
+            
+            if(newPassword === "" && confirmPassword === "") return false;
+            if(newPassword === "" || confirmPassword === "") {
+                Swal.fire("Warning","Both password fields are required","warning");
+                return false;
+            }
+
+            $.ajax({
+                url: apipath + "/guest/change-password",
+                type: "POST",
+                data:{
+                    guid: $("#guid").val(),
+                    new_password: newPassword,
+                    confirm_password: confirmPassword
+                },
+                success:function(res){
+                    if(res.status==200){
+                        Swal.fire("Success","Password changed successfully!","success");
+                        form.reset();
+                    } else { Swal.fire("Error", res.message, "error"); }
+                },
+                error:function(){ Swal.fire("Error","Something went wrong!","error"); }
+            });
+
+            return false;
+        }
+    });
+
+    });
+    </script>
+
+    @endsection

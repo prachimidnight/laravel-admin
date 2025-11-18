@@ -57,6 +57,8 @@ Route::prefix('guest')->controller(GuestController::class)->group(function() {
     Route::post('/list','list');
     Route::post('/update','update');
     Route::post('/delete','delete');
+    Route::post('/profile', 'profile');              
+    Route::post('/change-password', 'changePassword'); 
     Route::post('/login','login');
     Route::post('/logout','logout');
 });

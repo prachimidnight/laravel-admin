@@ -99,7 +99,7 @@ if ($userdata && isset($userdata[0])) {
     $token = $userdata[0]['token'] ?? '';
     $role_id = $userdata[0]['role_id'] ?? '';
     $guid = $userdata[0]['guid'] ?? '';
-   
+
 } else {
 
     // return redirect()->route('login');
