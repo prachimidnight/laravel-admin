@@ -137,7 +137,7 @@
                 if (result.status == 200) {
 
                             if (result.data.length > 0) {
-                            var userPhoto = result.data[0].user_profile_photo;
+                            var userPhoto = result.data[0].profile_image;
                             var devLogo = result.data[0].developer_logo;
 
                             var fallbackImage = 'resources/uploads/1723887504blank-profile-picture-973460_960_720.webp'; // Use your actual default path

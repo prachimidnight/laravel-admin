@@ -52,7 +52,7 @@ class GuestController extends Controller
             'address' => $request->address,
             'profile_image' => $imageFullPath,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => $request->password ? Hash::make($request->password) : null,
             'whatsapp_no' => $request->whatsapp_no,
             'is_whatsapp' => $request->boolean('is_whatsapp'),
             'is_send' => $request->boolean('is_send',0),
@@ -110,7 +110,7 @@ class GuestController extends Controller
         ]);
     }
 
-    public function update(Request $request)
+   public function update(Request $request)
     {
         $valid = Validator::make($request->all(), [
             "guid" => "required"
@@ -118,25 +118,79 @@ class GuestController extends Controller
 
         if ($valid->fails()) {
             return response()->json(['status' => 400, 'errors' => $valid->errors()], 400);
-        } else {
-            $data = new Guest(); // ✅ Use Guest model instead of role
-            $newrequest = $request->except(['guid']);
-            $request->request->add(['updated_by' => $request->input('updated_by')]);
-            $result = $data->where('guid', $request->input('guid'))->update($newrequest);
+        }
 
-            if ($result) {
-                return response()->json([
-                    'status' => 200,
-                    'message' => 'Guest updated successfully',
-                    'data' => []
-                ]);
-            } else {
-                return response()->json([
-                    'status' => 400,
-                    'errors' => 'Something went wrong.'
-                ], 400);
-            }
-        }   
+        // Check guest exists
+        $guest = Guest::where('guid', $request->input('guid'))->first();
+
+        if (!$guest) {
+            return response()->json(['status' => 404, 'message' => 'Guest not found'], 404);
+        }
+
+        // Existing profile image
+        $imageFullPath = $guest->profile_image;
+
+        // Handle new profile image upload
+        if ($request->hasFile('profile_image')) {
+            $image = $request->file('profile_image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('uploads/profile'), $imageName);
+            $imageFullPath = env('APP_URL') . '/uploads/profile/' . $imageName;
+        }
+
+        // List all fields that can be updated
+        $updateData = [
+            'first_name'    => $request->input('first_name', $guest->first_name),
+            'last_name'     => $request->input('last_name', $guest->last_name),
+            'phone_no'      => $request->input('phone_no', $guest->phone_no),
+            'whatsapp_no'   => $request->input('whatsapp_no', $guest->whatsapp_no),
+            'address'       => $request->input('address', $guest->address),
+            'state_id'      => $request->input('state_id', $guest->state_id),
+            'country_id'    => $request->input('country_id', $guest->country_id),
+            'city_id'       => $request->input('city_id', $guest->city_id),
+            'description'   => $request->input('description', $guest->description),
+            'is_gift'       => $request->input('is_gift', $guest->is_gift),
+            'profile_image' => $imageFullPath,
+        ];
+
+        // Add updated_by if exists
+        if ($request->has('updated_by')) {
+            $updateData['updated_by'] = $request->input('updated_by');
+        }
+
+        // Update record
+        $result = Guest::where('guid', $request->input('guid'))->update($updateData);
+
+        if (! $result) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Unable to save guest'
+            ], 500);
+        }
+
+        // Fetch updated data
+        $guest->refresh();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Guest updated successfully',
+            'data' => [
+                'guest_id'      => $guest->guest_id,
+                'guid'          => $guest->guid,
+                'email'         => $guest->email,
+                'first_name'    => $guest->first_name,
+                'last_name'     => $guest->last_name,
+                'phone_no'      => $guest->phone_no,
+                'whatsapp_no'   => $guest->whatsapp_no,
+                'address'       => $guest->address,
+                'state_id'      => $guest->state_id,
+                'country_id'    => $guest->country_id,
+                'city_id'       => $guest->city_id,
+                'description'   => $guest->description,
+                'is_gift'       => $guest->is_gift,  
+                'profile_image' => $guest->profile_image
+            ]
+        ]);
     }
 
     public function delete(Request $request)

@@ -76,7 +76,7 @@ $pagetype = 'Profile';
                                                         <img class="avatar avatar-xl cursor-pointer" id="profile-image"
                                                             src="media/images/avatars/1.png" alt="Profile Image">
                                                         <input class="is-hidden" type="file" id="fileInput"
-                                                            name="user_profile_photo" accept="image/*">
+                                                            name="profile_image" accept="image/*">
                                                         <button class="btn btn-icon btn-sm btn-success rounded-circle"
                                                             id="upload-profile">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="24"
@@ -96,7 +96,7 @@ $pagetype = 'Profile';
                                             <div
                                                 class="column is-12-mobile is-12-tablet is-12-desktop is-12-widescreen col-form">
                                                 <input type="hidden" name="guest_id" id="guest_id" />
-                                                <input type="text" name="guid" id="guid" />
+                                                <input type="hidden" name="guid" id="guid" />
                                                 <button type="submit" class="btn btn-primary"
                                                     id="sbt">Submit</button>
                                             </div>
@@ -175,105 +175,122 @@ $pagetype = 'Profile';
         </div>
     </body>
     <script>
+        $(document).ready(function(){
+            // Hide loader if you have one
+            $(".main-loading").hide();
 
-    $(document).ready(function(){
-        // Hide loader if you have one
-        $(".main-loading").hide();
 
+        // Autofill profile form
+        $("#first_name").val(sessionStorage.getItem("first_name"));
+        $("#last_name").val(sessionStorage.getItem("last_name"));
+        $("#email").val(sessionStorage.getItem("email"));
+        $("#phone_no").val(sessionStorage.getItem("phone_no"));
+        $("#guid").val(sessionStorage.getItem("guid"));
+        $("#guest_id").val(sessionStorage.getItem("guest_id"));
+        // console.log(sessionStorage.getItem("phone_no"));
 
-    // Autofill profile form
-    $("#first_name").val(sessionStorage.getItem("first_name"));
-    $("#last_name").val(sessionStorage.getItem("last_name"));
-    $("#email").val(sessionStorage.getItem("email"));
-    $("#phone_no").val(sessionStorage.getItem("phone_no"));
-    $("#guid").val(sessionStorage.getItem("guid"));
-    $("#guest_id").val(sessionStorage.getItem("guest_id"));
-    console.log(sessionStorage.getItem("phone_no"));
-
-    if(sessionStorage.getItem("profile_image")){
-        $("#profile-image").attr("src", sessionStorage.getItem("profile_image"));
-    }
-
-    // Profile image upload preview
-    $("#upload-profile").click(function(e){ e.preventDefault(); $("#fileInput").click(); });
-    $("#fileInput").change(function(){
-        let reader = new FileReader();
-        reader.onload = function(e){ $("#profile-image").attr("src", e.target.result); };
-        reader.readAsDataURL(this.files[0]);
-    });
-
-    // ---------------- PROFILE UPDATE ----------------
-    $("#update-profile").validate({
-        rules:{
-            first_name: {required:true},
-            last_name: {required:true},
-            phone_no: {required:true, minlength:10, maxlength:10}
-        },
-        submitHandler:function(form){
-            var formData = new FormData(form);
-            formData.append("guid", $("#guid").val());
-            $.ajax({
-                url: apipath + "/guest/update",
-                type:"POST",
-                data: formData,
-                contentType:false,
-                processData:false,
-                success:function(res){
-                    if(res.status==200){
-                        // Update sessionStorage
-                        sessionStorage.setItem("guest_id", res.data.guest_id);
-                        sessionStorage.setItem("guid", res.data.guid);
-                        sessionStorage.setItem("email", res.data.email);
-                        sessionStorage.setItem("first_name", res.data.first_name);
-                        sessionStorage.setItem("last_name", res.data.last_name);
-                        sessionStorage.setItem("phone_no", res.data.phone_no);
-                        sessionStorage.setItem("profile_image", res.data.profile_image);
-
-                        Swal.fire("Success","Profile updated successfully!","success");
-                    } else {
-                        Swal.fire("Error", res.message, "error");
-                    }
-                },
-                error:function(){ Swal.fire("Error","Something went wrong!","error"); }
-            });
-            return false;
+        if(sessionStorage.getItem("profile_image")){
+            $("#profile-image").attr("src", sessionStorage.getItem("profile_image"));
         }
-    });
 
-    // ---------------- CHANGE PASSWORD ----------------
-    $("#change-password").validate({
+        // Profile image upload preview
+        $("#upload-profile").click(function(e){ e.preventDefault(); $("#fileInput").click(); });
+        $("#fileInput").change(function(){
+            let reader = new FileReader();
+            reader.onload = function(e){ $("#profile-image").attr("src", e.target.result); };
+            reader.readAsDataURL(this.files[0]);
+        });
+
+        // ---------------- PROFILE UPDATE ----------------
+        $("#update-profile").validate({
+            rules:{
+                first_name: {required:true},
+                last_name: {required:true},
+                phone_no: {required:true, minlength:10, maxlength:10}
+            },
+            submitHandler:function(form){
+                var formData = new FormData(form);
+                formData.append("guid", $("#guid").val());
+                $.ajax({
+                    url: apipath + "/guest/update",
+                    type:"POST",
+                    data: formData,
+                    contentType:false,
+                    processData:false,
+                    success:function(res){
+                        if(res.status==200){
+                            // Update sessionStorage
+                            sessionStorage.setItem("guest_id", res.data.guest_id);
+                            sessionStorage.setItem("guid", res.data.guid);
+                            sessionStorage.setItem("email", res.data.email);
+                            sessionStorage.setItem("first_name", res.data.first_name);
+                            sessionStorage.setItem("last_name", res.data.last_name);
+                            sessionStorage.setItem("phone_no", res.data.phone_no);
+                            sessionStorage.setItem("profile_image", res.data.profile_image);
+
+                            Swal.fire("Success","Profile updated successfully!","success");
+                            setTimeout(() => {
+                                            window.location.href = "{{URL('dashboard')}}";
+                                            }, 1000);
+                        } else {
+                            Swal.fire("Error", res.message, "error");
+                            
+                        }
+                    },
+                    error:function(){ Swal.fire("Error","Something went wrong!","error"); }
+                });
+                return false;
+            }
+        });
+        // ---------------- CHANGE PASSWORD ----------------
+        $("#change-password").validate({
+            rules: {
+            new_password: {
+                required: true,
+                minlength: 6
+            },
+            confirm_password: {
+                required: true,
+                equalTo: "#new_password"
+            }
+        },
+        messages: {
+            new_password: {
+                required: "Please enter new password",
+                minlength: "Password must be at least 6 characters"
+            },
+            confirm_password: {
+                required: "Please confirm your password",
+                equalTo: "Passwords do not match"
+            }
+        },
         submitHandler:function(form){
             let newPassword = $("#new_password").val();
             let confirmPassword = $("#new_password_confirmation").val();
             
-            if(newPassword === "" && confirmPassword === "") return false;
-            if(newPassword === "" || confirmPassword === "") {
-                Swal.fire("Warning","Both password fields are required","warning");
+            if(newPassword !== confirmPassword) {
+                Swal.fire("Warning","Passwords do not match","warning");
                 return false;
             }
 
-            $.ajax({
-                url: apipath + "/guest/change-password",
-                type: "POST",
-                data:{
-                    guid: $("#guid").val(),
-                    new_password: newPassword,
-                    confirm_password: confirmPassword
-                },
-                success:function(res){
-                    if(res.status==200){
-                        Swal.fire("Success","Password changed successfully!","success");
-                        form.reset();
-                    } else { Swal.fire("Error", res.message, "error"); }
-                },
-                error:function(){ Swal.fire("Error","Something went wrong!","error"); }
+                $.ajax({
+                    url: apipath + "/guest/change-password",
+                    type: "POST",
+                    data:{
+                        guid: $("#guid").val(),
+                        new_password: newPassword,
+                        confirm_password: confirmPassword
+                    },
+                    success:function(res){
+                        if(res.status==200){
+                            Swal.fire("Success","Password changed successfully!","success");
+                            form.reset();
+                        } else { Swal.fire("Error", res.message, "error"); }
+                    },
+                    error:function(){ Swal.fire("Error","Something went wrong!","error"); }
+                });
+                return false; }
             });
-
-            return false;
-        }
-    });
-
-    });
+        });
     </script>
-
     @endsection

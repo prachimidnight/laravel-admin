@@ -86,13 +86,13 @@
 $userdata = Session::get('userdata');
 
 $guest_id = '';
-$user_profile_photo = '';
+$profile_image = '';
 $guid = '';
 
 if ($userdata && isset($userdata[0])) {
 
     $guest_id = $userdata[0]['guest_id'] ?? '';
-    $user_profile_photo = $userdata[0]['user_profile_photo'] ?? '';
+    $profile_image = $userdata[0]['profile_image'] ?? '';
     $guid = $userdata[0]['guid'] ?? '';
 } else {
 
@@ -102,11 +102,11 @@ if ($userdata && isset($userdata[0])) {
 
 <script>
     var guest_id = '{{ $guest_id }}';
-    var user_profile_photo = '{{ $user_profile_photo }}';
+    var profile_image = '{{ $profile_image }}';
     var guid = '{{ $guid }}';
 
     sessionStorage.setItem('guest_id', guest_id);
-    sessionStorage.setItem('user_profile_photo', user_profile_photo);
+    sessionStorage.setItem('profile_image', profile_image);
     sessionStorage.setItem('guid', guid);
  
     function slugify(content) {
