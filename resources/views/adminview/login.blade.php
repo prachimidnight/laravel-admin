@@ -13,7 +13,7 @@ $pagetype = 'Login';
 
     <div class="authentication-wrapper">
         <div class="authentication-card card">
-            <img class="auth-logo-element" src="{{URL::asset('resources/views/adminview/assets')}}/images/avatars/loginprofile.png" alt="Logo" />
+            <img class="auth-logo-element" src="{{URL::asset('resources/views/adminview/assets')}}/images/avatars/OIP.jpeg" alt="Logo" />
             <form class="form" id="frm-login" novalidate>
                 <div id="login" class="auth-item">
                     <div class="columns is-multiline">

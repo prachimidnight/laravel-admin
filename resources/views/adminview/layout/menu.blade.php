@@ -19,9 +19,9 @@
     </a>
     <div class="theme-menu-logo">
         <img class="theme-menu-logo-default"
-            src="{{ URL::asset('resources/views/adminview/assets') }}/images/avatars/loginprofile.png" alt="Logo" />
+            src="{{ URL::asset('resources/views/adminview/assets') }}/images/avatars/OIP.jpeg" alt="Logo" />
         <img class="theme-menu-logo-minimize"
-            src="{{ URL::asset('resources/views/adminview/assets') }}/images/avatars/loginprofile.png" alt="Logo" />
+            src="{{ URL::asset('resources/views/adminview/assets') }}/images/avatars/OIP.jpeg" alt="Logo" />
     </div>
     <div class="theme-menu-detail theme-scrollbar">
         <div class="menu-item-wrapper">

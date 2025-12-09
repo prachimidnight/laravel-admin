@@ -285,7 +285,8 @@ $pagetype = 'Guest';
         </div>
     </body>
     <!-- HTML code remains unchanged -->
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
     <script>
         $(document).ready(function() {
             getallguest();
@@ -762,32 +763,71 @@ $pagetype = 'Guest';
                 });
             }
         });
-        $("#btn-export").click(function (e) {
-        e.preventDefault();
+        $(document).on('click', '#btn-export', function (e) {
+            e.preventDefault();
 
-        $.ajax({
-            url: apipath + "/guest/export",
-            type: "POST",
-            xhrFields: { responseType: "blob" },
+            $.ajax({
+                url: apipath + "/guest/list",
+                type: "POST",
+                dataType: "json",
+                data: { offset: 0, limit: 100},
+                success: function (response) {
 
-            success: function (data, status, xhr) {
-                let fileName = "guest_export.xlsx";
+                    if (!response.data || response.data.length === 0) {
+                        Swal.fire("No data!", "No records found for export.", "warning");
+                        return;
+                    }
 
-                // Get filename from header if available
-                let header = xhr.getResponseHeader("Content-Disposition");
-                if (header?.includes("filename=")) {
-                    fileName = header.split("filename=")[1];
+                    // Convert JSON to sheet
+                    let excelData = response.data.map(item => ({
+                        "First Name": item.first_name || '',
+                        "Last Name": item.last_name || '',
+                        "Email": item.email || '',
+                        "Phone": item.phone_no || '',
+                        "WhatsApp": item.whatsapp_no || '',
+                        "Address": item.address || '',
+                        "Role": item.role_name || '',
+                        "Gift": item.is_gift == 1 ? 'Yes' : 'No',
+                        "create_at": item.created_at ? new Date(item.created_at).toLocaleString() : '',
+                        "update_at": item.updated_at ? new Date(item.updated_at).toLocaleString() : ''
+                    }));
+
+                    let ws = XLSX.utils.json_to_sheet(excelData);
+
+                    // ---- ADD BORDERS TO ALL CELLS ----
+                    const range = XLSX.utils.decode_range(ws['!ref']);
+                    for (let R = range.s.r; R <= range.e.r; ++R) {
+                        for (let C = range.s.c; C <= range.e.c; ++C) {
+                            let cellRef = XLSX.utils.encode_cell({ r: R, c: C });
+                            if (!ws[cellRef]) continue;
+
+                            ws[cellRef].s = {
+                                border: {
+                                    top:    { style: "thin", color: { rgb: "000000" } },
+                                    bottom: { style: "thin", color: { rgb: "000000" } },
+                                    left:   { style: "thin", color: { rgb: "000000" } },
+                                    right:  { style: "thin", color: { rgb: "000000" } }
+                                }
+                            };
+                        }
+                    }
+
+                    // Auto width
+                    ws['!cols'] = [
+                        { wch: 15 }, { wch: 15 }, { wch: 25 },
+                        { wch: 15 }, { wch: 15 }, { wch: 25 },
+                        { wch: 15 }, { wch: 10 }, { wch: 20 }, { wch: 20 }
+                    ];
+
+                    // Workbook create and download
+                    let wb = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(wb, ws, "Guests");
+
+                    XLSX.writeFile(wb, "guest_export.xlsx");
                 }
-
-                // Create download
-                let url = URL.createObjectURL(new Blob([data]));
-                $("<a>").attr({ href: url, download: fileName })[0].click();
-            },
-
-            error: function () {
-                Swal.fire("Export Failed!", "Unable to export data.", "error");
-            }
+            });
         });
-        });
+
+
     </script>
 @endsection
