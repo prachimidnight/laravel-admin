@@ -31,6 +31,7 @@ $pagetype = 'UserRoles';
                                 <input type="text" id="search" name="search" class="form-control"
                                     placeholder="Search">
                             </div>
+                            
                             <a class="btn btn-primary" id="btn-add-user" open-sidebar="add-users-sidebar"
                                 href="#">Add</a>
                         </div>

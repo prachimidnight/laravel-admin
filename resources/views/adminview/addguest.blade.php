@@ -118,6 +118,7 @@ $pagetype = 'Add Guest';
                                             </div>
                                         </div>
 
+                                
                                         <div class="column is-4-mobile is-4-tablet is-4-desktop is-4-widescreen col-form">
                                             <div class="form-group">
                                                 <label class="form-label">Country <span class="required-asterisk">*</span></label>
@@ -144,6 +145,15 @@ $pagetype = 'Add Guest';
                                                 </select>
                                             </div>
                                         </div>
+
+                                        <div class="column is-4-mobile is-4-tablet is-4-desktop is-4-widescreen col-form">
+                                            <div class="form-group">
+                                                <label class="form-label">Role <span class="required-asterisk">*</span></label>
+                                                <select class="form-control" name="role" id="role" required>
+                                                    <option value="">Select Role</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                         
 
                                         <div class="column is-12-mobile is-12-tablet is-12-desktop is-12-widescreen col-form">
@@ -159,7 +169,6 @@ $pagetype = 'Add Guest';
                                                 <textarea class="form-control" name="description" id="description" rows="4" ></textarea>
                                             </div>
                                         </div>
-                                        
                                         <div class="is-flex is-flex-wrap-wrap is-gap-3 pt-5 pl-3">
                                             <input type="hidden" name="guest_id" id="guest_id" />
                                             <button id="btn-add-project" class="btn btn-primary">Add </button>
@@ -185,7 +194,25 @@ $pagetype = 'Add Guest';
             });
         
             $(document).ready(function () {
-                loadCountries();
+                function loadRoles() {
+                $.ajax({
+                    url: apipath + "/role/list",
+                    type: "POST",
+                    dataType: "json",
+                    success: function (response) {
+                        $('#role').html('<option value="">Select Role</option>');
+                        $.each(response.data, function (index, item) {
+                            $('#role').append(`<option value="${item.role_id}">${item.role_name}</option>`);
+                        });
+                    },
+                    error: function (xhr) {
+                        console.error("Error loading roles:", xhr.responseText);
+                    }
+                });
+            }
+
+            // Load roles on page load
+            loadRoles();
 
                 // Load all countries
                 function loadCountries() {
@@ -204,7 +231,7 @@ $pagetype = 'Add Guest';
                         }
                     });
                 }
-
+                loadCountries();
                 // Load states when a country is selected
                 $('#country').on('change', function () {
                     var country_id = $(this).val();
@@ -267,6 +294,9 @@ $pagetype = 'Add Guest';
             $(".btn-primary").html('Loading...').attr('disabled', true);
 
             var formData = new FormData(form);
+
+            formData.append('role_id', $('#role').val());
+            formData.append('role_name', $('#role option:selected').text());
             
             // Get the selected text (names) instead of values (IDs)
             var countryName = $('#country option:selected').text();
@@ -303,6 +333,7 @@ $pagetype = 'Add Guest';
                     if (data.status == 200 || data.status == true) {
                         $(".form-control").val("");
                         $("#is_whatsapp").prop("checked", false);
+                        $('#role').val('');
                         $('#country').val('');
                         $('#state').html('<option value="">Select State</option>');
                         $('#city').html('<option value="">Select City</option>');

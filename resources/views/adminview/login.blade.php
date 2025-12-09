@@ -13,7 +13,7 @@ $pagetype = 'Login';
 
     <div class="authentication-wrapper">
         <div class="authentication-card card">
-            <img class="auth-logo-element" src="{{URL::asset('resources/views/adminview/assets')}}/images/" alt="Logo" />
+            <img class="auth-logo-element" src="{{URL::asset('resources/views/adminview/assets')}}/images/avatars/loginprofile.png" alt="Logo" />
             <form class="form" id="frm-login" novalidate>
                 <div id="login" class="auth-item">
                     <div class="columns is-multiline">
@@ -24,16 +24,23 @@ $pagetype = 'Login';
                             </div>
                         </div>
                         <div class="column is-12 col-form">
-                            <div class="form-group">
+                            <div class="form-group" style="position: relative;"> 
                                 <label class="form-label">Password <span class="required-asterisk">*</span></label>
-                                <div class="input-group form-control" style="border: none">
-                                    <input type="password" class="" name="password" id="password" autocomplete="off" />
-                                    <span class="input-group-password" onclick="togglePasswordVisibility()">
-                                        <i class="fa fa-eye-slash" id="togglePasswordIcon"></i>
-                                    </span>
-                                </div>
+                                
+                                <input type="password" class="form-control" name="password" id="password" autocomplete="off" />
+                                
+                                <span class="input-group-password" onclick="togglePasswordVisibility()" 
+                                    style="position:absolute; right:15px; cursor:pointer; 
+                                           top: 50%; /* Start alignment from 50% of parent form-group */
+                                           padding-top: 25px; /* Adjust based on label height */
+                                           transform: translateY(-50%);">
+                                    
+                                    <i class="fa fa-eye-slash" id="togglePasswordIcon"></i>
+                                </span>
                             </div>
                         </div>
+                        </div>
+                        
                         <div class="column is-12 col-form">
                             <button id="hoot_login_signin_submit" class="btn btn-black  w-100" type="submit">Login</button>
                         </div>

@@ -33,7 +33,7 @@ $pagetype = 'Guest';
                             <h1 class="fs-5 fw-600 lh-1">Guest</h1>
                             <ul class="breadcrumbs mt-1">
                                 <li>
-                                    <a href="masters">Masters</a>
+                                    <a href="dashboard">Dashboard</a>
                                 </li>
                                 <li class="active">Guest</li>
                             </ul>
@@ -43,6 +43,9 @@ $pagetype = 'Guest';
                                 <input type="text" id="search" name="search" class="form-control"
                                     placeholder="Search">
                             </div>
+                            <a class="btn btn-primary" id="btn-export" href="#">
+                                    Export
+                                </a>
                             <a class="btn btn-primary btn-add-user" id="btn-add-user" open-sidebar="add-guest-sidebar" href="addguest">Add</a>
                         </div>
                     </div>
@@ -67,6 +70,10 @@ $pagetype = 'Guest';
                                                 </div>
                                             </th>
                                             <th class="th-with-dropdown">Address
+                                                <div class="table-filter">
+                                                </div>
+                                            </th>
+                                            <th class="th-with-dropdown">Role
                                                 <div class="table-filter">
                                                 </div>
                                             </th>
@@ -580,9 +587,11 @@ $pagetype = 'Guest';
                                     ${item.address ? `${item.address}, ${item.city_name || ''}, ${item.state_name || ''}` : '-'}
                                 </td>
                                 
-                                <td>
-                                    <input type="checkbox" class="gift-checkbox" data-guid="${item.guid}" ${item.is_gift == 1 ? 'checked' : ''} />
-                                </td>
+                                <td>${item.role_name ? item.role_name : '-'}</td>
+                            <td>
+                                <input type="checkbox" class="gift-checkbox" data-guid="${item.guid}" ${item.is_gift == 1 ? 'checked' : ''} />
+                            </td>
+
                             
                                 <td>
                                     <div class="theme-date-list">
@@ -752,6 +761,33 @@ $pagetype = 'Guest';
                     text: "Please type 'DELETE' in the input box to confirm deletion.",
                 });
             }
+        });
+        $("#btn-export").click(function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: apipath + "/guest/export",
+            type: "POST",
+            xhrFields: { responseType: "blob" },
+
+            success: function (data, status, xhr) {
+                let fileName = "guest_export.xlsx";
+
+                // Get filename from header if available
+                let header = xhr.getResponseHeader("Content-Disposition");
+                if (header?.includes("filename=")) {
+                    fileName = header.split("filename=")[1];
+                }
+
+                // Create download
+                let url = URL.createObjectURL(new Blob([data]));
+                $("<a>").attr({ href: url, download: fileName })[0].click();
+            },
+
+            error: function () {
+                Swal.fire("Export Failed!", "Unable to export data.", "error");
+            }
+        });
         });
     </script>
 @endsection

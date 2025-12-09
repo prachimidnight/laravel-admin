@@ -71,45 +71,6 @@ class GuestController extends Controller
         ], 200);
     }
 
-    public function list(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'offset' => 'nullable|integer|min:0',
-            'limit' => 'nullable|integer|min:1|max:100',
-            'sortby' => 'nullable|string',
-            'sorttype' => 'nullable|in:asc,desc',
-            'search' => 'nullable|string',
-            'guest_id' => 'nullable|integer',
-            'role_id' => 'nullable|integer',
-            'city_id' => 'nullable|integer',
-            'state_id' => 'nullable|integer',
-            'country_id' => 'nullable|integer',
-        ]);
-    
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $filters = $request->only([
-            'offset', 'limit', 'sortby', 'sorttype', 
-            'search', 'guest_id', 'role_id', 'city_id', 
-            'state_id', 'country_id'
-        ]);
-
-        $guestModel = new guest();
-        $result = $guestModel->getallguest($filters);
-
-        return response()->json([
-            'status' => true,
-            'count' => $result['total'],
-            'data' => $result['data']
-        ]);
-    }
-
    public function update(Request $request)
     {
         $valid = Validator::make($request->all(), [
@@ -225,6 +186,45 @@ class GuestController extends Controller
         }
     }
    
+    public function list(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'offset' => 'nullable|integer|min:0',
+            'limit' => 'nullable|integer|min:1|max:100',
+            'sortby' => 'nullable|string',
+            'sorttype' => 'nullable|in:asc,desc',
+            'search' => 'nullable|string',
+            'guest_id' => 'nullable|integer',
+            'role_id' => 'nullable|integer',
+            'city_id' => 'nullable|integer',
+            'state_id' => 'nullable|integer',
+            'country_id' => 'nullable|integer',
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $filters = $request->only([
+            'offset', 'limit', 'sortby', 'sorttype', 
+            'search', 'guest_id', 'role_id', 'city_id', 
+            'state_id', 'country_id'
+        ]);
+
+        $guestModel = new guest();
+        $result = $guestModel->getallguest($filters);
+
+        return response()->json([
+            'status' => true,
+            'count' => $result['total'],
+            'data' => $result['data']
+        ]);
+    }
+
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -283,6 +283,59 @@ class GuestController extends Controller
         return response()->json(['status' => 200, 'message' => 'Password updated successfully']);
     }
     
+    public function exportExcel()
+    {
+        $filename = "guest_export_" . date('Ymd_His') . ".xls";
+        $guests = \App\Models\Guest::all();
+    
+        $xml = '<?xml version="1.0"?>
+        <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+                  xmlns:o="urn:schemas-microsoft-com:office:office"
+                  xmlns:x="urn:schemas-microsoft-com:office:excel"
+                  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+    
+            <Worksheet ss:Name="Guests">
+                <Table>
+    
+                    <Row>
+                        <Cell><Data ss:Type="String">Order</Data></Cell>
+                        <Cell><Data ss:Type="String">Name</Data></Cell>
+                        <Cell><Data ss:Type="String">Email</Data></Cell>
+                        <Cell><Data ss:Type="String">Phone</Data></Cell>
+                        <Cell><Data ss:Type="String">WhatsApp</Data></Cell>
+                        <Cell><Data ss:Type="String">Address</Data></Cell>
+                        <Cell><Data ss:Type="String">Role</Data></Cell>
+                        <Cell><Data ss:Type="String">Gift</Data></Cell>
+                        <Cell><Data ss:Type="String">Created</Data></Cell>
+                        <Cell><Data ss:Type="String">Updated</Data></Cell>
+                    </Row>';
+    
+        $i = 1;
+        foreach ($guests as $g) {
+            $xml .= '<Row>
+                        <Cell><Data ss:Type="Number">' . $i++ . '</Data></Cell>
+                        <Cell><Data ss:Type="String">' . ($g->first_name . " " . $g->last_name) . '</Data></Cell>
+                        <Cell><Data ss:Type="String">' . $g->email . '</Data></Cell>
+                        <Cell><Data ss:Type="String">' . $g->phone_no . '</Data></Cell>
+                        <Cell><Data ss:Type="String">' . $g->whatsapp_no . '</Data></Cell>
+                        <Cell><Data ss:Type="String">' . htmlspecialchars($g->address) . '</Data></Cell>
+                        <Cell><Data ss:Type="String">' . ($g->role->role_name ?? '') . '</Data></Cell>
+                        <Cell><Data ss:Type="String">' . ($g->is_gift ? "Yes" : "No") . '</Data></Cell>
+                        <Cell><Data ss:Type="String">' . date("d-m-Y", strtotime($g->created_at)) . '</Data></Cell>
+                        <Cell><Data ss:Type="String">' . date("d-m-Y", strtotime($g->updated_at)) . '</Data></Cell>
+                    </Row>';
+        }
+    
+        $xml .= '
+                </Table>
+            </Worksheet>
+        </Workbook>';
+    
+        return response($xml)
+            ->header('Content-Type', 'application/vnd.ms-excel')
+            ->header('Content-Disposition', "attachment; filename=$filename");
+    }
+    
   
     public function set_session(Request $request)
     {
@@ -297,6 +350,7 @@ class GuestController extends Controller
         return redirect()->route('login');
         // return response()->json(['status' => 200, 'message' => 'Logged out successfully']);
     }
+
 }
 
     

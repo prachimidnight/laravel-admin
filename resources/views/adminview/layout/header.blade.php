@@ -65,8 +65,8 @@
             </div>
             <div class="dropdown is-flex-shrink-0">
                 <button class="bg-transparent border-0 fw-700" style="font-size:16px;" type="button" data-toggle="dropdown">
-                    <img class="avatar avatar-sm" id="profile-image2" src="" alt="Avatars"><span class="log-in-user"></span>
-                </button>
+                    <img class="avatar avatar-sm" id="profile-image2" src="{{ asset('public/uploads/profile/profile1.png') }}" alt="Avatars" style="width:50px; height:50px; border-radius:50%;">
+                    </button>
                 <div class="dropdown-menu pt-1 pb-1">
                     <a class="dropdown-item" href="profile">Profile</a>
                     {{-- <a class="dropdown-item" href="/">Logout</a> --}}

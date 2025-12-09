@@ -31,6 +31,7 @@ $pagetype = 'State';
                                 <input type="text" id="search" name="search" class="form-control"
                                     placeholder="Search">
                             </div>
+                            
                             <a class="btn btn-primary" id="btn-add-user" open-sidebar="add-users-sidebar"
                                 href="#">Add</a>
                         </div>
@@ -161,6 +162,16 @@ $pagetype = 'State';
                     <form class="form" action="">
                         <div class="theme-sidebar-content theme-scrollbar">
                             <div class="columns is-multiline">
+
+                                <div class="column is-12 col-form">
+                                    <div class="form-group">
+                                        <label class="form-label">Country<span class="required-asterisk">*</span></label>
+                                        <select name="country_id" id="country_id" class="form-control" required>
+                                            <option value="">Select Country</option>
+                                            <!-- Options will be populated dynamically -->
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="column is-12 col-form">
                                     <div class="form-group">
                                         <label class="form-label">State Name<span
@@ -235,6 +246,7 @@ $pagetype = 'State';
         $(document).on("click", "#btn-add-user", function() {
             $('#guid').val(''); // Ensure guid is empty for new entries
             $('#state_name').val('');
+            getCountries()
             $('#add-users-sidebar').addClass('show');
             $('.theme-sidebar-title').html("Add State");
             $('#sbt').html("Add");
@@ -247,6 +259,7 @@ $pagetype = 'State';
 
             var state_name = $(this).data("state_name");
             $("#state_name").val(state_name);
+            var country_id = $(this).data("country_id") || '';
 
             $('#sbt').html("Save changes");
             $('.theme-sidebar-title').html("Edit State");
@@ -257,7 +270,7 @@ $pagetype = 'State';
           $("#add-users-sidebar form").submit(function(e) {
             $(".btn-primary").html('Loading...').attr('disabled', true);
             e.preventDefault();
-        }).validate({
+            }).validate({
             submitHandler: function(form) {
                 var formData = new FormData(form);
 
@@ -307,8 +320,27 @@ $pagetype = 'State';
                 return false;
             }
         });
+
+            function getCountries() {
+            $.ajax({
+                type: 'POST',
+                url: apipath + '/country/list', // your API endpoint for countries
+                dataType: 'json',
+                success: function(response) {
+                    $('#country_id').empty();
+                    $('#country_id').append('<option value="">Select Country</option>');
+                    $.each(response.data, function(index, item) {
+                        $('#country_id').append(`<option value="${item.country_id}">${item.country_name}</option>`);
+                    });
+                },
+                error: function(err) {
+                    console.log('Error fetching countries:', err);
+                }
+            });
+        }
+
           //Get all state
-          function getallstate(page = 1, offset = 0, limit = pagelimit, filterData = "") {
+        function getallstate(page = 1, offset = 0, limit = pagelimit, filterData = "") {
             var formdata = {
                 offset: offset,
                 limit: limit,

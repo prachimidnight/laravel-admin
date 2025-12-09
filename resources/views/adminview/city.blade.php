@@ -31,6 +31,7 @@ $pagetype = 'City';
                                 <input type="text" id="search" name="search" class="form-control"
                                     placeholder="Search">
                             </div>
+                            
                             <a class="btn btn-primary" id="btn-add-user" open-sidebar="add-users-sidebar"
                                 href="#">Add</a>
                         </div>
@@ -161,6 +162,27 @@ $pagetype = 'City';
                     <form class="form" action="">
                         <div class="theme-sidebar-content theme-scrollbar">
                             <div class="columns is-multiline">
+
+                                <div class="column is-12 col-form">
+                                    <div class="form-group">
+                                        <label class="form-label">Country<span class="required-asterisk">*</span></label>
+                                        <select name="country_id" id="country_id" class="form-control" required>
+                                            <option value="">Select Country</option>
+                                            <!-- Options will be populated dynamically -->
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="column is-12 col-form">
+                                    <div class="form-group">
+                                        <label class="form-label">State<span class="required-asterisk">*</span></label>
+                                        <select name="state_id" id="state_id" class="form-control" required>
+                                            <option value="">Select State</option>
+                                            <!-- Options will be populated dynamically -->
+                                        </select>
+                                    </div>
+                                </div>
+
                                 <div class="column is-12 col-form">
                                     <div class="form-group">
                                         <label class="form-label">City Name<span
@@ -235,6 +257,8 @@ $pagetype = 'City';
         $(document).on("click", "#btn-add-user", function() {
             $('#guid').val(''); // Ensure guid is empty for new entries
             $('#city_name').val('');
+            getCountries()
+            getstates()
             $('#add-users-sidebar').addClass('show');
             $('.theme-sidebar-title').html("Add City");
             $('#sbt').html("Add");
@@ -247,8 +271,18 @@ $pagetype = 'City';
             $("#guid").val(guid);
 
             var city_name = $(this).data("city_name");
+            var country_id = $(this).data("country_id"); // make sure you pass this in your data attributes
+            var state_id = $(this).data("state_id"); 
             $("#city_name").val(city_name);
 
+            getCountries()
+            getstates()
+
+            setTimeout(function() {
+            if(country_id) $('#country_id').val(country_id);
+            if(state_id) $('#state_id').val(state_id);
+            }, 300); 
+        
             $('#sbt').html("Save changes");
             $('.theme-sidebar-title').html("Edit City");
             $('#add-users-sidebar').addClass('active');
@@ -309,6 +343,42 @@ $pagetype = 'City';
                 return false;
             }
         });
+
+          function getCountries() {
+            $.ajax({
+                type: 'POST',
+                url: apipath + '/country/list', // your API endpoint for countries
+                dataType: 'json',
+                success: function(response) {
+                    $('#country_id').empty();
+                    $('#country_id').append('<option value="">Select Country</option>');
+                    $.each(response.data, function(index, item) {
+                        $('#country_id').append(`<option value="${item.country_id}">${item.country_name}</option>`);
+                    });
+                },
+                error: function(err) {
+                    console.log('Error fetching countries:', err);
+                }
+            });
+        }
+
+        function getstates() {
+        $.ajax({
+            type: 'POST',
+            url: apipath + '/state/list', // your API endpoint for countries
+            dataType: 'json',
+            success: function(response) {
+                $('#state_id').empty();
+                $('#state_id').append('<option value="">Select Country</option>');
+                $.each(response.data, function(index, item) {
+                    $('#state_id').append(`<option value="${item.state_id}">${item.state_name}</option>`);
+                });
+            },
+            error: function(err) {
+                console.log('Error fetching countries:', err);
+            }
+        });
+    }
 
         //Get all city
         function getallcity(page = 1, offset = 0, limit = pagelimit, filterData = "") {
