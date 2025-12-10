@@ -211,7 +211,6 @@ $pagetype = 'Add Guest';
                 });
             }
 
-            // Load roles on page load
             loadRoles();
 
                 // Load all countries
@@ -232,7 +231,6 @@ $pagetype = 'Add Guest';
                     });
                 }
                 loadCountries();
-                // Load states when a country is selected
                 $('#country').on('change', function () {
                     var country_id = $(this).val();
                     $('#state').html('<option value="">Select State</option>');
@@ -260,7 +258,6 @@ $pagetype = 'Add Guest';
                     }
                 });
 
-                // Load cities when a state is selected
                 $('#state').on('change', function () {
                     var state_id = $(this).val();
                     $('#city').html('<option value="">Select City</option>');
@@ -287,7 +284,6 @@ $pagetype = 'Add Guest';
                     }
                 });
             });
-            // Handle Add Guest form submit
 
             $("#addproject").validate({
             submitHandler: function(form) {

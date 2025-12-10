@@ -13,13 +13,48 @@ $pagetype = 'Guest';
 
         .wrap-text {
             white-space: normal;
-            /* Allow wrapping */
             word-break: break-word;
-            /* Break long words */
         }
 
-        .required-asterisk {
-            color: red;
+        /* Dropdown Styles */
+        .dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .dropdown-menu {
+            margin-top: 5px !important;
+        }
+        .custom-loading-popup {
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+
+        .custom-loading-popup .swal2-title {
+            color: #fff !important;
+            font-size: 1.5rem !important;
+            margin-bottom: 20px !important;
+        }
+
+        .custom-loading-text {
+            color: rgba(255, 255, 255, 0.9) !important;
+            margin-bottom: 25px !important;
+        }
+
+        .custom-loading-popup .swal2-loader {
+            border: 4px solid rgba(255, 255, 255, 0.3) !important;
+            border-top-color: #fff !important;
+            width: 60px !important;
+            height: 60px !important;
+            animation: swal2-rotate 1s linear infinite !important;
+        }
+
+        @keyframes swal2-rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .swal2-container {
+            backdrop-filter: blur(3px);
         }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf/notyf.min.css">
@@ -43,9 +78,36 @@ $pagetype = 'Guest';
                                 <input type="text" id="search" name="search" class="form-control"
                                     placeholder="Search">
                             </div>
+                            
+                            <!-- Sort Button with Dropdown -->
+                            <div class="dropdown" style="position: relative; display: inline-block;">
+                                <button class="btn btn-primary" id="btn-sort">
+                                    Sort
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 5px;">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </button>
+                                <div class="dropdown-menu" id="sort-dropdown" style="display: none; position: absolute; background: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); min-width: 150px; z-index: 1000; margin-top: 5px;">
+                                    <a href="#" class="dropdown-item sort-option" data-sort="asc" style="display: block; padding: 10px 15px; text-decoration: none; color: #333; transition: background 0.2s;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px; vertical-align: middle;">
+                                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                                            <polyline points="19 12 12 19 5 12"></polyline>
+                                        </svg>
+                                        Ascending (A-Z)
+                                    </a>
+                                    <a href="#" class="dropdown-item sort-option" data-sort="desc" style="display: block; padding: 10px 15px; text-decoration: none; color: #333; transition: background 0.2s;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px; vertical-align: middle;">
+                                            <line x1="12" y1="19" x2="12" y2="5"></line>
+                                            <polyline points="19 12 12 5 5 12"></polyline>
+                                        </svg>
+                                        Descending (Z-A)
+                                    </a>
+                                </div>
+                            </div>
+                            
                             <a class="btn btn-primary" id="btn-export" href="#">
-                                    Export
-                                </a>
+                                Export
+                            </a>
                             <a class="btn btn-primary btn-add-user" id="btn-add-user" open-sidebar="add-guest-sidebar" href="addguest">Add</a>
                         </div>
                     </div>
@@ -91,7 +153,6 @@ $pagetype = 'Guest';
                                     </thead>
                                     <tbody id="handle-list-1">
                                         <tr>
-                                            <!--dynamically data -->
                                         </tr>
                                     </tbody>
                                 </table>
@@ -243,8 +304,7 @@ $pagetype = 'Guest';
                 </div>
             </div>
         </div>
-        
-        <!-- Delete Sidebar -->
+
         <div id="delete-sidebar" class="theme-sidebar theme-sidebar-sm">
             <div class="theme-sidebar-card">
                 <div class="theme-sidebar-header">
@@ -274,7 +334,7 @@ $pagetype = 'Guest';
                                     </div>
                                 </div>
                                 <div class="column is-12 col-form">
-                                    <input type="hidden" name="guid" id="guid" />
+                                    <input type="hidden" name="guid" id="delete_guid" />
                                     <button type="submit" class="btn btn-danger w-100" id="delete">Delete</button>
                                 </div>
                             </div>
@@ -284,102 +344,153 @@ $pagetype = 'Guest';
             </div>
         </div>
     </body>
-    <!-- HTML code remains unchanged -->
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <script>
+        var currentSortOrder = 'asc'; // Default sort order
+        
         $(document).ready(function() {
             getallguest();
             $(".main-loading").hide();
+            
+            // Search functionality
             $("#search").on('input', function() {
                 var filterData = {
-                    "search": $(this).val()
+                    "search": $(this).val(),
+                    "sort_order": currentSortOrder
                 };
                 getallguest(page = 1, offset = 0, limit = pagelimit, filterData);
+            });
+            
+            // Toggle dropdown on sort button click
+            $('#btn-sort').on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $('#sort-dropdown').toggle();
+            });
+            
+            // Close dropdown when clicking outside
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.dropdown').length) {
+                    $('#sort-dropdown').hide();
+                }
+            });
+            
+            // Handle sort option selection
+            $('.sort-option').on('click', function(e) {
+                e.preventDefault();
+                
+                currentSortOrder = $(this).data('sort');
+                $('#sort-dropdown').hide();
+                
+                // Show loading indicator
+                Swal.fire({
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                backdrop: 'rgba(0, 0, 0, 0.8)', 
+                background: 'transparent', // Popup background transparent
+                color: '#fff',
+                customClass: {
+                    popup: 'custom-loading-popup',
+                    htmlContainer: 'custom-loading-text'
+                },
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+                // Fetch sorted data
+                var filterData = {
+                    "search": $("#search").val(),
+                    "sort_order": currentSortOrder
+                };
+                
+                getallguest(1, 0, pagelimit, filterData);
+                
+                // Close loading
+                setTimeout(() => {
+                    Swal.close();
+                }, 500);
             });
         });
 
         $(document).ready(function () {
-                loadCountries();
+            loadCountries();
 
-                // Load all countries
-                function loadCountries() {
+            function loadCountries() {
+                $.ajax({
+                    url: apipath + "/country/list",
+                    type: "POST",
+                    dataType: "json",
+                    success: function (response) {
+                        $('#country').html('<option value="">Select Country</option>');
+                        $.each(response.data, function (index, item) {
+                            $('#country').append(`<option value="${item.country_id}">${item.country_name}</option>`);
+                        });
+                    },
+                    error: function (xhr) {
+                        console.error("Error loading countries:", xhr.responseText);
+                    }
+                });
+            }
+
+            $('#country').on('change', function () {
+                var country_id = $(this).val();
+                $('#state').html('<option value="">Select State</option>');
+                $('#city').html('<option value="">Select City</option>');
+
+                if (country_id) {
                     $.ajax({
-                        url: apipath + "/country/list",
+                        url: apipath + "/state/list",
                         type: "POST",
                         dataType: "json",
+                        data: { country_id: country_id },
                         success: function (response) {
-                            $('#country').html('<option value="">Select Country</option>');
-                            $.each(response.data, function (index, item) {
-                                $('#country').append(`<option value="${item.country_id}">${item.country_name}</option>`);
-                            });
+                            if (response.data && response.data.length > 0) {
+                                $.each(response.data, function (index, item) {
+                                    $('#state').append(`<option value="${item.state_id}">${item.state_name}</option>`);
+                                });
+                            } else {
+                                $('#state').append('<option value="">No states found</option>');
+                            }
                         },
                         error: function (xhr) {
-                            console.error("Error loading countries:", xhr.responseText);
+                            console.error("Error loading states:", xhr.responseText);
                         }
                     });
                 }
-
-                // Load states when a country is selected
-                $('#country').on('change', function () {
-                    var country_id = $(this).val();
-                    $('#state').html('<option value="">Select State</option>');
-                    $('#city').html('<option value="">Select City</option>');
-
-                    if (country_id) {
-                        $.ajax({
-                            url: apipath + "/state/list",
-                            type: "POST",
-                            dataType: "json",
-                            data: { country_id: country_id },
-                            success: function (response) {
-                                if (response.data && response.data.length > 0) {
-                                    $.each(response.data, function (index, item) {
-                                        $('#state').append(`<option value="${item.state_id}">${item.state_name}</option>`);
-                                    });
-                                } else {
-                                    $('#state').append('<option value="">No states found</option>');
-                                }
-                            },
-                            error: function (xhr) {
-                                console.error("Error loading states:", xhr.responseText);
-                            }
-                        });
-                    }
-                });
-
-                // Load cities when a state is selected
-                $('#state').on('change', function () {
-                    var state_id = $(this).val();
-                    $('#city').html('<option value="">Select City</option>');
-
-                    if (state_id) {
-                        $.ajax({
-                            url: apipath + "/city/list",
-                            type: "POST",
-                            dataType: "json",
-                            data: { state_id: state_id },
-                            success: function (response) {
-                                if (response.data && response.data.length > 0) {
-                                    $.each(response.data, function (index, item) {
-                                        $('#city').append(`<option value="${item.city_id}">${item.city_name}</option>`);
-                                    });
-                                } else {
-                                    $('#city').append('<option value="">No cities found</option>');
-                                }
-                            },
-                            error: function (xhr) {
-                                console.error("Error loading cities:", xhr.responseText);
-                            }
-                        });
-                    }
-                });
             });
+
+            $('#state').on('change', function () {
+                var state_id = $(this).val();
+                $('#city').html('<option value="">Select City</option>');
+
+                if (state_id) {
+                    $.ajax({
+                        url: apipath + "/city/list",
+                        type: "POST",
+                        dataType: "json",
+                        data: { state_id: state_id },
+                        success: function (response) {
+                            if (response.data && response.data.length > 0) {
+                                $.each(response.data, function (index, item) {
+                                    $('#city').append(`<option value="${item.city_id}">${item.city_name}</option>`);
+                                });
+                            } else {
+                                $('#city').append('<option value="">No cities found</option>');
+                            }
+                        },
+                        error: function (xhr) {
+                            console.error("Error loading cities:", xhr.responseText);
+                        }
+                    });
+                }
+            });
+        });
     
-            $(document).on("click", "#openedit", function() {
+        $(document).on("click", "#openedit", function() {
             var $this = $(this);
             
-            // Get all data attributes
             var guid = $this.data("guid");
             var first_name = $this.data("first_name");
             var last_name = $this.data("last_name");
@@ -392,7 +503,6 @@ $pagetype = 'Guest';
             var country_id = $this.data("country_id");
             var description = $this.data("description");
             
-            // Populate basic form fields
             $("#guid").val(guid || '');
             $("#edit_first_name").val(first_name || '');
             $("#edit_last_name").val(last_name || '');
@@ -402,11 +512,9 @@ $pagetype = 'Guest';
             $("#edit_address").val(address || '');
             $("#edit_description").val(description || '');
             
-            // Set country and load states
             if (country_id) {
                 $('#country').val(country_id);
-                
-                // Load states for this country
+
                 $.ajax({
                     url: apipath + "/state/list",
                     type: "POST",
@@ -419,55 +527,51 @@ $pagetype = 'Guest';
                                 $('#state').append(`<option value="${item.state_id}">${item.state_name}</option>`);
                             });
                             
-                            // Set the state value after loading
                             if (state_id) {
                                 $('#state').val(state_id);
                                 
-                            $.ajax({
-                                url: apipath + "/city/list",
-                                type: "POST",
-                                dataType: "json",
-                                data: { state_id: state_id },
-                                success: function (response) {
-                                    $('#city').html('<option value="">Select City</option>');
-                                    if (response.data && response.data.length > 0) {
-                                        $.each(response.data, function (index, item) {
-                                            $('#city').append(`<option value="${item.city_id}">${item.city_name}</option>`);
-                                        });
-                                        
-                                        // Set the city value after loading
-                                        if (city_id) {
-                                            $('#city').val(city_id);
+                                $.ajax({
+                                    url: apipath + "/city/list",
+                                    type: "POST",
+                                    dataType: "json",
+                                    data: { state_id: state_id },
+                                    success: function (response) {
+                                        $('#city').html('<option value="">Select City</option>');
+                                        if (response.data && response.data.length > 0) {
+                                            $.each(response.data, function (index, item) {
+                                                $('#city').append(`<option value="${item.city_id}">${item.city_name}</option>`);
+                                            });
+
+                                            if (city_id) {
+                                                $('#city').val(city_id);
+                                            }
                                         }
                                     }
-                                }
-                            });
+                                });
+                            }
                         }
                     }
-                }
-            });
-        }
+                });
+            }
     
-        $('#sbt').html("Save changes");
-        $('.theme-sidebar-title').html("Edit Guest");
-        $('#add-users-sidebar').addClass('active');
+            $('#sbt').html("Save changes");
+            $('.theme-sidebar-title').html("Edit Guest");
+            $('#add-users-sidebar').addClass('active');
         });
+        
         $(document).on("submit", "#updateForm", function(e) {
             e.preventDefault();
             $(".btn-primary").html('Loading...').attr('disabled', true);
 
             var formData = new FormData(this);
 
-            // Remove the select dropdown values (which contain IDs)
             formData.delete('country');
             formData.delete('state');
             formData.delete('city');
-            
-            // Add only the IDs with correct column names
+
             formData.append('country_id', $('#country').val());
             formData.append('state_id', $('#state').val());
             formData.append('city_id', $('#city').val());
-
             formData.append('guid', $('#guid').val());
 
             var url = apipath + "/guest/update";
@@ -512,15 +616,21 @@ $pagetype = 'Guest';
             });
         });
         
-        //Get all guest
         function getallguest(page = 1, offset = 0, limit = pagelimit, filterData = "") {
             var formdata = {
                 offset: offset,
                 limit: limit,
             };
+            
             if (filterData && filterData.search !== undefined && filterData.search !== "") {
                 formdata['search'] = filterData.search;
             }
+            
+            // Add sort order to request (if your backend supports it)
+            if (filterData && filterData.sort_order !== undefined) {
+                formdata['sort_order'] = filterData.sort_order;
+            }
+            
             $.ajax({
                 url: apipath + "/guest/list",
                 type: 'POST',
@@ -528,8 +638,23 @@ $pagetype = 'Guest';
                 data: formdata,
                 success: function(response) {
                     $('#handle-list-1').empty();
+                    
+                    // Sort data on frontend
+                    var sortedData = response.data;
+                    if (filterData && filterData.sort_order) {
+                        sortedData = response.data.sort(function(a, b) {
+                            var nameA = (a.first_name + ' ' + a.last_name).toLowerCase();
+                            var nameB = (b.first_name + ' ' + b.last_name).toLowerCase();
+                            
+                            if (filterData.sort_order === 'asc') {
+                                return nameA.localeCompare(nameB);
+                            } else {
+                                return nameB.localeCompare(nameA);
+                            }
+                        });
+                    }
     
-                    $.each(response.data, function(index, item) {
+                    $.each(sortedData, function(index, item) {
                         $('#handle-list-1').append(`
                             <tr>
                                 <td>
@@ -659,7 +784,6 @@ $pagetype = 'Guest';
             var guid = checkbox.data('guid');
             var isGift = checkbox.is(':checked') ? 1 : 0;
             
-            // Disable checkbox while processing
             checkbox.prop('disabled', true);
             
             $.ajax({
@@ -672,7 +796,7 @@ $pagetype = 'Guest';
                 },
                 success: function(response) {
                     if (response.status == 200) {
-                        // Show success notification
+
                         Swal.fire({
                             icon: 'success',
                             title: 'Updated!',
@@ -680,11 +804,10 @@ $pagetype = 'Guest';
                             timer: 1500,
                             showConfirmButton: false
                         });
-                        
-                        // Re-enable checkbox
+
                         checkbox.prop('disabled', false);
                     } else {
-                        // Revert checkbox state on error
+
                         checkbox.prop('checked', !checkbox.is(':checked'));
                         checkbox.prop('disabled', false);
                         
@@ -698,7 +821,6 @@ $pagetype = 'Guest';
                 error: function(xhr) {
                     console.error("Gift status update error:", xhr);
                     
-                    // Revert checkbox state on error
                     checkbox.prop('checked', !checkbox.is(':checked'));
                     checkbox.prop('disabled', false);
                     
@@ -778,7 +900,6 @@ $pagetype = 'Guest';
                         return;
                     }
 
-                    // Convert JSON to sheet
                     let excelData = response.data.map(item => ({
                         "First Name": item.first_name || '',
                         "Last Name": item.last_name || '',
@@ -794,7 +915,6 @@ $pagetype = 'Guest';
 
                     let ws = XLSX.utils.json_to_sheet(excelData);
 
-                    // ---- ADD BORDERS TO ALL CELLS ----
                     const range = XLSX.utils.decode_range(ws['!ref']);
                     for (let R = range.s.r; R <= range.e.r; ++R) {
                         for (let C = range.s.c; C <= range.e.c; ++C) {
@@ -812,14 +932,12 @@ $pagetype = 'Guest';
                         }
                     }
 
-                    // Auto width
                     ws['!cols'] = [
                         { wch: 15 }, { wch: 15 }, { wch: 25 },
                         { wch: 15 }, { wch: 15 }, { wch: 25 },
                         { wch: 15 }, { wch: 10 }, { wch: 20 }, { wch: 20 }
                     ];
 
-                    // Workbook create and download
                     let wb = XLSX.utils.book_new();
                     XLSX.utils.book_append_sheet(wb, ws, "Guests");
 

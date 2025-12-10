@@ -49,7 +49,7 @@ $pagetype = 'Login';
             </form>
         </div>
     </div>
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.js" integrity="sha512-uE2UhqPZkcKyOjeXjPCmYsW9Sudy5Vbv0XwAVnKBamQeasAVAmH6HR9j5Qpy6Itk1cxk+ypFRPeAZwNnEwNuzQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.js" integrity="sha512-uE2UhqPZkcKyOjeXjPCmYsW9Sudy5Vbv0XwAVnKBamQeasAVAmH6HR9j5Qpy6Itk1cxk+ypFRPeAZwNnEwNuzQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
     var apipath = "http://localhost/laravel-admin/api";
 
@@ -58,12 +58,12 @@ $pagetype = 'Login';
             var toggleIcon = document.getElementById("togglePasswordIcon");
 
             if (passwordInput.type === "password") {
-                // Show the password and change the icon to 'eye-open' (fa-eye)
+            
                 passwordInput.type = "text";
                 toggleIcon.classList.remove("fa-eye-slash");
                 toggleIcon.classList.add("fa-eye");
             } else {
-                // Hide the password and change the icon to 'eye-closed' (fa-eye-slash)
+                
                 passwordInput.type = "password";
                 toggleIcon.classList.remove("fa-eye");
                 toggleIcon.classList.add("fa-eye-slash");

@@ -97,7 +97,6 @@ $pagetype = 'City';
                                     </thead>
                                     <tbody id="handle-list-1">
                                         <tr>
-                                            <!--dynamically data-->
                                         </tr>
                                     </tbody>
                                 </table>
@@ -141,7 +140,6 @@ $pagetype = 'City';
             </div>
         </div>
 
-        <!-- Sidebar -->
         <div id="add-users-sidebar" class="theme-sidebar theme-sidebar-sm">
             <div class="theme-sidebar-card">
                 <div class="theme-sidebar-header">
@@ -201,8 +199,6 @@ $pagetype = 'City';
             </div>
         </div>
 
-
-        <!-- Delete Sidebar -->
         <div id="delete-sidebar" class="theme-sidebar theme-sidebar-sm">
             <div class="theme-sidebar-card">
                 <div class="theme-sidebar-header">
@@ -255,40 +251,42 @@ $pagetype = 'City';
         });
 
         $(document).on("click", "#btn-add-user", function() {
-            $('#guid').val(''); // Ensure guid is empty for new entries
+            $('#guid').val(''); 
             $('#city_name').val('');
-            getCountries()
-            getstates()
+            getCountries();
+            getstates();
             $('#add-users-sidebar').addClass('show');
             $('.theme-sidebar-title').html("Add City");
             $('#sbt').html("Add");
         });
 
-
-        //Edit model
         $(document).on("click", "#openedit", function() {
             var guid = $(this).data("guid");
             $("#guid").val(guid);
 
             var city_name = $(this).data("city_name");
-            var country_id = $(this).data("country_id"); // make sure you pass this in your data attributes
-            var state_id = $(this).data("state_id"); 
+            var country_id = $(this).data("country_id");
+            var state_id = $(this).data("state_id");
+            
             $("#city_name").val(city_name);
 
-            getCountries()
-            getstates()
+            getCountries(function() {
+                if(country_id) {
+                    $('#country_id').val(country_id);
+                }
+            });
 
-            setTimeout(function() {
-            if(country_id) $('#country_id').val(country_id);
-            if(state_id) $('#state_id').val(state_id);
-            }, 300); 
-        
+            getstates(function() {
+                if(state_id) {
+                    $('#state_id').val(state_id);
+                }
+            });
+
             $('#sbt').html("Save changes");
             $('.theme-sidebar-title').html("Edit City");
             $('#add-users-sidebar').addClass('active');
         });
 
-        // Add-Update city
         $("#add-users-sidebar form").submit(function(e) {
             $(".btn-primary").html('Loading...').attr('disabled', true);
             e.preventDefault();
@@ -344,10 +342,10 @@ $pagetype = 'City';
             }
         });
 
-          function getCountries() {
+        function getCountries(callback) {
             $.ajax({
                 type: 'POST',
-                url: apipath + '/country/list', // your API endpoint for countries
+                url: apipath + '/country/list',
                 dataType: 'json',
                 success: function(response) {
                     $('#country_id').empty();
@@ -355,6 +353,10 @@ $pagetype = 'City';
                     $.each(response.data, function(index, item) {
                         $('#country_id').append(`<option value="${item.country_id}">${item.country_name}</option>`);
                     });
+                    // Execute callback after options are loaded
+                    if(callback && typeof callback === 'function') {
+                        callback();
+                    }
                 },
                 error: function(err) {
                     console.log('Error fetching countries:', err);
@@ -362,25 +364,27 @@ $pagetype = 'City';
             });
         }
 
-        function getstates() {
-        $.ajax({
-            type: 'POST',
-            url: apipath + '/state/list', // your API endpoint for countries
-            dataType: 'json',
-            success: function(response) {
-                $('#state_id').empty();
-                $('#state_id').append('<option value="">Select Country</option>');
-                $.each(response.data, function(index, item) {
-                    $('#state_id').append(`<option value="${item.state_id}">${item.state_name}</option>`);
-                });
-            },
-            error: function(err) {
-                console.log('Error fetching countries:', err);
-            }
-        });
-    }
+        function getstates(callback) {
+            $.ajax({
+                type: 'POST',
+                url: apipath + '/state/list',
+                dataType: 'json',
+                success: function(response) {
+                    $('#state_id').empty();
+                    $('#state_id').append('<option value="">Select State</option>');
+                    $.each(response.data, function(index, item) {
+                        $('#state_id').append(`<option value="${item.state_id}">${item.state_name}</option>`);
+                    });
+                    if(callback && typeof callback === 'function') {
+                        callback();
+                    }
+                },
+                error: function(err) {
+                    console.log('Error fetching states:', err);
+                }
+            });
+        }
 
-        //Get all city
         function getallcity(page = 1, offset = 0, limit = pagelimit, filterData = "") {
             var formdata = {
                 offset: offset,
@@ -399,70 +403,74 @@ $pagetype = 'City';
 
                     $.each(response.data, function(index, item) {
                         $('#handle-list-1').append(`
-                                  <tr>
-                                      <td>
-                                          <div class="is-flex is-align-items-center is-gap-3">
-                                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-direction drag-handle cursor-pointer">
-                                                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                  <path d="M9 10l3 -3l3 3" />
-                                                  <path d="M9 14l3 3l3 -3" />
-                                              </svg>
-                                              ${index + 1}
-                                          </div>
-                                      </td>
-                                      <td>
-                                          <div class="tag-rounded-wrapper">
-                                              <div class="tag-rounded tag-rounded-gray">
-                                                  <span class="avatar avatar-md">
-                                                      <span class="user-name-latter latter-j">${item.city_name.charAt(0)}</span>
-                                                  </span>
-                                                  <div>
-                                                      <b>${item.city_name}</b>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                      </td>
-                                    <td>
-                                        <div class="theme-date-list">
-                                           <div class="theme-date" data-tooltip="Create at: ${new Date(item.created_at).toUTCString()}">
-                                              <div class="theme-date-content">
-                                              <small>${new Date(item.created_at).toLocaleString('default', { month: 'short', timeZone: 'UTC' })}</small>
-                                              <span>${new Date(item.created_at).getUTCDate()}</span>
-                                            </div>
-                                               <span class="theme-date-footer">${new Date(item.created_at).getUTCFullYear()}</span>
-                                            </div>
-                                               <div class="theme-date" data-tooltip="Update at: ${new Date(item.updated_at).toUTCString()}">
-                                               <div class="theme-date-content"> 
-                                               <small>${new Date(item.updated_at).toLocaleString('default', { month: 'short', timeZone: 'UTC' })}</small>
-                                               <span>${new Date(item.updated_at).getUTCDate()}</span>
-                                            </div>
-                                               <span class="theme-date-footer">${new Date(item.updated_at).getUTCFullYear()}</span>
+                            <tr>
+                                <td>
+                                    <div class="is-flex is-align-items-center is-gap-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-direction drag-handle cursor-pointer">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M9 10l3 -3l3 3" />
+                                            <path d="M9 14l3 3l3 -3" />
+                                        </svg>
+                                        ${index + 1}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="tag-rounded-wrapper">
+                                        <div class="tag-rounded tag-rounded-gray">
+                                            <span class="avatar avatar-md">
+                                                <span class="user-name-latter latter-j">${item.city_name.charAt(0)}</span>
+                                            </span>
+                                            <div>
+                                                <b>${item.city_name}</b>
                                             </div>
                                         </div>
-                                      </td>
-                                      <td class="table-actions-wrapper">
-                                          <div class="table-actions">
-                                              <a href="#" open-sidebar="edit-users-sidebar"  id="openedit" data-guid=${item.guid} data-city_name=${item.city_name}>
-                                                  <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-pencil" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"></path>
-                                                      <path d="M13.5 6.5l4 4"></path>
-                                                  </svg>
-                                              </a>
-                                              <a href="#" open-sidebar="delete-sidebar" class="opendelete" data-guid=${item.guid}>
-                                                  <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                      <path d="M4 7l16 0"></path>
-                                                      <path d="M10 11l0 6"></path>
-                                                      <path d="M14 11l0 6"></path>
-                                                      <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
-                                                      <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-                                                  </svg>
-                                              </a>
-                                          </div>
-                                      </td>
-                                  </tr>
-                              `);
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="theme-date-list">
+                                        <div class="theme-date" data-tooltip="Create at: ${new Date(item.created_at).toUTCString()}">
+                                            <div class="theme-date-content">
+                                                <small>${new Date(item.created_at).toLocaleString('default', { month: 'short', timeZone: 'UTC' })}</small>
+                                                <span>${new Date(item.created_at).getUTCDate()}</span>
+                                            </div>
+                                            <span class="theme-date-footer">${new Date(item.created_at).getUTCFullYear()}</span>
+                                        </div>
+                                        <div class="theme-date" data-tooltip="Update at: ${new Date(item.updated_at).toUTCString()}">
+                                            <div class="theme-date-content"> 
+                                                <small>${new Date(item.updated_at).toLocaleString('default', { month: 'short', timeZone: 'UTC' })}</small>
+                                                <span>${new Date(item.updated_at).getUTCDate()}</span>
+                                            </div>
+                                            <span class="theme-date-footer">${new Date(item.updated_at).getUTCFullYear()}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="table-actions-wrapper">
+                                    <div class="table-actions">
+                                        <a href="#" open-sidebar="edit-users-sidebar" id="openedit" 
+                                           data-guid="${item.guid}" 
+                                           data-city_name="${item.city_name}"
+                                           data-country_id="${item.country_id}"
+                                           data-state_id="${item.state_id}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-pencil" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"></path>
+                                                <path d="M13.5 6.5l4 4"></path>
+                                            </svg>
+                                        </a>
+                                        <a href="#" open-sidebar="delete-sidebar" class="opendelete" data-guid="${item.guid}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M4 7l16 0"></path>
+                                                <path d="M10 11l0 6"></path>
+                                                <path d="M14 11l0 6"></path>
+                                                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        `);
                     });
                 },
                 error: function(error) {
@@ -470,6 +478,7 @@ $pagetype = 'City';
                 }
             });
         }
+
         $(document).on('click', '.opendelete', function(e) {
             e.preventDefault();
             var guid = $(this).data('guid');
@@ -485,7 +494,6 @@ $pagetype = 'City';
             if (deleteInput === "DELETE") {
                 var guid = $('#guid').val();
 
-                // AJAX call to delete data
                 $.ajax({
                     type: 'POST',
                     url: apipath + "/city/delete",
@@ -494,7 +502,6 @@ $pagetype = 'City';
                         guid: guid
                     },
                     success: function(response) {
-                        // console.log('Data deleted successfully:', response);
                         $('#delete-sidebar').removeClass('active');
 
                         Swal.fire({

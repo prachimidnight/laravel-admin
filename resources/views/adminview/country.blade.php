@@ -234,15 +234,15 @@ $pagetype = 'Country';
         });
 
         $(document).on("click", "#btn-add-user", function() {
-            $('#guid').val(''); // Ensure guid is empty for new entries
+            $('#guid').val(''); 
             $('#country_name').val('');
             $('#add-users-sidebar').addClass('show');
             $('.theme-sidebar-title').html("Add Country");
             $('#sbt').html("Add");
         });
 
-               //Edit model
-               $(document).on("click", "#openedit", function() {
+             
+        $(document).on("click", "#openedit", function() {
             var guid = $(this).data("guid");
             $("#guid").val(guid);
 
@@ -254,7 +254,6 @@ $pagetype = 'Country';
             $('#add-users-sidebar').addClass('active');
         });
 
-        // Add-Update Country
         $("#add-users-sidebar form").submit(function(e) {
             $(".btn-primary").html('Loading...').attr('disabled', true);
             e.preventDefault();
@@ -310,7 +309,6 @@ $pagetype = 'Country';
             }
         });
 
-        //Get all country
         function getallcountry(page = 1, offset = 0, limit = pagelimit, filterData = "") {
             var formdata = {
                 offset: offset,
@@ -415,7 +413,6 @@ $pagetype = 'Country';
             if (deleteInput === "DELETE") {
                 var guid = $('#guid').val();
 
-                // AJAX call to delete data
                 $.ajax({
                     type: 'POST',
                     url: apipath + "/country/delete",
@@ -424,7 +421,7 @@ $pagetype = 'Country';
                         guid: guid
                     },
                     success: function(response) {
-                        // console.log('Data deleted successfully:', response);
+
                         $('#delete-sidebar').removeClass('active');
 
                         Swal.fire({

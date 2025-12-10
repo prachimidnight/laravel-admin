@@ -35,7 +35,6 @@ class GuestController extends Controller
             $imageName = time().'.'.$image->getClientOriginalExtension();
             $image->move(public_path('uploads/profile'), $imageName);
     
-            // ⭐ FULL PATH (APP_URL se)
            $imageFullPath = env('APP_URL') . '/uploads/profile/' . $imageName;
 
         }
@@ -81,17 +80,14 @@ class GuestController extends Controller
             return response()->json(['status' => 400, 'errors' => $valid->errors()], 400);
         }
 
-        // Check guest exists
         $guest = Guest::where('guid', $request->input('guid'))->first();
 
         if (!$guest) {
             return response()->json(['status' => 404, 'message' => 'Guest not found'], 404);
         }
 
-        // Existing profile image
         $imageFullPath = $guest->profile_image;
 
-        // Handle new profile image upload
         if ($request->hasFile('profile_image')) {
             $image = $request->file('profile_image');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
@@ -99,7 +95,6 @@ class GuestController extends Controller
             $imageFullPath = env('APP_URL') . '/uploads/profile/' . $imageName;
         }
 
-        // List all fields that can be updated
         $updateData = [
             'first_name'    => $request->input('first_name', $guest->first_name),
             'last_name'     => $request->input('last_name', $guest->last_name),
@@ -114,12 +109,10 @@ class GuestController extends Controller
             'profile_image' => $imageFullPath,
         ];
 
-        // Add updated_by if exists
         if ($request->has('updated_by')) {
             $updateData['updated_by'] = $request->input('updated_by');
         }
 
-        // Update record
         $result = Guest::where('guid', $request->input('guid'))->update($updateData);
 
         if (! $result) {
@@ -129,7 +122,6 @@ class GuestController extends Controller
             ], 500);
         }
 
-        // Fetch updated data
         $guest->refresh();
 
         return response()->json([
@@ -283,8 +275,45 @@ class GuestController extends Controller
         return response()->json(['status' => 200, 'message' => 'Password updated successfully']);
     }
     
-   
-  
+    // Ascending list
+    public function listAsc(Request $request)
+    {
+        $query = Guest::query();
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where('first_name', 'like', "%$search%")
+                ->orWhere('last_name', 'like', "%$search%");
+        }
+
+        $guests = $query->orderBy('first_name', 'asc')->get();
+
+        return response()->json([
+            'status' => true,
+            'data' => $guests
+        ]);
+    }
+
+    // Descending list
+    public function listDesc(Request $request)
+    {
+        $query = Guest::query();
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where('first_name', 'like', "%$search%")
+                ->orWhere('last_name', 'like', "%$search%");
+        }
+
+        $guests = $query->orderBy('first_name', 'desc')->get();
+
+        return response()->json([
+            'status' => true,
+            'data' => $guests
+        ]);
+    }
+
+    
     public function set_session(Request $request)
     {
         $userdata = json_decode($request->userdata, true);

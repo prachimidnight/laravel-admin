@@ -97,7 +97,6 @@ $pagetype = 'UserRoles';
                                     </thead>
                                     <tbody id="handle-list-1">
                                         <tr>
-                                            <!--dynamically data-->
                                         </tr>
                                     </tbody>
                                 </table>
@@ -141,7 +140,6 @@ $pagetype = 'UserRoles';
             </div>
         </div>
 
-        <!-- Sidebar -->
         <div id="add-users-sidebar" class="theme-sidebar theme-sidebar-sm">
             <div class="theme-sidebar-card">
                 <div class="theme-sidebar-header">
@@ -180,8 +178,6 @@ $pagetype = 'UserRoles';
             </div>
         </div>
 
-
-        <!-- Delete Sidebar -->
         <div id="delete-sidebar" class="theme-sidebar theme-sidebar-sm">
             <div class="theme-sidebar-card">
                 <div class="theme-sidebar-header">
@@ -234,15 +230,13 @@ $pagetype = 'UserRoles';
         });
 
         $(document).on("click", "#btn-add-user", function() {
-            $('#guid').val(''); // Ensure guid is empty for new entries
+            $('#guid').val(''); 
             $('#role_name').val('');
             $('#add-users-sidebar').addClass('show');
             $('.theme-sidebar-title').html("Add Role");
             $('#sbt').html("Add");
         });
 
-
-        //Edit model
         $(document).on("click", "#openedit", function() {
             var guid = $(this).data("guid");
             $("#guid").val(guid);
@@ -255,7 +249,6 @@ $pagetype = 'UserRoles';
             $('#add-users-sidebar').addClass('active');
         });
 
-        // Add-Update city
         $("#add-users-sidebar form").submit(function(e) {
             $(".btn-primary").html('Loading...').attr('disabled', true);
             e.preventDefault();
@@ -311,7 +304,6 @@ $pagetype = 'UserRoles';
             }
         });
 
-        //Get all role
         function getallrole(page = 1, offset = 0, limit = pagelimit, filterData = "") {
             var formdata = {
                 offset: offset,
@@ -416,7 +408,6 @@ $pagetype = 'UserRoles';
             if (deleteInput === "DELETE") {
                 var guid = $('#guid').val();
 
-                // AJAX call to delete data
                 $.ajax({
                     type: 'POST',
                     url: apipath + "/role/delete",

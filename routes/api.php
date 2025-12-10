@@ -58,6 +58,8 @@ Route::prefix('guest')->controller(GuestController::class)->group(function() {
     Route::post('/update','update');
     Route::post('/delete','delete');  
     Route::post('/change-password', 'changePassword'); 
+    Route::get('/asc','listAsc' );
+    Route::get('/des','listDesc' );
     Route::post('/login','login');
     Route::post('/logout','logout');
 });
