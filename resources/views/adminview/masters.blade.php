@@ -132,7 +132,27 @@ $pagetype = 'Masters';
                                     </a>
                                 </div>
                             </div>
-                        </div>     
+                        </div>  
+                        <div class="column col-master">
+                            <div class="card master-card">
+                                <div class="card-body">
+                                    <a href="functioncategories">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="icon icon-tabler icon-tabler-category">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <path d="M4 4h6v6h-6z" />
+                                            <path d="M14 4h6v6h-6z" />
+                                            <path d="M4 14h6v6h-6z" />
+                                            <path d="M14 14h6v6h-6z" />
+                                        </svg>
+                                        <span>Function Categories</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                           
                     </div>
                 </div>
             </div>
@@ -140,6 +160,19 @@ $pagetype = 'Masters';
     </body>
 
     <script>
+    $(document).ready(function () {
         $(".main-loading").hide();
+
+        $.ajax({
+            url: apipath + "/guest/dashboarddata",
+            type: "POST",
+            dataType: "json",
+            success: function (res) {
+                if (res.status === 200) {
+                    $('#guest-count').text(res.total_guests);
+                }
+            }
+        });
+    });
     </script>
 @endsection

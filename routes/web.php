@@ -62,5 +62,12 @@ Route::get('/profile', function() {
     return view('adminview/profile');
 });
 
+Route::get('/functioncategories', function() {
+    return view('adminview/functioncategories');
+});
+
+Route::get('/bulkupload', function() {
+    return view('adminview/bulkupload');
+});
 
 

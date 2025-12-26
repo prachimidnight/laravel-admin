@@ -217,6 +217,9 @@ $pagetype = 'UserRoles';
     </body>
 
     <script>
+         function notifyuser(type, message) {
+        $.notify(message, type);
+    }
         $(document).ready(function() {
             getallrole();
             $(".main-loading").hide();
@@ -250,9 +253,9 @@ $pagetype = 'UserRoles';
         });
 
         $("#add-users-sidebar form").submit(function(e) {
-            $(".btn-primary").html('Loading...').attr('disabled', true);
+            // $(".btn-primary").html('Loading...').attr('disabled', true);
             e.preventDefault();
-        }).validate({
+            }).validate({
             submitHandler: function(form) {
                 var formData = new FormData(form);
 
@@ -278,15 +281,11 @@ $pagetype = 'UserRoles';
                             $(".form-control").val("");
                             $(".btn-primary").html('Add').attr('disabled', true);
                             $('#add-users-sidebar').removeClass('active');
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success',
-                                text: 'Data added successfully!',
-                                showConfirmButton: false,
-                                timer: 2000
-                            }).then(() => {
+                            notifyuser('success', 'Role saved successfully');
+                            setTimeout(() => {
                                 location.reload();
-                            });
+                            }, 2000);
+
                         } else {
                             notifyuser('error', 'An error occurred');
                         }
@@ -319,6 +318,16 @@ $pagetype = 'UserRoles';
                 data: formdata,
                 success: function(response) {
                     $('#handle-list-1').empty();
+                    if (!response.data || response.data.length === 0) {
+                    $('#handle-list-1').html(`
+                        <tr>
+                            <td colspan="4" class="no-data-row text-center">
+                                Data Not Found
+                            </td>
+                        </tr>
+                    `);
+                    return;
+                }
 
                     $.each(response.data, function(index, item) {
                         $('#handle-list-1').append(`
@@ -340,7 +349,7 @@ $pagetype = 'UserRoles';
                                                       <span class="user-name-latter latter-j">${item.role_name.charAt(0)}</span>
                                                   </span>
                                                   <div>
-                                                      <b>${item.role_name}</b>
+                                                      <b class="text-capitalizes">${item.role_name}</b>
                                                   </div>
                                               </div>
                                           </div>
@@ -365,7 +374,7 @@ $pagetype = 'UserRoles';
                                       </td>
                                       <td class="table-actions-wrapper">
                                           <div class="table-actions">
-                                              <a href="#" open-sidebar="edit-users-sidebar"  id="openedit" data-guid=${item.guid} data-role_name=${item.role_name}>
+                                              <a href="#" open-sidebar="edit-users-sidebar"  id="openedit"  data-guid="${item.guid}" data-role_name="${item.role_name}">
                                                   <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-pencil" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                       <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                       <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"></path>
@@ -400,51 +409,51 @@ $pagetype = 'UserRoles';
             $('#delete-sidebar').addClass('active');
         });
 
-        $(document).on('click', '#delete', function(e) {
-            e.preventDefault();
+        $(document).on('click', '#delete', function (e) {
+        e.preventDefault();
 
-            var deleteInput = $('#deletedata').val().trim();
+        var deleteInput = $('#deletedata').val().trim();
 
-            if (deleteInput === "DELETE") {
-                var guid = $('#guid').val();
+        if (deleteInput === "DELETE") {
+            var guid = $('#guid').val();
 
-                $.ajax({
-                    type: 'POST',
-                    url: apipath + "/role/delete",
-                    dataType: 'json',
-                    data: {
-                        guid: guid
-                    },
-                    success: function(response) {
-                        // console.log('Data deleted successfully:', response);
-                        $('#delete-sidebar').removeClass('active');
+            $.ajax({
+                type: 'POST',
+                url: apipath + "/role/delete",
+                dataType: 'json',
+                data: { guid: guid },
 
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Deleted!',
-                            text: 'Role has been deleted successfully.',
-                            timer: 2000,
-                            showConfirmButton: false
-                        }).then(() => {
-                            location.reload();
-                        });
-                    },
-                    error: function(err) {
-                        console.error('Error deleting data:', err);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: 'There was an error deleting the Role. Please try again.',
-                        });
-                    }
-                });
-            } else {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Input Required',
-                    text: "Please type 'DELETE' in the input box to confirm deletion.",
-                });
+                success: function (response) {
+                    $('#delete-sidebar').removeClass('active');
+
+                    notifyuser('success', 'Role deleted successfully');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                },
+
+                error: function (err) {
+                    console.error('Error deleting data:', err);
+                    notifyuser('error', 'There was an error deleting the Role');
+                }
+            });
+
+        } else {
+            notifyuser('warn', "Please type 'DELETE' to confirm deletion");
+        }
+    });
+    $(document).ready(function () {
+        $(".main-loading").hide();
+        $.ajax({
+            url: apipath + "/guest/dashboarddata",
+            type: "POST",
+            dataType: "json",
+            success: function (res) {
+                if (res.status === 200) {
+                    $('#guest-count').text(res.total_guests);
+                }
             }
         });
+    });
     </script>
 @endsection

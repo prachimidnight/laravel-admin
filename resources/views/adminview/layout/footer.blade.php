@@ -333,7 +333,7 @@
 </script>
 <script src="{{URL('resources/js/pagination.js')}}"></script>
 <script>
-	var pagelimit = 15;
+	var pagelimit = 20;
 
 	function pagination(tblid, totaldata, currentpage = 1, perpagedatasize = pagelimit) {
 		$('#' + tblid).pagination({

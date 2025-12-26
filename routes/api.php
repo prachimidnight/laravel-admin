@@ -3,6 +3,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\FunctioncategoriesController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StateController;
@@ -52,6 +53,13 @@ Route::prefix('city')->controller(CityController::class)->group(function() {
     Route::post('/delete','delete');
 });
 
+Route::prefix('functioncategories')->controller(FunctioncategoriesController::class)->group(function() {
+    Route::post('/create','create');
+    Route::post('/list','list');
+    Route::post('/update','update');
+    Route::post('/delete','delete');
+});
+
 Route::prefix('guest')->controller(GuestController::class)->group(function() {
     Route::post('/create','create');
     Route::post('/list','list');
@@ -62,4 +70,10 @@ Route::prefix('guest')->controller(GuestController::class)->group(function() {
     Route::get('/des','listDesc' );
     Route::post('/login','login');
     Route::post('/logout','logout');
+    Route::get('/guest-count','guestCount');
+    Route::post('/dashboarddata','dashboardData');
+    // Route::post('/bulk-upload','upload');
+
+
 });
+

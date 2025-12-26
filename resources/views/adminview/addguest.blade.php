@@ -154,6 +154,15 @@ $pagetype = 'Add Guest';
                                                 </select>
                                             </div>
                                         </div>
+
+                                        <div class="column is-4-mobile is-4-tablet is-4-desktop is-4-widescreen col-form">
+                                            <div class="form-group">
+                                                <label class="form-label">Category <span class="required-asterisk">*</span></label>
+                                                <select class="form-control" name="category" id="category" required>
+                                                    <option value="">Select Category</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                         
 
                                         <div class="column is-12-mobile is-12-tablet is-12-desktop is-12-widescreen col-form">
@@ -180,7 +189,13 @@ $pagetype = 'Add Guest';
                 </div>
             </div>
     </body>
+  
     <script>
+        // Add notification function
+        function notifyuser(type, message) {
+            $.notify(message, type);
+        }
+    
         $(document).ready(function () {
             $(".main-loading").hide();
         
@@ -193,8 +208,8 @@ $pagetype = 'Add Guest';
                 }
             });
         
-            $(document).ready(function () {
-                function loadRoles() {
+            // Load Roles
+            function loadRoles() {
                 $.ajax({
                     url: apipath + "/role/list",
                     type: "POST",
@@ -207,166 +222,187 @@ $pagetype = 'Add Guest';
                     },
                     error: function (xhr) {
                         console.error("Error loading roles:", xhr.responseText);
+                        notifyuser('error', 'Failed to load roles');
+                    }
+                });
+            }
+    
+            loadRoles();
+
+            // Load Categories
+            function loadCategories() {
+                $.ajax({
+                    url: apipath + "/functioncategories/list",
+                    type: "POST",
+                    dataType: "json",
+                    success: function (response) {
+                        $('#category').html('<option value="">Select Category</option>');
+                        if (response.data && response.data.length > 0) {
+                            $.each(response.data, function (index, item) {
+                                $('#category').append(`<option value="${item.categories_id}">${item.categories_name}</option>`);
+                            });
+                        }
+                    },
+                    error: function (xhr) {
+                        console.error("Error loading categories:", xhr.responseText);
+                        notifyuser('error', 'Failed to load categories');
                     }
                 });
             }
 
-            loadRoles();
-
-                // Load all countries
-                function loadCountries() {
+            loadCategories();
+    
+            // Load all countries
+            function loadCountries() {
+                $.ajax({
+                    url: apipath + "/country/list",
+                    type: "POST",
+                    dataType: "json",
+                    success: function (response) {
+                        $('#country').html('<option value="">Select Country</option>');
+                        $.each(response.data, function (index, item) {
+                            $('#country').append(`<option value="${item.country_id}">${item.country_name}</option>`);
+                        });
+                    },
+                    error: function (xhr) {
+                        console.error("Error loading countries:", xhr.responseText);
+                        notifyuser('error', 'Failed to load countries');
+                    }
+                });
+            }
+            
+            loadCountries();
+            
+            // Country change event
+            $('#country').on('change', function () {
+                var country_id = $(this).val();
+                $('#state').html('<option value="">Select State</option>');
+                $('#city').html('<option value="">Select City</option>');
+    
+                if (country_id) {
                     $.ajax({
-                        url: apipath + "/country/list",
+                        url: apipath + "/state/list",
                         type: "POST",
                         dataType: "json",
+                        data: { country_id: country_id },
                         success: function (response) {
-                            $('#country').html('<option value="">Select Country</option>');
-                            $.each(response.data, function (index, item) {
-                                $('#country').append(`<option value="${item.country_id}">${item.country_name}</option>`);
-                            });
+                            if (response.data && response.data.length > 0) {
+                                $.each(response.data, function (index, item) {
+                                    $('#state').append(`<option value="${item.state_id}">${item.state_name}</option>`);
+                                });
+                            } else {
+                                $('#state').append('<option value="">No states found</option>');
+                            }
                         },
                         error: function (xhr) {
-                            console.error("Error loading countries:", xhr.responseText);
+                            console.error("Error loading states:", xhr.responseText);
+                            notifyuser('error', 'Failed to load states');
                         }
                     });
                 }
-                loadCountries();
-                $('#country').on('change', function () {
-                    var country_id = $(this).val();
-                    $('#state').html('<option value="">Select State</option>');
-                    $('#city').html('<option value="">Select City</option>');
-
-                    if (country_id) {
-                        $.ajax({
-                            url: apipath + "/state/list",
-                            type: "POST",
-                            dataType: "json",
-                            data: { country_id: country_id },
-                            success: function (response) {
-                                if (response.data && response.data.length > 0) {
-                                    $.each(response.data, function (index, item) {
-                                        $('#state').append(`<option value="${item.state_id}">${item.state_name}</option>`);
-                                    });
-                                } else {
-                                    $('#state').append('<option value="">No states found</option>');
-                                }
-                            },
-                            error: function (xhr) {
-                                console.error("Error loading states:", xhr.responseText);
-                            }
-                        });
-                    }
-                });
-
-                $('#state').on('change', function () {
-                    var state_id = $(this).val();
-                    $('#city').html('<option value="">Select City</option>');
-
-                    if (state_id) {
-                        $.ajax({
-                            url: apipath + "/city/list",
-                            type: "POST",
-                            dataType: "json",
-                            data: { state_id: state_id },
-                            success: function (response) {
-                                if (response.data && response.data.length > 0) {
-                                    $.each(response.data, function (index, item) {
-                                        $('#city').append(`<option value="${item.city_id}">${item.city_name}</option>`);
-                                    });
-                                } else {
-                                    $('#city').append('<option value="">No cities found</option>');
-                                }
-                            },
-                            error: function (xhr) {
-                                console.error("Error loading cities:", xhr.responseText);
-                            }
-                        });
-                    }
-                });
             });
-
-            $("#addproject").validate({
-            submitHandler: function(form) {
-            $(".btn-primary").html('Loading...').attr('disabled', true);
-
-            var formData = new FormData(form);
-
-            formData.append('role_id', $('#role').val());
-            formData.append('role_name', $('#role option:selected').text());
-            
-            // Get the selected text (names) instead of values (IDs)
-            var countryName = $('#country option:selected').text();
-            var stateName = $('#state option:selected').text();
-            var cityName = $('#city option:selected').text();
-            
-            // Remove the ID values and add names instead
-            formData.delete('country');
-            formData.delete('state');
-            formData.delete('city');
-            
-            // Append the names
-            formData.append('country', countryName);
-            formData.append('state', stateName);
-            formData.append('city', cityName);
-            
-            // Also append the IDs if your backend needs them
-            formData.append('country_id', $('#country').val());
-            formData.append('state_id', $('#state').val());
-            formData.append('city_id', $('#city').val());
-
-            var url = apipath + "/guest/create";
-            var type = 'POST';
-
-            $.ajax({
-                type: type,
-                url: url,
-                data: formData,
-                dataType: 'json',
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function(data) {
-                    if (data.status == 200 || data.status == true) {
-                        $(".form-control").val("");
-                        $("#is_whatsapp").prop("checked", false);
-                        $('#role').val('');
-                        $('#country').val('');
-                        $('#state').html('<option value="">Select State</option>');
-                        $('#city').html('<option value="">Select City</option>');
-                        $(".btn-primary").html('Add').removeAttr("disabled");
-
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: 'Guest added successfully!',
-                            showConfirmButton: false,
-                            timer: 2000
-                        }).then(() => {
-                            setTimeout(() => {
-                                           window.location.href = "{{URL('guest')}}";
-                                          }, 1000);
-                        });
-                    } else {
-                        $(".btn-primary").html('Add').removeAttr("disabled");
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: data.message || 'Failed to add guest!'
-                        });
-                    }
-                },
-                error: function(xhr) {
-                    console.log(xhr.responseText);
-                    $(".btn-primary").html('Add').removeAttr("disabled");
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: 'Something went wrong. Please check required fields.'
+    
+            // State change event
+            $('#state').on('change', function () {
+                var state_id = $(this).val();
+                $('#city').html('<option value="">Select City</option>');
+    
+                if (state_id) {
+                    $.ajax({
+                        url: apipath + "/city/list",
+                        type: "POST",
+                        dataType: "json",
+                        data: { state_id: state_id },
+                        success: function (response) {
+                            if (response.data && response.data.length > 0) {
+                                $.each(response.data, function (index, item) {
+                                    $('#city').append(`<option value="${item.city_id}">${item.city_name}</option>`);
+                                });
+                            } else {
+                                $('#city').append('<option value="">No cities found</option>');
+                            }
+                        },
+                        error: function (xhr) {
+                            console.error("Error loading cities:", xhr.responseText);
+                            notifyuser('error', 'Failed to load cities');
+                        }
                     });
                 }
             });
-            return false; }
-        });
+    
+            // Form validation and submission
+            $("#addproject").validate({
+                submitHandler: function(form) {
+                    var formData = new FormData(form);
+    
+                    formData.append('role_id', $('#role').val());
+                    formData.append('role_name', $('#role option:selected').text());
+                    
+                    // Get the selected text (names) instead of values (IDs)
+                    var countryName = $('#country option:selected').text();
+                    var stateName = $('#state option:selected').text();
+                    var cityName = $('#city option:selected').text();
+                    
+                    // Remove the ID values and add names instead
+                    formData.delete('country');
+                    formData.delete('state');
+                    formData.delete('city');
+                    
+                    // Append the names
+                    formData.append('country', countryName);
+                    formData.append('state', stateName);
+                    formData.append('city', cityName);
+                    
+                    // Also append the IDs if your backend needs them
+                    formData.append('country_id', $('#country').val());
+                    formData.append('state_id', $('#state').val());
+                    formData.append('city_id', $('#city').val());
+
+                    // Append Category ID
+                    formData.append('categories_id', $('#category').val());
+                    formData.append('category_name', $('#category option:selected').text());
+    
+                    var url = apipath + "/guest/create";
+                    var type = 'POST';
+    
+                    $.ajax({
+                        type: type,
+                        url: url,
+                        data: formData,
+                        dataType: 'json',
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        success: function(data) {
+                            if (data.status == 200 || data.status == true) {
+                                $(".form-control").val("");
+                                $("#is_whatsapp").prop("checked", false);
+                                $('#role').val('');
+                                $('#category').val('');
+                                $('#country').val('');
+                                $('#state').html('<option value="">Select State</option>');
+                                $('#city').html('<option value="">Select City</option>');
+                                $(".btn-primary").html('Add').removeAttr("disabled");    
+    
+                                notifyuser('success', 'Guest added successfully');
+                                
+                                setTimeout(() => {
+                                    window.location.href = "{{URL('guest')}}";
+                                }, 1000);
+                            } else {
+                                $(".btn-primary").html('Add').removeAttr("disabled");
+                                notifyuser('error', data.message || 'Failed to add guest');
+                            }
+                        },
+                        error: function(xhr) {
+                            console.log(xhr.responseText);
+                            $(".btn-primary").html('Add').removeAttr("disabled");
+                            notifyuser('error', 'Something went wrong. Please check required fields');
+                        }
+                    });
+                    return false;
+                }
+            });
         });
     </script>     
 @endsection

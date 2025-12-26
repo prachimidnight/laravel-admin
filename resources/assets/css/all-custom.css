@@ -4871,3 +4871,7 @@ a.powered-by-text {
 .swal-button-black:hover {
   background-color: #333 !important; /* Slightly lighter shade on hover */
 }
+
+.text-capitalize {
+  text-transform: capitalize !important;
+}

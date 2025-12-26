@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\guest;
+use App\Models\role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
@@ -17,7 +18,7 @@ class GuestController extends Controller
             'first_name' => 'required',
             'last_name' => 'required',
             'phone_no' => 'required',
-            'email'=>'required',
+            'email' => 'required',
         ]);
             
         if ($validator->fails()) {
@@ -35,12 +36,12 @@ class GuestController extends Controller
             $imageName = time().'.'.$image->getClientOriginalExtension();
             $image->move(public_path('uploads/profile'), $imageName);
     
-           $imageFullPath = env('APP_URL') . '/uploads/profile/' . $imageName;
-
+            $imageFullPath = env('APP_URL') . '/uploads/profile/' . $imageName;
         }
 
         $guest = guest::create([
             'role_id' => $request->role_id,
+            'categories_id' => $request->categories_id, // Added categories_id
             'country_id' => $request->country_id,
             'state_id' => $request->state_id,
             'city_id' => $request->city_id,
@@ -54,9 +55,9 @@ class GuestController extends Controller
             'password' => $request->password ? Hash::make($request->password) : null,
             'whatsapp_no' => $request->whatsapp_no,
             'is_whatsapp' => $request->boolean('is_whatsapp'),
-            'is_send' => $request->boolean('is_send',0),
-            'is_sms' => $request->boolean('is_sms',0),
-            'is_gift' => $request->boolean('is_gift',0),
+            'is_send' => $request->boolean('is_send', 0),
+            'is_sms' => $request->boolean('is_sms', 0),
+            'is_gift' => $request->boolean('is_gift', 0),
             'token' => generateToken(10),
             'guid' => generateToken(30),
             'created_by' => $request->created_by,
@@ -70,7 +71,7 @@ class GuestController extends Controller
         ], 200);
     }
 
-   public function update(Request $request)
+    public function update(Request $request)
     {
         $valid = Validator::make($request->all(), [
             "guid" => "required"
@@ -101,6 +102,8 @@ class GuestController extends Controller
             'phone_no'      => $request->input('phone_no', $guest->phone_no),
             'whatsapp_no'   => $request->input('whatsapp_no', $guest->whatsapp_no),
             'address'       => $request->input('address', $guest->address),
+            'role_id'       => $request->input('role_id', $guest->role_id),
+            'categories_id' => $request->input('categories_id', $guest->categories_id), // Added categories_id
             'state_id'      => $request->input('state_id', $guest->state_id),
             'country_id'    => $request->input('country_id', $guest->country_id),
             'city_id'       => $request->input('city_id', $guest->city_id),
@@ -115,7 +118,7 @@ class GuestController extends Controller
 
         $result = Guest::where('guid', $request->input('guid'))->update($updateData);
 
-        if (! $result) {
+        if (!$result) {
             return response()->json([
                 'status' => 500,
                 'message' => 'Unable to save guest'
@@ -136,6 +139,8 @@ class GuestController extends Controller
                 'phone_no'      => $guest->phone_no,
                 'whatsapp_no'   => $guest->whatsapp_no,
                 'address'       => $guest->address,
+                'role_id'       => $guest->role_id,
+                'categories_id' => $guest->categories_id, // Added categories_id
                 'state_id'      => $guest->state_id,
                 'country_id'    => $guest->country_id,
                 'city_id'       => $guest->city_id,
@@ -154,30 +159,28 @@ class GuestController extends Controller
     
         if ($valid->fails()) {
             return response()->json(['status' => 400, 'errors' => $valid->errors()], 400);
+        }
+
+        $data = new Guest();
+        $request->request->add(['status' => 0]);
+        $newrequest = $request->except(['guid']);
+        $request->request->add(['updated_by' => $request->input('updated_by')]);
+
+        $result = $data->where('guid', $request->input('guid'))->update($newrequest);
+
+        if ($result) {
+            return response()->json([
+                'status' => 200,
+                'message' => 'Guest Deleted Successfully',
+                'data' => []
+            ]);
         } else {
-    
-            $data = new Guest(); // ✅ use your Guest model here
-            $request->request->add(['status' => 0]); // mark as deleted
-            $newrequest = $request->except(['guid']);
-            $request->request->add(['updated_by' => $request->input('updated_by')]);
-    
-            $result = $data->where('guid', $request->input('guid'))->update($newrequest);
-    
-            if ($result) {
-                return response()->json([
-                    'status' => 200,
-                    'message' => 'Guest Deleted Successfully',
-                    'data' => []
-                ]);
-            } else {
-                return response()->json([
-                    'status' => 400,
-                    'errors' => 'Something went wrong.'
-                ], 400);
-            }
+            return response()->json([
+                'status' => 400,
+                'errors' => 'Something went wrong.'
+            ], 400);
         }
     }
-   
     public function list(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -188,6 +191,7 @@ class GuestController extends Controller
             'search' => 'nullable|string',
             'guest_id' => 'nullable|integer',
             'role_id' => 'nullable|integer',
+            'categories_id' => 'nullable|integer', 
             'city_id' => 'nullable|integer',
             'state_id' => 'nullable|integer',
             'country_id' => 'nullable|integer',
@@ -203,9 +207,15 @@ class GuestController extends Controller
 
         $filters = $request->only([
             'offset', 'limit', 'sortby', 'sorttype', 
-            'search', 'guest_id', 'role_id', 'city_id', 
-            'state_id', 'country_id'
+            'search', 'guest_id', 'role_id', 'categories_id', // Added categories_id
+            'city_id', 'state_id', 'country_id'
         ]);
+
+        if ($request->has('filters')) {
+            $filters['roles']     = $request->filters['roles'] ?? [];
+            $filters['functions'] = $request->filters['functions'] ?? [];
+            $filters['gifts']     = $request->filters['gifts'] ?? [];
+        }
 
         $guestModel = new guest();
         $result = $guestModel->getallguest($filters);
@@ -235,7 +245,6 @@ class GuestController extends Controller
         $user = guest::where('email', $request->input('email'))->first();
 
         if ($user && Hash::check($request->input('password'), $user->password)) {
-
             Session::put('userdata', $user);    
 
             return response()->json([
@@ -274,8 +283,7 @@ class GuestController extends Controller
     
         return response()->json(['status' => 200, 'message' => 'Password updated successfully']);
     }
-    
-    // Ascending list
+
     public function listAsc(Request $request)
     {
         $query = Guest::query();
@@ -294,7 +302,6 @@ class GuestController extends Controller
         ]);
     }
 
-    // Descending list
     public function listDesc(Request $request)
     {
         $query = Guest::query();
@@ -313,7 +320,55 @@ class GuestController extends Controller
         ]);
     }
 
+    public function guestCount()
+    {
+        $count = Guest::where('status', 1)
+                     ->whereIn('role_id', [3, 4, 5])
+                    ->count();
+
+        return response()->json([
+            'status' => 200,
+            'count'  => $count
+        ]);
+    }
     
+    public function dashboarddata(Request $request)
+    {
+        // Total Guests (role_id = 3, 4, 5 - ALL)
+        $total_guests = Guest::whereIn('role_id', [3, 4, 5])
+            ->where('status', 1)
+            ->count();
+    
+        // Total Friends (role_id = 4)
+        $total_friends = Guest::where('role_id', 4)
+            ->where('status', 1)
+            ->count();
+    
+        // Total Business Relatives (role_id = 5)
+        $total_business = Guest::where('role_id', 5)
+            ->where('status', 1)
+            ->count();
+    
+        // Total Roles
+        $total_roles = Role::count();
+    
+        // Recently Added Guests (Last 10, role_id = 3, 4, 5)
+        $recent_guests = Guest::whereIn('role_id', [3, 4, 5])
+            ->where('status', 1)
+            ->latest()
+            ->limit(10)
+            ->get();
+    
+        return response()->json([
+            'status' => 200,
+            'total_guests' => $total_guests,
+            'total_friends' => $total_friends,
+            'total_business' => $total_business,
+            'total_roles' => $total_roles,
+            'recent_guests' => $recent_guests
+        ]);
+    }
+
     public function set_session(Request $request)
     {
         $userdata = json_decode($request->userdata, true);
@@ -321,13 +376,9 @@ class GuestController extends Controller
         return response()->json(['status' => 200]);
     }
 
-     public function destroy(Request $request)
+    public function destroy(Request $request)
     {
         Session::flush();
         return redirect()->route('login');
-        // return response()->json(['status' => 200, 'message' => 'Logged out successfully']);
     }
-
 }
-
-    

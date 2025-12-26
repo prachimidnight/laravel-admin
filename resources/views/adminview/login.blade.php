@@ -5,6 +5,11 @@ $pagename = 'Login';
 $pagetype = 'Login';
 ?>
 @Include('adminview.layout.head')
+<style>
+    .required-asterisk {
+        color: red;
+    }
+</style>
 <body class="authentication-page">
     <div class="authentication-bg">
         <img class="auth-bg" src="{{URL::asset('resources/views/adminview/assets')}}/images/main-bg.png" width="1920" height="1080"
@@ -13,8 +18,13 @@ $pagetype = 'Login';
 
     <div class="authentication-wrapper">
         <div class="authentication-card card">
-            <img class="auth-logo-element" src="{{URL::asset('resources/views/adminview/assets')}}/images/avatars/OIP.jpeg" alt="Logo" />
-            <form class="form" id="frm-login" novalidate>
+            <div class="auth-logo-force">
+                <img 
+                    src="{{ URL::asset('resources/views/adminview/assets') }}/images/avatars/OIP.jpeg"
+                    alt="Logo"
+                >
+            </div>
+                        <form class="form" id="frm-login" novalidate>
                 <div id="login" class="auth-item">
                     <div class="columns is-multiline">
                         <div class="column is-12 col-form">
@@ -41,8 +51,8 @@ $pagetype = 'Login';
                         </div>
                         </div>
                         
-                        <div class="column is-12 col-form">
-                            <button id="hoot_login_signin_submit" class="btn btn-black  w-100" type="submit">Login</button>
+                        <div class="column is-12 col-form text-center">
+                            <button id="hoot_login_signin_submit" class="btn login-btn btn-small" type="submit">Login</button>
                         </div>
                     </div>
                 </div>
@@ -70,74 +80,86 @@ $pagetype = 'Login';
             }
         }
         $(document).ready(function() {
-          $("#frm-login").validate({
-              submitHandler: function(form) {
-                  var formData = {
-                      email: $("#email").val(),
-                      password: $("#password").val(),
-                      dynamicurl: "user/login"
-                  };
+            $("#frm-login").validate({
+            rules: {
+                email: { required: true },
+                password: { required: true }
+            },
+            messages: {
+                email: { required: "Username is required" },
+                password: { required: "Password is required" }
+            },
+            errorElement: "small",
+            errorClass: "error",
 
-                  $(".btn-primary").html('Loading...').attr('disabled', true);
+            errorPlacement: function (error, element) {
+                error.insertAfter(element); // 🔥 EXACT State behaviour
+            },
 
-                  $.ajax({
-                      method: "POST",
-                      url: apipath + "/guest/login",
-                      data: formData,
-                      dataType: "json",
-                      success: function(response) {
+            highlight: function (element) {
+                $(element).addClass("error");
+            },
+            unhighlight: function (element) {
+                $(element).removeClass("error");
+            },
+        submitHandler: function(form) {
+            var formData = {
+                email: $("#email").val(),
+                password: $("#password").val(),
+                dynamicurl: "user/login"
+            };
 
-                          if (response.status == 200) {
+            // $(".btn-primary").html('Loading...').attr('disabled', true);
 
-                            sessionStorage.setItem("guid", response.data.guid);
-                            // console.log("Saved GUID:", response.data.guid);
-                            
-                              let userdata = response.data;
+            $.ajax({
+                method: "POST",
+                url: apipath + "/guest/login",
+                data: formData,
+                dataType: "json",
+                success: function(response) {
+                    if (response.status == 200) {
+                        sessionStorage.setItem("guid", response.data.guid);
 
-                              $.ajax({
-                                  type: "POST",
-                                  headers: {
-                                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                  },
-                                  url: "{{ URL('set_session') }}",
-                                  data: { userdata: JSON.stringify(userdata) },
-                                  dataType: 'json',
-                                  success: function(data1) {
-                                      if (data1.status == 200) {
-                                        var finaljson = response.data;
-                                          $.each(finaljson, function(key, value) {
-                                            sessionStorage.setItem(key, value);
+                        let userdata = response.data;
 
-                                          });
+                        $.ajax({
+                            type: "POST",
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            url: "{{ URL('set_session') }}",
+                            data: { userdata: JSON.stringify(userdata) },
+                            dataType: 'json',
+                            success: function(data1) {
+                                if (data1.status == 200) {
+                                    $.each(response.data, function(key, value) {
+                                        sessionStorage.setItem(key, value);
+                                    });
 
-                                          notifyuser('success', 'Login successful');
-                                          setTimeout(() => {
-                                           window.location.href = "{{URL('dashboard')}}";
-                                          }, 1000);
-                                      }
-                                  },
-                                  complete: function() {
-                                      $('.main-loading').hide();
-                                      $(".btn-primary").html('LOGIN').removeAttr("disabled");
-                                  },
-                                  error: function() {
-                                      notifyuser('error', 'An error occurred while processing your request.');
-                                  }
-                              });
-                          } else {
-                              notifyuser('error', response.message || 'Invalid credentials, please try again.');
-                              $(".btn-primary").html('LOGIN').removeAttr("disabled");
-                          }
-                      },
-                      error: function(xhr) {
-                          notifyuser('error', xhr.responseJSON?.message || 'Something went wrong.');
-                          $(".btn-primary").html('LOGIN').removeAttr("disabled");
-                      }
-                  });
-                  return false;
-              }
-          });
-      });
+                                    notifyuser('success', 'Login successful');
+                                    setTimeout(() => {
+                                        window.location.href = "{{URL('dashboard')}}";
+                                    }, 1000);
+                                }
+                            },
+                            complete: function() {
+                                $(".btn-primary").html('LOGIN').removeAttr("disabled");
+                            }
+                        });
+                    } else {
+                        notifyuser('error', response.message || 'Invalid credentials');
+                        $(".btn-primary").html('LOGIN').removeAttr("disabled");
+                    }
+                },
+                error: function(xhr) {
+                    notifyuser('error', 'Something went wrong');
+                    $(".btn-primary").html('LOGIN').removeAttr("disabled");
+                }
+            });
+            return false;
+        }
+    });
+});
 
       function notifyuser(type, message) {
             $.notify(message, type);

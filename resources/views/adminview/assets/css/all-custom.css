@@ -1340,6 +1340,9 @@ section,
 }
 
 .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   position: relative;
   font-family: var(--font-family);
   width: fit-content;
@@ -1716,7 +1719,7 @@ section,
 }
 
 .theme-menu-logo-default {
-  height: 40px;
+  height: 100px;
   width: auto;
 }
 
@@ -3880,3 +3883,109 @@ span.other {
   font-size: 11px;
   font-family: 'Montserrat';
 }
+.text-capitalize {
+  text-transform: capitalize !important;
+}
+
+.login-btn {
+  background-color: #0d6efd; /* Blue */
+  color: #fff;
+  font-size: 16px;
+  padding: 6px 12px; /* small */
+  border-radius: 6px;
+}
+.btn-small {
+  font-size: 13px;
+  padding: 6px 12px;
+  width: 100px;
+  display: block;
+  margin: 0 auto;   /* center */
+}
+/* FORCE OVERRIDE */
+.auth-logo-force {
+  width: 100%;
+  text-align: center;
+}
+
+.auth-logo-force img {
+  width: 280px !important;   /* 🔥 change here */
+  height: auto !important;
+  max-width: none !important;
+  min-width: 280px !important;
+}
+
+.small.error {
+  background-color: #e53935;  
+  color: #fff;
+  padding: 2px 3px;
+  border-radius: 3px;
+  font-size: 12px;
+  margin-top: 4px;
+  display : inline-block;
+}
+.input.error {
+  border-color: #e53935 !important;
+}
+.no-data-row {
+  text-align: center;
+  font-weight: 700;          /* bold */
+  color: #000;               /* pure black */
+  padding: 30px 0;
+  font-size: 16px;
+}
+/* Hide submenu by default */
+.submenu {
+  display: none;
+  padding-left: 20px;
+}
+
+/* Show submenu when parent has active class */
+.menu-link.with-submenu.active + .submenu {
+  display: block;
+}
+.submenu {
+  display: none;
+  padding-left: 25px;
+}
+
+.menu-item.open > .submenu {
+  display: block;
+}
+
+.submenu-caret {
+  cursor: pointer;
+  font-size: 20px;
+  float: right;
+  color: #fff; 
+  margin-top: 3px;
+  margin-right: 12px;
+  transition: transform 0.3s ease;
+}
+
+.menu-item.open .submenu-caret {
+  transform: rotate(90deg);
+}
+.guest-count {
+  margin-left: auto;
+  margin-right: 6px;
+}
+
+.btn svg {
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.btn-primary svg {
+  transition: transform 0.2s ease;
+}
+
+.btn-primary:hover svg {
+  transform: translateY(-1px);
+}
+
+
+
+
+
+
+
+

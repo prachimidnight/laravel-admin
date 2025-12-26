@@ -226,6 +226,10 @@ $pagetype = 'State';
     </body>
 
     <script>
+
+    function notifyuser(type, message) {
+            $.notify(message, type);
+        }
         $(document).ready(function() {
             getallstate();
             $(".main-loading").hide();
@@ -269,7 +273,7 @@ $pagetype = 'State';
         });
 
         $("#add-users-sidebar form").submit(function(e) {
-            $(".btn-primary").html('Loading...').attr('disabled', true);
+            // $(".btn-primary").html('Loading...').attr('disabled', true);
             e.preventDefault();
         }).validate({
             submitHandler: function(form) {
@@ -296,15 +300,11 @@ $pagetype = 'State';
                             $(".form-control").val("");
                             $(".btn-primary").html('Add').attr('disabled', true);
                             $('#add-users-sidebar').removeClass('active');
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success',
-                                text: 'Data added successfully!',
-                                showConfirmButton: false,
-                                timer: 2000
-                            }).then(() => {
+                            notifyuser('success', 'State saved successfully');
+                            setTimeout(() => {
                                 location.reload();
-                            });
+                            }, 2000);
+
                         } else {
                             notifyuser('error', 'An error occurred');
                         }
@@ -357,7 +357,18 @@ $pagetype = 'State';
                 dataType: 'json',
                 data: formdata,
                 success: function(response) {
-                    $('#handle-list-1').empty();
+                    $('#handle-list-1').empty();  
+                    
+                    if (!response.data || response.data.length === 0) {
+                    $('#handle-list-1').html(`
+                        <tr>
+                            <td colspan="4" class="no-data-row text-center">
+                                Data Not Found
+                            </td>
+                        </tr>
+                    `);
+                    return;
+                }
 
                     $.each(response.data, function(index, item) {
                         $('#handle-list-1').append(`
@@ -443,50 +454,51 @@ $pagetype = 'State';
             $('#delete-sidebar').addClass('active');
         });
 
-        $(document).on('click', '#delete', function(e) {
-            e.preventDefault();
+        $(document).on('click', '#delete', function (e) {
+    e.preventDefault();
 
-            var deleteInput = $('#deletedata').val().trim();
+    var deleteInput = $('#deletedata').val().trim();
 
-            if (deleteInput === "DELETE") {
-                var guid = $('#guid').val();
+    if (deleteInput === "DELETE") {
+        var guid = $('#guid').val();
 
-                $.ajax({
-                    type: 'POST',
-                    url: apipath + "/state/delete",
-                    dataType: 'json',
-                    data: {
-                        guid: guid
-                    },
-                    success: function(response) {
-                        $('#delete-sidebar').removeClass('active');
+        $.ajax({
+            type: 'POST',
+            url: apipath + "/state/delete",
+            dataType: 'json',
+            data: { guid: guid },
 
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Deleted!',
-                            text: 'State has been deleted successfully.',
-                            timer: 2000,
-                            showConfirmButton: false
-                        }).then(() => {
-                            location.reload();
-                        });
-                    },
-                    error: function(err) {
-                        console.error('Error deleting data:', err);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: 'There was an error deleting the State. Please try again.',
-                        });
-                    }
-                });
-            } else {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Input Required',
-                    text: "Please type 'DELETE' in the input box to confirm deletion.",
-                });
+            success: function (response) {
+                $('#delete-sidebar').removeClass('active');
+
+                notifyuser('success', 'State deleted successfully');
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            },
+
+            error: function (err) {
+                console.error('Error deleting data:', err);
+                notifyuser('error', 'There was an error deleting the State');
             }
         });
+
+    } else {
+        notifyuser('warn', "Please type 'DELETE' to confirm deletion");
+    }
+});
+$(document).ready(function () {
+        $(".main-loading").hide();
+        $.ajax({
+            url: apipath + "/guest/dashboarddata",
+            type: "POST",
+            dataType: "json",
+            success: function (res) {
+                if (res.status === 200) {
+                    $('#guest-count').text(res.total_guests);
+                }
+            }
+        });
+    });
     </script>
 @endsection
