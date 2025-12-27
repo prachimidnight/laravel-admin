@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FunctionCategories;
 use Illuminate\Http\Request;
+use App\Models\functioncategories;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 
-class FunctionCategoriesController extends Controller
+class FunctioncategoriesController extends Controller
 {
+
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [

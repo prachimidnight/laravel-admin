@@ -160,7 +160,6 @@ $pagetype = 'Guest';
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                                         <path d="M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227z"/>
                                     </svg>
-                                    Filter
                                 </button>
                                 <div class="filter-dropdown" id="filter-dropdown">
                                     <div class="filter-section">
@@ -235,7 +234,6 @@ $pagetype = 'Guest';
                                     <path d="M21 15l-4 4l-4 -4"/>
                                     <path d="M17 19v-14"/>
                                 </svg>
-                                Sort
                             </button>
                             <div class="dropdown-menu" id="sort-dropdown" style="display: none; position: absolute; background: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); min-width: 150px; z-index: 1000; margin-top: 5px;">
                                 <a href="#" class="dropdown-item sort-option" data-sort="asc" style="display: block; padding: 10px 15px; text-decoration: none; color: #333; transition: background 0.2s;">
@@ -264,20 +262,9 @@ $pagetype = 'Guest';
                                     <path d="M12 15v6"/>
                                     <path d="M9 18l3 3l3 -3"/>
                                 </svg>
-                                Export
                             </a>
                             <a class="btn btn-primary btn-add-user" id="btn-add-user"
-                            open-sidebar="add-guest-sidebar" href="addguest">
-                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                 stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
-                                 class="icon icon-tabler icon-tabler-user-plus mr-1">
-                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                 <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/>
-                                 <path d="M16 19h6"/>
-                                 <path d="M19 16v6"/>
-                                 <path d="M6 21v-2a4 4 0 0 1 4 -4h4"/>
-                             </svg>
+                            open-sidebar="add-guest-sidebar" href="addguest">                
                              Add
                          </a>
                         </div>
@@ -298,7 +285,7 @@ $pagetype = 'Guest';
                                                 <div class="table-filter">
                                                 </div>
                                             </th>
-                                            <th class="th-with-dropdown">Guest Contact
+                                            <th class="th-with-dropdown">Contact Details
                                                 <div class="table-filter">
                                                 </div>
                                             </th>
@@ -852,6 +839,14 @@ $pagetype = 'Guest';
             $('.theme-sidebar-title').html("Edit Guest");
             $('#add-users-sidebar').addClass('active');
         });
+        
+        $(document).on("click", ".opendelete", function() {
+            var $this = $(this);
+            
+            $('.theme-sidebar-title').html("DELETE");
+            $('#delete-sidebar').addClass('active');
+        });
+
         function notifyuser(type, message) {
             $.notify(message, type);
         }

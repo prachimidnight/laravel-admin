@@ -11,7 +11,6 @@ $pagetype = 'City';
             color: red;
         }
     </style>
-
     <body>
         <div class="theme-wrapper">
             <div class="theme-content">
@@ -31,7 +30,6 @@ $pagetype = 'City';
                                 <input type="text" id="search" name="search" class="form-control"
                                     placeholder="Search">
                             </div>
-                            
                             <a class="btn btn-primary" id="btn-add-user" open-sidebar="add-users-sidebar"
                                 href="#">Add</a>
                         </div>
@@ -462,6 +460,8 @@ $pagetype = 'City';
 
         // Rest of functions remain same...
         $(document).on("click", "#btn-add-user", function() {
+            $('#add-users-sidebar form').validate().resetForm(); // ✅ ADD
+            $('#add-users-sidebar form')[0].reset(); 
             $('#guid').val(''); 
             $('#city_name').val('');
             getCountries();
@@ -472,6 +472,8 @@ $pagetype = 'City';
         });
 
         $(document).on("click", "#openedit", function() {
+            $('#add-users-sidebar form').validate().resetForm(); // ✅ ADD
+            $('#add-users-sidebar form')[0].reset();    
             var guid = $(this).data("guid");
             $("#guid").val(guid);
             var city_name = $(this).data("city_name");
@@ -573,7 +575,9 @@ $pagetype = 'City';
             e.preventDefault();
             var guid = $(this).data('guid');
             $('#guid').val(guid);
+            $('#add-users-sidebar').removeClass('active show');
             $('#delete-sidebar').addClass('active');
+            $('#delete-sidebar .theme-sidebar-title').html("Delete City");
         });
 
         $(document).on('click', '#delete', function (e) {

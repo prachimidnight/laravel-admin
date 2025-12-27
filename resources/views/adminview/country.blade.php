@@ -242,6 +242,8 @@ $pagetype = 'Country';
         });
 
         $(document).on("click", "#btn-add-user", function() {
+            $('#add-users-sidebar form').validate().resetForm(); // ✅ ADD
+            $('#add-users-sidebar form')[0].reset();  
             $('#guid').val(''); 
             $('#country_name').val('');
             $('#add-users-sidebar').addClass('show');
@@ -251,6 +253,8 @@ $pagetype = 'Country';
 
              
         $(document).on("click", "#openedit", function() {
+            $('#add-users-sidebar form').validate().resetForm(); // ✅ ADD
+            $('#add-users-sidebar form')[0].reset();  
             var guid = $(this).data("guid");
             $("#guid").val(guid);
 
@@ -415,8 +419,11 @@ $pagetype = 'Country';
         $(document).on('click', '.opendelete', function(e) {
             e.preventDefault();
             var guid = $(this).data('guid');
+            $('#add-users-sidebar').removeClass('active show');
             $('#guid').val(guid);
             $('#delete-sidebar').addClass('active');
+            $('#delete-sidebar .theme-sidebar-title').html("Delete Country");
+
         });
 
         $(document).on('click', '#delete', function (e) {

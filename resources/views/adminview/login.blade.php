@@ -50,7 +50,6 @@ $pagetype = 'Login';
                             </div>
                         </div>
                         </div>
-                        
                         <div class="column is-12 col-form text-center">
                             <button id="hoot_login_signin_submit" class="btn login-btn btn-small" type="submit">Login</button>
                         </div>
@@ -93,7 +92,7 @@ $pagetype = 'Login';
             errorClass: "error",
 
             errorPlacement: function (error, element) {
-                error.insertAfter(element); // 🔥 EXACT State behaviour
+                error.insertAfter(element); 
             },
 
             highlight: function (element) {

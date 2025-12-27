@@ -215,7 +215,6 @@ $pagetype = 'UserRoles';
             </div>
         </div>
     </body>
-
     <script>
          function notifyuser(type, message) {
         $.notify(message, type);
@@ -233,6 +232,8 @@ $pagetype = 'UserRoles';
         });
 
         $(document).on("click", "#btn-add-user", function() {
+            $('#add-users-sidebar form').validate().resetForm(); // ✅ ADD
+            $('#add-users-sidebar form')[0].reset(); 
             $('#guid').val(''); 
             $('#role_name').val('');
             $('#add-users-sidebar').addClass('show');
@@ -241,6 +242,8 @@ $pagetype = 'UserRoles';
         });
 
         $(document).on("click", "#openedit", function() {
+            $('#add-users-sidebar form').validate().resetForm(); // ✅ ADD
+            $('#add-users-sidebar form')[0].reset(); 
             var guid = $(this).data("guid");
             $("#guid").val(guid);
 
@@ -406,7 +409,9 @@ $pagetype = 'UserRoles';
             e.preventDefault();
             var guid = $(this).data('guid');
             $('#guid').val(guid);
+            $('#add-users-sidebar').removeClass('active show');
             $('#delete-sidebar').addClass('active');
+            $('#delete-sidebar .theme-sidebar-title').html("Delete Role");
         });
 
         $(document).on('click', '#delete', function (e) {

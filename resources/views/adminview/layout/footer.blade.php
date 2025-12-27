@@ -282,7 +282,6 @@
 		}
 	})
 
-
 	$(document).ready(function() {
     // select2 single
     $('.select').each(function() {

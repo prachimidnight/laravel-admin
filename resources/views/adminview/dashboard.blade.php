@@ -98,7 +98,7 @@ $pagetype = 'dashboard';
                                         <tr>
                                             <th>Order</th>
                                             <th>Guest</th>
-                                            <th>Type</th>
+                                            <th>Guest Contact</th>
                                             <th>Logs</th>
                                         </tr>
                                     </thead>
@@ -202,9 +202,9 @@ $pagetype = 'dashboard';
                     $('#total_friends').text(res.total_friends || 0);
                     $('#total_business').text(res.total_business || 0);
                     renderDashboardGuests(res.recent_guests);
-                    $.notify('Dashboard refreshed successfully!', 'success');
-                } else {
-                    $.notify('Failed to load dashboard data', 'error');
+                //     $.notify('Dashboard refreshed successfully!', 'success');
+                // } else {
+                    // $.notify('Failed to load dashboard data', 'error');
                 }
             },
             error: function () {
@@ -241,7 +241,11 @@ $pagetype = 'dashboard';
                     <td>
                         <b>${item.first_name || ''} ${item.last_name || ''}</b>
                     </td>
-                    <td>${getRoleName(item.role_id)}</td>
+                    <td>
+                    <b>${item.email || ''}</b><br>
+                    <i class="fab fa-whatsapp"></i> ${item.whatsapp_no || ''} <br>
+                    <i class="fas fa-phone"></i> ${item.phone_no || ''}
+                        </td>
                     <td>
                         ${new Date(item.created_at).toDateString()}
                     </td>

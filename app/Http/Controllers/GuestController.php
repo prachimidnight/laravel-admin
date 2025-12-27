@@ -189,12 +189,12 @@ class GuestController extends Controller
             'sortby' => 'nullable|string',
             'sorttype' => 'nullable|in:asc,desc',
             'search' => 'nullable|string',
-            'guest_id' => 'nullable|integer',
-            'role_id' => 'nullable|integer',
-            'categories_id' => 'nullable|integer', 
-            'city_id' => 'nullable|integer',
-            'state_id' => 'nullable|integer',
-            'country_id' => 'nullable|integer',
+            // 'guest_id' => 'nullable|integer',
+            // 'role_id' => 'nullable|integer',
+            // 'categories_id' => 'nullable|integer', 
+            // 'city_id' => 'nullable|integer',
+            // 'state_id' => 'nullable|integer',
+            // 'country_id' => 'nullable|integer',
         ]);
     
         if ($validator->fails()) {
