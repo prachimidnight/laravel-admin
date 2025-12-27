@@ -84,7 +84,7 @@ $pagetype = 'dashboard';
         <div class="px-5 mb-5">
             <div class="columns">
 
-                <div class="column is-6">
+                <div class="column is-12">
                     <div class="card">
                         <div class="card-body p-5">
 
@@ -98,7 +98,8 @@ $pagetype = 'dashboard';
                                         <tr>
                                             <th>Order</th>
                                             <th>Guest</th>
-                                            <th>Guest Contact</th>
+                                            <th>Contact Details</th>
+                                            <th>Address</th>
                                             <th>Logs</th>
                                         </tr>
                                     </thead>
@@ -269,6 +270,9 @@ $pagetype = 'dashboard';
                                     ${item.whatsapp_no ? item.whatsapp_no : '-'}
                                     </span>
                                 </div>
+                            <td class="wrap-text">
+                                ${item.address ? item.address : '-'}
+                            </td>
                         </td>
                     <td>
                         ${new Date(item.created_at).toDateString()}
