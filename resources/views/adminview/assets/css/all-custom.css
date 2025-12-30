@@ -3574,7 +3574,7 @@ footer {
 }
 
 .master-card a {
-  padding: 24px 12px;
+  padding: 50px 30px;
   border-radius: var(--border-radius);
   display: block;
   color: var(--gray-800);
@@ -4334,4 +4334,7 @@ span.other {
 
   .gradient-green {
     background: linear-gradient(135deg, #28c76f, #00b894);
+}
+.gradient-purple-pink {
+    background: linear-gradient(135deg, #ab47bc, #ec407a);
 }
