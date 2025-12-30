@@ -13,6 +13,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <!--End Select2-->
 <!--Flatpickr-->
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
 <script src="{{URL::asset('resources/views/adminview/assets')}}/js/forms-pickers.js"></script>
 <!--End Flatpickr-->

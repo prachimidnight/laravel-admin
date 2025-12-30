@@ -30,6 +30,7 @@ $pagetype = 'Masters';
                         <div class="column col-master">
                             <div class="card master-card">
                                 <div class="card-body">
+                                    <div class="card gradient-card gradient-purple">
                                     <a href="city">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -49,10 +50,12 @@ $pagetype = 'Masters';
                                     </a>
                                 </div>
                             </div>
+                            </div>
                         </div>
                       <div class="column col-master">
                             <div class="card master-card">
                                 <div class="card-body">
+                                    <div class="card gradient-card gradient-blue">
                                     <a href="state">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -72,10 +75,12 @@ $pagetype = 'Masters';
                                     </a>
                                 </div>
                             </div>
+                            </div>
                         </div>
                         <div class="column col-master">
                             <div class="card master-card">
                                 <div class="card-body">
+                                    <div class="card gradient-card gradient-orange">
                                     <a href="country">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -94,12 +99,14 @@ $pagetype = 'Masters';
                                         <span>Country</span>
                                     </a>
                                 </div>
+                                </div>
                             </div>
                         </div>
                      
                         <div class="column col-master">
                             <div class="card master-card">
                                 <div class="card-body">
+                                    <div class="card gradient-card gradient-green">
                                     <a href="userroles">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -113,10 +120,12 @@ $pagetype = 'Masters';
                                     </a>
                                 </div>
                             </div>
+                            </div>
                         </div>
                         <div class="column col-master">
                             <div class="card master-card">
                                 <div class="card-body">
+                                    <div class="card gradient-card gradient-red">
                                     <a href="guest">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -132,10 +141,12 @@ $pagetype = 'Masters';
                                     </a>
                                 </div>
                             </div>
+                            </div>
                         </div>  
                         <div class="column col-master">
                             <div class="card master-card">
                                 <div class="card-body">
+                                    <div class="card gradient-card gradient-blue">
                                     <a href="functioncategories">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -152,7 +163,7 @@ $pagetype = 'Masters';
                                 </div>
                             </div>
                         </div>
-                           
+                        </div>
                     </div>
                 </div>
             </div>

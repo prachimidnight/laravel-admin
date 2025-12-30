@@ -189,12 +189,9 @@ class GuestController extends Controller
             'sortby' => 'nullable|string',
             'sorttype' => 'nullable|in:asc,desc',
             'search' => 'nullable|string',
-            // 'guest_id' => 'nullable|integer',
-            // 'role_id' => 'nullable|integer',
-            // 'categories_id' => 'nullable|integer', 
-            // 'city_id' => 'nullable|integer',
-            // 'state_id' => 'nullable|integer',
-            // 'country_id' => 'nullable|integer',
+            'categories_name'=> 'nullable|string', // Added categories_name
+            'is_gift' => 'nullable|in:0,1',
+            'role_id'=>'nullable|integer',
         ]);
     
         if ($validator->fails()) {
@@ -207,8 +204,7 @@ class GuestController extends Controller
 
         $filters = $request->only([
             'offset', 'limit', 'sortby', 'sorttype', 
-            'search', 'guest_id', 'role_id', 'categories_id', // Added categories_id
-            'city_id', 'state_id', 'country_id'
+            'search', 'categories_name', 'is_gift','role_id' 
         ]);
 
         if ($request->has('filters')) {
@@ -216,6 +212,9 @@ class GuestController extends Controller
             $filters['functions'] = $request->filters['functions'] ?? [];
             $filters['gifts']     = $request->filters['gifts'] ?? [];
         }
+
+        $query = Guest::where('status', 1)
+        ->whereNotIn('role_id', [1, 2]);
 
         $guestModel = new guest();
         $result = $guestModel->getallguest($filters);
@@ -368,6 +367,129 @@ class GuestController extends Controller
             'recent_guests' => $recent_guests
         ]);
     }
+// Add these methods in your GuestController class
+
+public function bulkupload()
+{
+    return view('adminview.bulkupload');
+}
+
+public function import(Request $request)
+{
+    try {
+        $validator = Validator::make($request->all(), [
+            'csv_file' => 'required|file|mimes:csv,txt|max:10240'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 400,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 400);
+        }
+
+        $file = $request->file('csv_file');
+        $handle = fopen($file->getRealPath(), 'r');
+        
+        $header = null;
+        $successCount = 0;
+        $errorCount = 0;
+        $errors = [];
+        $rowNumber = 0;
+
+        while (($row = fgetcsv($handle, 1000, ',')) !== false) {
+            $rowNumber++;
+            
+            if (!$header) {
+                $header = array_map('trim', $row);
+                $requiredColumns = ['first_name', 'last_name', 'phone_no', 'email'];
+                $missingColumns = array_diff($requiredColumns, $header);
+                
+                if (!empty($missingColumns)) {
+                    fclose($handle);
+                    return response()->json([
+                        'status' => 400,
+                        'message' => 'Missing columns: ' . implode(', ', $missingColumns)
+                    ], 400);
+                }
+                continue;
+            }
+
+            $rowData = array_combine($header, array_map('trim', $row));
+            
+            // Validate row
+            $rowValidator = Validator::make($rowData, [
+                'first_name' => 'required',
+                'last_name' => 'required',
+                'phone_no' => 'required',
+                'email' => 'required|email',
+            ]);
+
+            if ($rowValidator->fails()) {
+                $errors[] = "Row {$rowNumber}: " . implode(', ', $rowValidator->errors()->all());
+                $errorCount++;
+                continue;
+            }
+
+            // Check duplicate email
+            if (Guest::where('email', $rowData['email'])->exists()) {
+                $errors[] = "Row {$rowNumber}: Email {$rowData['email']} already exists";
+                $errorCount++;
+                continue;
+            }
+
+            try {
+                Guest::create([
+                    'role_id' => $rowData['role_id'] ?? 3,
+                    'categories_id' => $rowData['categories_id'] ?? null,
+                    'country_id' => $rowData['country_id'] ?? null,
+                    'state_id' => $rowData['state_id'] ?? null,
+                    'city_id' => $rowData['city_id'] ?? null,
+                    'first_name' => $rowData['first_name'],
+                    'last_name' => $rowData['last_name'],
+                    'phone_no' => $rowData['phone_no'],
+                    'email' => $rowData['email'],
+                    'whatsapp_no' => $rowData['whatsapp_no'] ?? null,
+                    'address' => $rowData['address'] ?? null,
+                    'description' => $rowData['description'] ?? null,
+                    'password' => isset($rowData['password']) && $rowData['password'] ? Hash::make($rowData['password']) : null,
+                    'is_whatsapp' => isset($rowData['is_whatsapp']) ? (bool)$rowData['is_whatsapp'] : false,
+                    'is_send' => isset($rowData['is_send']) ? (bool)$rowData['is_send'] : false,
+                    'is_sms' => isset($rowData['is_sms']) ? (bool)$rowData['is_sms'] : false,
+                    'is_gift' => isset($rowData['is_gift']) ? (bool)$rowData['is_gift'] : false,
+                    'token' => generateToken(10),
+                    'guid' => generateToken(30),
+                    'status' => 1
+                ]);
+                
+                $successCount++;
+            } catch (\Exception $e) {
+                $errors[] = "Row {$rowNumber}: " . $e->getMessage();
+                $errorCount++;
+            }
+        }
+        
+        fclose($handle);
+
+        return response()->json([
+            'status' => 200,
+            'message' => "Import completed: {$successCount} successful, {$errorCount} failed",
+            'data' => [
+                'success_count' => $successCount,
+                'error_count' => $errorCount,
+                'errors' => $errors
+            ]
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 500,
+            'message' => 'Error: ' . $e->getMessage()
+        ], 500);
+    }
+}
+    
 
     public function set_session(Request $request)
     {

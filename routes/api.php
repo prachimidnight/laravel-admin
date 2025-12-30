@@ -72,7 +72,7 @@ Route::prefix('guest')->controller(GuestController::class)->group(function() {
     Route::post('/logout','logout');
     Route::get('/guest-count','guestCount');
     Route::post('/dashboarddata','dashboardData');
-    // Route::post('/bulk-upload','upload');
+    Route::post('/bulkupload/import', 'import');
 
 
 });

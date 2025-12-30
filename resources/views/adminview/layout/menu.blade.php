@@ -130,21 +130,6 @@
         updateMenuCounts();
     });
 
-    // document.addEventListener('DOMContentLoaded', function () {
-
-    //     // Arrow (▸) pe click → sirf submenu open/close
-    //     document.querySelectorAll('.submenu-caret').forEach(function (arrow) {
-    //         arrow.addEventListener('click', function (e) {
-    //             e.preventDefault();   // guest page open na ho
-    //             e.stopPropagation();  // parent <a> click stop
-
-    //             const menuItem = this.closest('.menu-item');
-    //             menuItem.classList.toggle('open');
-    //         });
-    //     });
-
-    // });
-
     function updateMenuCounts() {
         var developerGlobalCount = localStorage.getItem("developer_global_count") || 0;
         var leadGlobalCount = localStorage.getItem("leads_global_count") || 0;

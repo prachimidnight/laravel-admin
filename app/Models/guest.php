@@ -16,7 +16,7 @@ class guest extends Model
     protected $fillable = [
         'guest_id',
         'role_id',
-        'categories_id', // Added categories_id
+        'categories_id', 
         'country_id',
         'state_id',
         'city_id',
